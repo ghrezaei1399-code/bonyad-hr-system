@@ -898,7 +898,7 @@ body.dark .role-guide-card { background: rgba(0,0,0,0.2); }
     <input type="text" id="wfCode" placeholder="کد پرسنلی (مثلاً 1001)">
     <br>
     <button onclick="checkCode()">ورود</button>
-    <a class="skip-link" onclick="enterAsNewcomer()">🚪 من تازه‌وارد هستم (بدون کد)</a>
+    <button type="button" class="skip-link" onclick="enterAsNewcomer()" style="background:none;border:none;width:100%;text-align:center;cursor:pointer;">🚪 من تازه‌وارد هستم (بدون کد)</button>
   </div>
 
   <div id="step2">
@@ -1254,8 +1254,12 @@ function checkCode() {
     document.getElementById('wfWelcome').textContent = 'پرسنل گرامی، ' + found.name;
     document.getElementById('wfRole').textContent = 'واحد: ' + found.unit;
     renderUnits();
-  } else {
-    alert('کد پرسنلی یافت نشد. کدهای مجاز: 1001 تا 1005');
+    } else {
+    const msg = document.createElement('div');
+    msg.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#ff4757;color:#fff;padding:12px 24px;border-radius:12px;font-weight:bold;z-index:99999;box-shadow:0 8px 20px rgba(0,0,0,0.3);font-family:inherit;';
+    msg.textContent = 'کد پرسنلی یافت نشد. کدهای مجاز: 1001 تا 1005';
+    document.body.appendChild(msg);
+    setTimeout(() => msg.remove(), 3000);
   }
 }
 function enterAsNewcomer() {
