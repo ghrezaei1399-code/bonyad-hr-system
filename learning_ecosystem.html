@@ -1,0 +1,723 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اکوسیستم توانمندسازی | اداره کل سرمایه انسانی</title>
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+<style>
+:root { --bg-gradient: linear-gradient(135deg, #e0f2f1 0%, #f1f8e9 50%, #fff8e1 100%); --text-dark: #1a3b32; --gold: #d4a843; --primary: #0d8a63; --card-bg: #fff; --muted: #666; }
+body.dark { --bg-gradient: linear-gradient(135deg, #0a3b2a 0%, #1a4d3a 50%, #3a2e1a 100%); --text-dark: #e8f5e9; --card-bg: #102b20; --muted: #a5c9b8; }
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', Tahoma, sans-serif; }
+body { background: var(--bg-gradient); color: var(--text-dark); min-height: 100vh; padding: 20px; overflow-x: hidden; position: relative; transition: background 0.5s; }
+body::before { content: ''; position: fixed; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%); transform: skewX(-25deg); animation: shinePage 10s infinite linear; pointer-events: none; z-index: 1; }
+@keyframes shinePage { 0% { left: -100%; } 100% { left: 200%; } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes shineCard { 0% { left: -100%; } 100% { left: 200%; } }
+@keyframes floatIcon { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+header { display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #1a2a4a 0%, #2a3f6b 100%); color: #fff; padding: 15px 30px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(26, 42, 74, 0.4); position: relative; overflow: hidden; animation: fadeInUp 0.6s ease forwards; z-index: 2; flex-wrap: wrap; gap: 10px; }
+header::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%); transform: skewX(-25deg); animation: shineCard 5s infinite; }
+header h1 { font-size: 1.2rem; font-weight: 800; color: var(--gold); position: relative; z-index: 2; }
+.header-actions { display: flex; gap: 8px; flex-wrap: wrap; position: relative; z-index: 2; }
+.back-btn { background: rgba(255,255,255,0.2); color: #fff; padding: 8px 18px; border-radius: 12px; text-decoration: none; font-weight: bold; border: 1px solid rgba(255,255,255,0.4); transition: 0.3s; cursor: pointer; font-size: 0.85rem; }
+.back-btn:hover { background: var(--gold); color: #1a2a4a; transform: scale(1.05); }
+
+.floating-controls { position: fixed; top: 15px; left: 15px; display: flex; flex-direction: column; gap: 8px; z-index: 150; }
+.float-btn { width: 40px; height: 40px; border-radius: 50%; border: none; background: #fff; color: #1a2a4a; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.15); transition: 0.3s; }
+.float-btn:hover { background: var(--gold); color: #fff; transform: scale(1.1); }
+
+.ticker-wrap { background: linear-gradient(90deg, var(--gold), #f1c65e, var(--gold)); color: #fff; padding: 6px 0; border-radius: 15px; overflow: hidden; font-weight: 600; font-size: 0.85rem; white-space: nowrap; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(212, 168, 67, 0.3); position: relative; z-index: 2; }
+.ticker { display: inline-block; animation: tickerScroll 25s linear infinite; }
+.ticker span { padding: 0 25px; }
+@keyframes tickerScroll { 0% { transform: translateX(0); } 100% { transform: translateX(100%); } }
+
+.section-title { font-size: 1.1rem; font-weight: 800; color: var(--text-dark); margin: 25px 0 15px; border-right: 5px solid var(--gold); padding-right: 15px; position: relative; z-index: 2; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; position: relative; z-index: 2; }
+.card { border-radius: 18px; padding: 20px; background: var(--card-bg); backdrop-filter: blur(10px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; overflow: hidden; animation: fadeInUp 0.6s ease forwards; transition: transform 0.3s ease, box-shadow 0.3s ease; color: var(--text-dark); border: 2px solid var(--gold); }
+.card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.15); }
+.card h3 { font-size: 1rem; font-weight: 800; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; color: var(--text-dark); }
+.card p { font-size: 0.85rem; line-height: 1.6; color: var(--muted); margin-bottom: 12px; }
+.card-gradient-1 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: #fff; }
+.card-gradient-1 h3, .card-gradient-1 p { color: #fff; }
+.card-gradient-2 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: #fff; }
+.card-gradient-2 h3, .card-gradient-2 p { color: #fff; }
+.card-gradient-3 { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: #fff; }
+.card-gradient-3 h3, .card-gradient-3 p { color: #fff; }
+
+.form-group { margin-bottom: 10px; }
+.form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border-radius: 10px; border: 2px solid #ddd; font-family: inherit; font-size: 0.88rem; outline: none; }
+.form-group textarea { min-height: 70px; resize: vertical; }
+.btn-submit { padding: 10px 24px; border: none; border-radius: 10px; background: var(--primary); color: #fff; font-weight: bold; cursor: pointer; font-family: inherit; font-size: 0.88rem; transition: 0.3s; width: 100%; }
+.btn-submit:hover { background: var(--gold); }
+
+.archive-list { max-height: 250px; overflow-y: auto; }
+.archive-item { background: rgba(0,0,0,0.05); border-radius: 8px; padding: 8px 12px; margin-bottom: 6px; font-size: 0.82rem; border-right: 3px solid var(--gold); }
+body.dark .archive-item { background: rgba(255,255,255,0.08); }
+.archive-item .name { font-weight: bold; color: var(--primary); font-size: 0.78rem; }
+.archive-item .meta { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+
+.suggestion-toggle { background: rgba(0,0,0,0.05); padding: 12px; border-radius: 10px; cursor: pointer; font-weight: bold; margin-bottom: 10px; text-align: center; }
+body.dark .suggestion-toggle { background: rgba(255,255,255,0.1); }
+.suggestion-content { display: none; background: rgba(0,0,0,0.03); padding: 12px; border-radius: 10px; margin-top: 8px; font-size: 0.85rem; line-height: 1.7; }
+body.dark .suggestion-content { background: rgba(255,255,255,0.08); }
+.suggestion-content.active { display: block; animation: fadeInUp 0.3s ease forwards; }
+
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay.active { display: flex; }
+.modal-box { background: #fff; color: #1a3b32; border-radius: 20px; padding: 25px; max-width: 500px; width: 100%; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+.modal-box h3 { margin-bottom: 15px; color: #1a3b32; }
+.modal-box input, .modal-box textarea { width: 100%; padding: 10px; margin-bottom: 12px; border: 2px solid #ddd; border-radius: 10px; font-family: inherit; font-size: 0.88rem; }
+.modal-box .modal-actions { display: flex; gap: 10px; margin-top: 15px; }
+.modal-box .modal-actions button { flex: 1; padding: 10px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; font-family: inherit; }
+.btn-cancel { background: #eee; color: #333; }
+.btn-confirm { background: linear-gradient(135deg, #4facfe, #00f2fe); color: #fff; }
+
+#adminPanel { display: none; }
+#adminPanel.active { display: block; }
+
+.tabs { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
+.tab-btn { padding: 8px 16px; border: 2px solid var(--gold); border-radius: 10px; background: transparent; color: var(--text-dark); font-family: inherit; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 0.85rem; }
+.tab-btn.active { background: var(--gold); color: #1a2a4a; }
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeInUp 0.4s ease forwards; }
+
+.work-item { background: rgba(0,0,0,0.05); border-radius: 10px; padding: 12px; margin-bottom: 10px; border-right: 4px solid var(--primary); }
+body.dark .work-item { background: rgba(255,255,255,0.08); }
+.work-item h4 { font-size: 0.9rem; margin-bottom: 6px; color: var(--text-dark); }
+.work-item p { font-size: 0.8rem; margin-bottom: 6px; color: var(--muted); }
+.work-item .actions { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.work-item .actions button { padding: 5px 12px; border: none; border-radius: 6px; font-family: inherit; font-weight: bold; cursor: pointer; font-size: 0.75rem; }
+.btn-approve { background: #2ed573; color: #fff; }
+.btn-reject { background: #ff4757; color: #fff; }
+.btn-plan { background: #4facfe; color: #fff; }
+
+.course-card { background: linear-gradient(135deg, #e8f5e9, #f1f8e9); border-radius: 12px; padding: 15px; margin-bottom: 10px; border-right: 4px solid #2ed573; }
+body.dark .course-card { background: linear-gradient(135deg, #1a3a2a, #2a4a3a); }
+.course-card h4 { color: #0d8a63; font-size: 0.95rem; margin-bottom: 8px; }
+.course-card p { font-size: 0.82rem; color: var(--muted); line-height: 1.7; margin-bottom: 4px; }
+
+.file-upload-area { border: 2px dashed var(--primary); padding: 15px; border-radius: 10px; text-align: center; cursor: pointer; margin-bottom: 10px; transition: 0.3s; }
+.file-upload-area:hover { background: rgba(13,138,99,0.05); }
+.file-upload-area input { display: none; }
+.file-upload-area .label { color: var(--primary); font-weight: bold; font-size: 0.85rem; }
+.file-selected { font-size: 0.75rem; color: var(--muted); margin-top: 6px; }
+
+.report-form { background: rgba(0,0,0,0.03); border-radius: 12px; padding: 15px; margin-bottom: 15px; }
+body.dark .report-form { background: rgba(255,255,255,0.05); }
+.report-list-item { background: rgba(0,0,0,0.05); border-radius: 10px; padding: 12px; margin-bottom: 10px; border-right: 4px solid var(--gold); }
+body.dark .report-list-item { background: rgba(255,255,255,0.08); }
+.report-list-item .actions { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.report-list-item .actions button { padding: 4px 10px; border: none; border-radius: 6px; font-family: inherit; font-weight: bold; cursor: pointer; font-size: 0.72rem; }
+
+#satisfactionToggle { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #1a2a4a 0%, #2a3f6b 100%); color: #fff; padding: 8px 25px; border-radius: 15px 15px 0 0; cursor: pointer; z-index: 9999; font-weight: bold; font-size: 0.85rem; border: 1px solid var(--gold); border-bottom: none; }
+#satisfactionBox { position: fixed; bottom: -220px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 500px; background: var(--card-bg); padding: 15px; border-radius: 15px 15px 0 0; box-shadow: 0 -10px 30px rgba(0,0,0,0.3); z-index: 9998; text-align: center; border: 2px solid var(--gold); border-bottom: none; transition: bottom 0.4s ease; }
+
+@media (max-width: 768px) { header { flex-direction: column; text-align: center; } }
+</style>
+<script src="assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header>
+  <h1 data-fa="🌿 اکوسیستم توانمندسازی زنده" data-en="🌿 Living Empowerment Ecosystem">🌿 اکوسیستم توانمندسازی زنده</h1>
+  <div class="header-actions">
+    <button onclick="toggleTheme()" class="back-btn" title="تم">🌓</button>
+    <button onclick="toggleLang()" class="back-btn" title="زبان">🌐</button>
+    <a href="learning_guide.html" class="back-btn" style="background:rgba(46,213,115,0.35);border-color:#2ed573;">📘 راهنمای توانمندسازی</a>
+    <button onclick="goBack()" class="back-btn" style="background:rgba(255,255,255,0.15);">⬅️ برگشت</button>
+    <button onclick="openAdminModal()" class="back-btn" style="background:#d4a843;color:#1a2a4a;border:none;">🔐 ورود مدیر</button>
+    <a href="index.html" class="back-btn">🏠 صفحه اصلی</a>
+  </div>
+</header>
+
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span>✦ به باغ دانش خوش آمدید ✦</span>
+    <span>✦ هر چالش، فرصتی برای یادگیری است ✦</span>
+    <span>✦ دانش خود را با همکاران به اشتراک بگذارید ✦</span>
+  </div>
+</div>
+
+<div class="card" style="margin-bottom:20px;">
+  <div class="suggestion-toggle" onclick="toggleSuggestion()">
+    🎁 پیشنهاد امروز مدیر توانمندسازی (برای مشاهده کلیک کنید) ▼
+  </div>
+  <div class="suggestion-content" id="suggestionContent">
+    <p id="suggestionText">هنوز پیشنهادی از طرف مدیر ارسال نشده است.</p>
+    <div id="suggestionFile" style="margin-top:8px;"></div>
+    <button onclick="saveSuggestion()" style="margin-top:8px;padding:6px 14px;border:none;border-radius:6px;background:var(--primary);color:#fff;font-weight:bold;cursor:pointer;font-family:inherit;font-size:0.78rem;">💾 ذخیره متن</button>
+  </div>
+</div>
+
+<div id="publicSection">
+
+<div class="section-title">🤝 چالش‌ها و همیابی (ایجنت همیاب)</div>
+<div class="grid">
+  <div class="card">
+    <h3>📝 ثبت چالش / ایده</h3>
+    <p>چالش خود را ثبت کنید تا ایجنت همیاب راهکار پیدا کند.</p>
+    <div class="form-group">
+      <input type="text" id="challengeName" placeholder="نام شما (اختیاری)">
+    </div>
+    <div class="form-group">
+      <textarea id="challengeText" placeholder="چالش یا ایده خود را بنویسید..."></textarea>
+    </div>
+    <button class="btn-submit" onclick="submitChallenge()">📤 ثبت چالش</button>
+    <div id="challengeResult" style="margin-top:10px;font-size:0.82rem;line-height:1.6;"></div>
+  </div>
+  <div class="card card-gradient-2">
+    <h3>🎯 آرشیو چالش‌ها</h3>
+    <p>همه چالش‌های ثبت‌شده:</p>
+    <div class="archive-list" id="challengesArchive"></div>
+  </div>
+</div>
+
+<div class="section-title">🌱 باغ دانش (ایجنت باغبان)</div>
+<div class="grid">
+  <div class="card card-gradient-1">
+    <h3>📚 آرشیو دانش‌ها</h3>
+    <p>دانش‌های استخراج‌شده:</p>
+    <div class="archive-list" id="knowledgeArchive"></div>
+  </div>
+  <div class="card">
+    <h3>🔍 جستجو / افزودن دانش</h3>
+    <div class="form-group">
+      <input type="text" id="knowledgeSearch" placeholder="کلیدواژه جستجو...">
+    </div>
+    <button class="btn-submit" onclick="searchKnowledge()" style="margin-bottom:10px;">🔍 جستجو</button>
+    <hr style="margin:10px 0;border:none;border-top:1px dashed #ddd;">
+    <div class="form-group">
+      <input type="text" id="newKnowledgeTitle" placeholder="عنوان دانش جدید">
+    </div>
+    <div class="form-group">
+      <textarea id="newKnowledgeText" placeholder="متن دانش..."></textarea>
+    </div>
+    <button class="btn-submit" onclick="addKnowledge()">➕ افزودن دانش</button>
+  </div>
+</div>
+
+<div class="section-title">🔥 مشارکت و انگیزش (ایجنت ترغیب‌گر)</div>
+<div class="grid">
+  <div class="card card-gradient-3">
+    <h3>📈 وضعیت مشارکت شما</h3>
+    <ul style="padding-right:20px;font-size:0.85rem;line-height:2;">
+      <li>🏅 چالش‌های ثبت‌شده: <strong id="myChallengeCount">0</strong></li>
+      <li>📖 دانش‌های ثبت‌شده: <strong id="myKnowledgeCount">0</strong></li>
+      <li>🎓 دوره‌های فعال: <strong id="myCoursesCount">0</strong></li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>🎁 پیشنهاد شخصی ایجنت ترغیب‌گر</h3>
+    <div id="catalystSuggestion" style="background:rgba(0,0,0,0.05);padding:12px;border-radius:10px;font-size:0.85rem;line-height:1.6;">
+      در حال تحلیل فعالیت شما...
+    </div>
+  </div>
+</div>
+
+<div class="section-title">🎓 دوره‌های توانمندسازی فعال</div>
+<div class="grid">
+  <div class="card" style="grid-column: 1 / -1;">
+    <h3>📅 دوره‌های ابلاغ‌شده (برای مشاهده جزئیات کلیک کنید)</h3>
+    <div id="coursesList">
+      <p style="text-align:center;color:var(--muted);font-style:italic;">هنوز دوره‌ای ابلاغ نشده است.</p>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div id="adminPanel">
+
+  <div class="section-title">⚙️ اتاق فرمان رئیس توانمندسازی</div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('agents', this)">🤖 ایجنت‌ها</button>
+    <button class="tab-btn" onclick="showTab('planning', this)">📋 دستور کار و برنامه‌ریزی</button>
+    <button class="tab-btn" onclick="showTab('content', this)">📢 تولید محتوا</button>
+    <button class="tab-btn" onclick="showTab('report', this)">📤 گزارش به مدیرکل</button>
+  </div>
+
+  <div id="tab-agents" class="tab-content active">
+    <div class="grid">
+      <div class="card">
+        <h3>🤝 ایجنت همیاب</h3>
+        <div style="padding:8px;background:rgba(46,213,115,0.15);border-radius:8px;border-right:3px solid #2ed573;font-size:0.85rem;">وضعیت: <strong>فعال</strong></div>
+        <p style="margin-top:10px;font-size:0.82rem;">تعداد چالش‌های ثبت‌شده: <strong id="agentChallengesCount">0</strong></p>
+      </div>
+      <div class="card">
+        <h3>🌿 ایجنت باغبان</h3>
+        <div style="padding:8px;background:rgba(46,213,115,0.15);border-radius:8px;border-right:3px solid #2ed573;font-size:0.85rem;">وضعیت: <strong>فعال</strong></div>
+        <p style="margin-top:10px;font-size:0.82rem;">تعداد دانش‌ها: <strong id="agentKnowledgeCount">0</strong></p>
+      </div>
+      <div class="card">
+        <h3>🔥 ایجنت ترغیب‌گر</h3>
+        <div style="padding:8px;background:rgba(46,213,115,0.15);border-radius:8px;border-right:3px solid #2ed573;font-size:0.85rem;">وضعیت: <strong>فعال</strong></div>
+        <p style="margin-top:10px;font-size:0.82rem;" id="agentCatalystInfo">در حال تحلیل...</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-planning" class="tab-content">
+    <div class="card">
+      <h3>📋 دستور کار (تایید/رد و ارجاع به کمیته راهبری)</h3>
+      <p>موارد ارسالی از چالش‌ها و دانش‌های ثبت‌شده. با تایید، به کمیته راهبری ارسال می‌شود.</p>
+      <div id="workList"></div>
+    </div>
+    <div class="card" style="margin-top:15px;">
+      <h3>🧠 هوش برنامه‌ریز (دستور مستقیم)</h3>
+      <p>دستور خود را بنویسید تا طرح درس کامل و دوره ساخته شود:</p>
+      <div class="form-group">
+        <textarea id="plannerCommand" placeholder="مثلاً: دوره آموزش گزارش‌نویسی برای ۱۰ نفر، آنلاین، ۸ ساعت..."></textarea>
+      </div>
+      <button class="btn-submit" onclick="runPlanner()">🧠 اجرای هوش برنامه‌ریز</button>
+      <div id="plannerResult" style="margin-top:15px;"></div>
+    </div>
+  </div>
+
+  <div id="tab-content" class="tab-content">
+    <div class="card">
+      <h3>📢 تولید و ارسال محتوا برای «پیشنهاد امروز»</h3>
+      <p>این محتوا در بخش «پیشنهاد امروز» صفحه اصلی اکوسیستم نمایش داده می‌شود.</p>
+      <div class="form-group">
+        <input type="text" id="contentTitle" placeholder="عنوان محتوا (مثلاً: مقاله گزارش‌نویسی هوشمند)">
+      </div>
+      <div class="form-group">
+        <textarea id="contentText" placeholder="متن محتوا..."></textarea>
+      </div>
+      <div class="form-group">
+        <div class="file-upload-area" onclick="document.getElementById('contentFile').click()">
+          <input type="file" id="contentFile" onchange="showFileName(this)" accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png">
+          <div class="label">📎 آپلود فایل (PDF, Word, PPT, عکس)</div>
+          <div class="file-selected" id="fileNameDisplay">فایلی انتخاب نشده</div>
+        </div>
+      </div>
+      <button class="btn-submit" onclick="sendContent()">📢 ارسال محتوا به صفحه اصلی</button>
+      <h3 style="margin-top:20px;font-size:0.95rem;">📚 محتواهای ارسال‌شده</h3>
+      <div id="contentList"></div>
+    </div>
+  </div>
+
+  <div id="tab-report" class="tab-content">
+    <div class="card">
+      <h3>📤 تهیه و ارسال گزارش به مدیرکل</h3>
+      <div class="report-form">
+        <div class="form-group">
+          <input type="text" id="reportTitle" placeholder="موضوع گزارش (مثلاً: گزارش ماهانه اکوسیستم توانمندسازی)">
+        </div>
+        <div class="form-group">
+          <textarea id="reportBody" placeholder="متن گزارش..."></textarea>
+        </div>
+        <button class="btn-submit" onclick="createReport()">💾 ثبت گزارش</button>
+      </div>
+      <h3 style="font-size:0.95rem;margin-bottom:10px;">📋 گزارش‌های تهیه‌شده</h3>
+      <div id="reportsList"></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="modal-overlay" id="adminModal">
+  <div class="modal-box">
+    <h3>🔐 ورود مدیر توانمندسازی</h3>
+    <p style="font-size:0.85rem;color:#666;margin-bottom:12px;">کد پرسنلی رئیس توانمندسازی (پیش‌فرض: 1002)</p>
+    <input type="text" id="adminCode" placeholder="کد پرسنلی">
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeAdminModal()">انصراف</button>
+      <button class="btn-confirm" onclick="checkAdminCode()" data-fa="ورود" data-en="Login">ورود</button>
+    </div>
+  </div>
+</div>
+
+<div id="satisfactionToggle" onclick="toggleSatisfaction()">⭐ ثبت رضایتمندی</div>
+<div id="satisfactionBox">
+  <p style="margin-bottom: 10px; font-weight: bold; color: var(--text-dark);">میزان رضایت شما چقدر است؟</p>
+  <div style="display: flex; gap: 8px; justify-content: center;">
+    <button onclick="submitSatisfaction(1)" style="width: 40px; height: 40px; border-radius: 50%; border: none; background: #ff4757; color: #fff; cursor: pointer; font-weight: bold;">۱</button>
+    <button onclick="submitSatisfaction(2)" style="width: 40px; height: 40px; border-radius: 50%; border: none; background: #ff6b81; color: #fff; cursor: pointer; font-weight: bold;">۲</button>
+    <button onclick="submitSatisfaction(3)" style="width: 40px; height: 40px; border-radius: 50%; border: none; background: #ffa502; color: #fff; cursor: pointer; font-weight: bold;">۳</button>
+    <button onclick="submitSatisfaction(4)" style="width: 40px; height: 40px; border-radius: 50%; border: none; background: #7bed9f; color: #1a2a4a; cursor: pointer; font-weight: bold;">۴</button>
+    <button onclick="submitSatisfaction(5)" style="width: 40px; height: 40px; border-radius: 50%; border: none; background: #2ed573; color: #fff; cursor: pointer; font-weight: bold;">۵</button>
+  </div>
+</div>
+
+<script>
+const LS = {
+  ECO_CHALLENGES: 'hr_eco_challenges',
+  ECO_KNOWLEDGE: 'hr_eco_knowledge',
+  ECO_COURSES: 'hr_eco_courses',
+  ECO_CONTENT: 'hr_eco_content',
+  ECO_WORK: 'hr_eco_work',
+  ECO_REPORTS: 'hr_eco_reports',
+  ADMIN_REFERRALS: 'hr_admin_referrals'
+};
+function getLS(key, fallback = []) { try { return JSON.parse(localStorage.getItem(key)) || fallback; } catch { return fallback; } }
+function setLS(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+function faDate(ts) { try { return new Date(ts).toLocaleString('fa-IR'); } catch { return new Date(ts).toLocaleString(); } }
+
+const LS_THEME = 'theme';
+const LS_LANG = 'lang';
+function loadTheme() { if (localStorage.getItem(LS_THEME) === 'dark') document.body.classList.add('dark'); }
+function toggleTheme() { document.body.classList.toggle('dark'); localStorage.setItem(LS_THEME, document.body.classList.contains('dark') ? 'dark' : 'light'); }
+let currentLang = localStorage.getItem(LS_LANG) || 'fa';
+function applyLang() {
+  document.documentElement.lang = currentLang;
+  document.documentElement.dir = currentLang === 'fa' ? 'rtl' : 'ltr';
+  document.querySelectorAll('[data-fa]').forEach(el => { el.textContent = currentLang === 'fa' ? el.dataset.fa : el.dataset.en; });
+}
+function toggleLang() { currentLang = currentLang === 'fa' ? 'en' : 'fa'; localStorage.setItem(LS_LANG, currentLang); applyLang(); }
+function goBack() { history.back(); }
+
+function toggleSuggestion() { document.getElementById('suggestionContent').classList.toggle('active'); }
+function saveSuggestion() {
+  const text = document.getElementById('suggestionText').textContent;
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'suggestion.txt';
+  document.body.appendChild(link); link.click(); document.body.removeChild(link);
+  URL.revokeObjectURL(link.href);
+}
+function renderSuggestion() {
+  const content = getLS(LS.ECO_CONTENT);
+  const box = document.getElementById('suggestionText');
+  const fileBox = document.getElementById('suggestionFile');
+  if (content.length === 0) {
+    box.textContent = 'هنوز پیشنهادی از طرف مدیر ارسال نشده است.';
+    fileBox.innerHTML = '';
+  } else {
+    const latest = content[content.length - 1];
+    box.innerHTML = '<strong>' + latest.title + '</strong><br>' + latest.text;
+    if (latest.fileData) {
+      fileBox.innerHTML = '<button onclick="downloadFile(\'' + latest.id + '\')" style="padding:6px 14px;border:none;border-radius:6px;background:var(--gold);color:#1a2a4a;font-weight:bold;cursor:pointer;font-family:inherit;font-size:0.78rem;">📥 دانلود فایل پیوست (' + latest.fileName + ')</button>';
+    } else {
+      fileBox.innerHTML = '';
+    }
+  }
+}
+function downloadFile(id) {
+  const content = getLS(LS.ECO_CONTENT);
+  const item = content.find(c => c.id === id);
+  if (!item || !item.fileData) return;
+  const link = document.createElement('a');
+  link.href = item.fileData;
+  link.download = item.fileName || 'file';
+  document.body.appendChild(link); link.click(); document.body.removeChild(link);
+}
+
+function submitChallenge() {
+  const name = document.getElementById('challengeName').value.trim() || 'ناشناس';
+  const text = document.getElementById('challengeText').value.trim();
+  const resultDiv = document.getElementById('challengeResult');
+  if (!text) { resultDiv.innerHTML = '<span style="color:#ff4757;">متن چالش را وارد کنید.</span>'; return; }
+  const challenges = getLS(LS.ECO_CHALLENGES);
+  challenges.push({ id: uid(), name, text, createdAt: Date.now(), status: 'open' });
+  setLS(LS.ECO_CHALLENGES, challenges);
+  resultDiv.innerHTML = '<span>⏳ ایجنت همیاب در حال تحلیل...</span>';
+  setTimeout(() => {
+    const similar = challenges.slice(0, -1).slice(-3);
+    let html = '<strong>✅ ثبت شد.</strong><br>';
+    if (similar.length > 0) html += '🔍 چالش‌های مشابه: ' + similar.map(s => s.name).join('، ');
+    else html += '🆕 اولین چالش در این موضوع. گره موقت ایجاد شد.';
+    resultDiv.innerHTML = html;
+    const work = getLS(LS.ECO_WORK);
+    work.push({ id: uid(), type: 'challenge', source: text, submittedBy: name, status: 'pending', createdAt: Date.now() });
+    setLS(LS.ECO_WORK, work);
+  }, 1000);
+  document.getElementById('challengeText').value = '';
+  document.getElementById('challengeName').value = '';
+  renderArchive(); updateStats();
+}
+
+function renderArchive() {
+  const challengesBox = document.getElementById('challengesArchive');
+  const challenges = getLS(LS.ECO_CHALLENGES);
+  challengesBox.innerHTML = challenges.length === 0
+    ? '<p style="text-align:center;color:#999;font-style:italic;">هنوز چالشی ثبت نشده است.</p>'
+    : challenges.slice().reverse().map(c => `<div class="archive-item"><div class="name">👤 ${c.name}</div><div>${c.text}</div><div class="meta">${faDate(c.createdAt)}</div></div>`).join('');
+
+  const knowledgeBox = document.getElementById('knowledgeArchive');
+  const knowledge = getLS(LS.ECO_KNOWLEDGE);
+  knowledgeBox.innerHTML = knowledge.length === 0
+    ? '<p style="text-align:center;color:#999;font-style:italic;">هنوز دانشی ثبت نشده است.</p>'
+    : knowledge.slice().reverse().map(k => `<div class="archive-item"><div class="name">💡 ${k.title}</div><div>${k.text}</div><div class="meta">${faDate(k.createdAt)}</div></div>`).join('');
+
+  const coursesBox = document.getElementById('coursesList');
+  const courses = getLS(LS.ECO_COURSES);
+  coursesBox.innerHTML = courses.length === 0
+    ? '<p style="text-align:center;color:var(--muted);font-style:italic;">هنوز دوره‌ای ابلاغ نشده است.</p>'
+    : courses.slice().reverse().map(c => `
+      <div class="course-card">
+        <h4>🎓 ${c.title}</h4>
+        <p><strong>نوع:</strong> ${c.type || '—'} — <strong>مدت:</strong> ${c.duration || '—'}</p>
+        <p><strong>زمان:</strong> ${c.schedule || '—'}</p>
+        <p><strong>خروجی:</strong> ${c.outcome || '—'}</p>
+        ${c.instructor ? `<p><strong>استاد:</strong> ${c.instructor}</p>` : ''}
+        ${c.audience ? `<p><strong>مخاطبین:</strong> ${c.audience}</p>` : ''}
+        <div class="meta" style="font-size:0.72rem;color:var(--muted);margin-top:6px;">${faDate(c.createdAt)}</div>
+      </div>
+    `).join('');
+}
+
+function searchKnowledge() {
+  const q = document.getElementById('knowledgeSearch').value.trim();
+  if (!q) return alert('کلیدواژه را وارد کنید.');
+  const knowledge = getLS(LS.ECO_KNOWLEDGE);
+  const found = knowledge.filter(k => (k.title + ' ' + k.text).includes(q));
+  const box = document.getElementById('knowledgeArchive');
+  box.innerHTML = found.length === 0
+    ? '<p style="text-align:center;color:#999;">نتیجه‌ای یافت نشد.</p>'
+    : found.map(k => `<div class="archive-item"><div class="name">💡 ${k.title}</div><div>${k.text}</div></div>`).join('');
+}
+
+function addKnowledge() {
+  const title = document.getElementById('newKnowledgeTitle').value.trim();
+  const text = document.getElementById('newKnowledgeText').value.trim();
+  if (!title || !text) return alert('عنوان و متن را وارد کنید.');
+  const knowledge = getLS(LS.ECO_KNOWLEDGE);
+  knowledge.push({ id: uid(), title, text, createdAt: Date.now() });
+  setLS(LS.ECO_KNOWLEDGE, knowledge);
+  const work = getLS(LS.ECO_WORK);
+  work.push({ id: uid(), type: 'knowledge', source: title + ' — ' + text.substring(0, 100), submittedBy: 'کاربر', status: 'pending', createdAt: Date.now() });
+  setLS(LS.ECO_WORK, work);
+  document.getElementById('newKnowledgeTitle').value = '';
+  document.getElementById('newKnowledgeText').value = '';
+  renderArchive(); updateStats();
+  alert('✅ دانش ثبت شد و به دستور کار رئیس ارسال شد.');
+}
+
+function updateCatalyst() {
+  const challenges = getLS(LS.ECO_CHALLENGES);
+  const knowledge = getLS(LS.ECO_KNOWLEDGE);
+  const courses = getLS(LS.ECO_COURSES);
+  let suggestion = '';
+  if (challenges.length === 0 && knowledge.length === 0) suggestion = '🌟 شما اولین نفر هستید! یک چالش یا دانش جدید ثبت کنید.';
+  else if (challenges.length > knowledge.length) suggestion = '💡 چالش‌های زیادی ثبت شده. می‌توانید دانش جدید بنویسید.';
+  else if (courses.length === 0) suggestion = '🎓 دانش‌های خوبی جمع شده. منتظر ابلاغ اولین دوره باشید.';
+  else suggestion = '🔥 مشارکت شما عالی است! در دوره‌های فعال شرکت کنید.';
+  document.getElementById('catalystSuggestion').innerHTML = suggestion;
+  document.getElementById('myChallengeCount').textContent = challenges.length;
+  document.getElementById('myKnowledgeCount').textContent = knowledge.length;
+  document.getElementById('myCoursesCount').textContent = courses.length;
+}
+
+function updateStats() {
+  const challenges = getLS(LS.ECO_CHALLENGES);
+  const knowledge = getLS(LS.ECO_KNOWLEDGE);
+  const work = getLS(LS.ECO_WORK);
+  if (document.getElementById('agentChallengesCount')) document.getElementById('agentChallengesCount').textContent = challenges.length;
+  if (document.getElementById('agentKnowledgeCount')) document.getElementById('agentKnowledgeCount').textContent = knowledge.length;
+  if (document.getElementById('agentCatalystInfo')) document.getElementById('agentCatalystInfo').textContent = `${work.filter(w => w.status === 'pending').length} مورد در دستور کار.`;
+  updateCatalyst();
+}
+
+function openAdminModal() { document.getElementById('adminModal').classList.add('active'); }
+function closeAdminModal() { document.getElementById('adminModal').classList.remove('active'); }
+function checkAdminCode() {
+  const code = document.getElementById('adminCode').value.trim();
+  if (code === '1002') {
+    closeAdminModal();
+    document.getElementById('publicSection').style.display = 'none';
+    document.getElementById('adminPanel').classList.add('active');
+    renderWork(); renderContentList(); renderReports(); updateStats();
+  } else {
+    alert('کد اشتباه است. کد مجاز: 1002');
+  }
+}
+
+function showTab(name, btn) {
+  document.querySelectorAll('#adminPanel .tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('#adminPanel .tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+function renderWork() {
+  const box = document.getElementById('workList');
+  const work = getLS(LS.ECO_WORK);
+  if (work.length === 0) { box.innerHTML = '<p style="text-align:center;color:var(--muted);font-style:italic;">دستور کاری وجود ندارد.</p>'; return; }
+  box.innerHTML = work.slice().reverse().map(w => `
+    <div class="work-item">
+      <h4>${w.type === 'challenge' ? '📝 چالش' : '💡 دانش'} <span style="font-size:0.72rem;padding:2px 8px;border-radius:10px;background:${w.status === 'approved' ? '#2ed573' : w.status === 'rejected' ? '#ff4757' : '#ffa502'};color:#fff;">${w.status === 'approved' ? 'تایید شده' : w.status === 'rejected' ? 'رد شده' : 'در انتظار'}</span></h4>
+      <p>${w.source}</p>
+      <div class="meta" style="font-size:0.72rem;color:var(--muted);">${faDate(w.createdAt)} — ارسال‌کننده: ${w.submittedBy}</div>
+      ${w.status === 'pending' ? `<div class="actions"><button class="btn-approve" onclick="approveWork('${w.id}')">✅ تایید و ارجاع به کمیته</button><button class="btn-reject" onclick="rejectWork('${w.id}')">❌ رد</button></div>` : ''}
+      ${w.status === 'approved' ? `<div class="meta" style="font-size:0.72rem;color:#0d8a63;margin-top:6px;">📤 برای برنامه‌ریزی به کمیته راهبری ارسال شد.</div>` : ''}
+    </div>
+  `).join('');
+}
+
+function approveWork(id) {
+  const work = getLS(LS.ECO_WORK);
+  const w = work.find(x => x.id === id);
+  if (!w) return;
+  w.status = 'approved';
+  setLS(LS.ECO_WORK, work);
+  const steering = getLS('hr_steering_tasks');
+  steering.push({ id: uid(), sourceWorkId: id, type: w.type, source: w.source, status: 'pending_committee', createdAt: Date.now() });
+  setLS('hr_steering_tasks', steering);
+  renderWork(); updateStats();
+  alert('✅ تایید شد و برای بررسی به کمیته راهبری ارسال شد.');
+}
+
+function rejectWork(id) {
+  const work = getLS(LS.ECO_WORK);
+  const w = work.find(x => x.id === id);
+  if (!w) return;
+  w.status = 'rejected';
+  setLS(LS.ECO_WORK, work);
+  renderWork(); updateStats();
+}
+
+function runPlanner() {
+  const cmd = document.getElementById('plannerCommand').value.trim();
+  if (!cmd) return alert('دستور را وارد کنید.');
+  const result = document.getElementById('plannerResult');
+  result.innerHTML = '<p>⏳ هوش برنامه‌ریز در حال تهیه طرح درس...</p>';
+  setTimeout(() => {
+    const courses = getLS(LS.ECO_COURSES);
+    const course = {
+      id: uid(),
+      title: cmd.substring(0, 60),
+      type: 'آنلاین / حضوری',
+      duration: '۸ ساعت (۴ جلسه ۲ ساعته)',
+      schedule: 'هفته آینده — دوشنبه و چهارشنبه ۱۰-۱۲',
+      outcome: 'توانمندسازی شرکت‌کنندگان + گواهی پایان دوره',
+      instructor: 'از مدرسان تخصصی سازمان',
+      audience: '۱۰ نفر از پرسنل',
+      createdAt: Date.now()
+    };
+    courses.push(course);
+    setLS(LS.ECO_COURSES, courses);
+    result.innerHTML = `<div class="course-card"><h4>✅ دوره ساخته و ابلاغ شد:</h4><p><strong>عنوان:</strong> ${course.title}</p><p><strong>مدت:</strong> ${course.duration}</p><p><strong>زمان:</strong> ${course.schedule}</p><p><strong>استاد:</strong> ${course.instructor}</p><p><strong>مخاطبین:</strong> ${course.audience}</p><p><strong>خروجی:</strong> ${course.outcome}</p></div>`;
+    document.getElementById('plannerCommand').value = '';
+    renderArchive(); updateStats();
+  }, 1500);
+}
+
+let selectedFileData = null;
+let selectedFileName = '';
+function showFileName(input) {
+  if (input.files && input.files[0]) {
+    const file = input.files[0];
+    selectedFileName = file.name;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      selectedFileData = e.target.result;
+      document.getElementById('fileNameDisplay').textContent = '✅ ' + file.name + ' (' + Math.round(file.size / 1024) + ' KB)';
+    };
+    reader.readAsDataURL(file);
+  }
+}
+function sendContent() {
+  const title = document.getElementById('contentTitle').value.trim();
+  const text = document.getElementById('contentText').value.trim();
+  if (!title || !text) return alert('عنوان و متن را وارد کنید.');
+  const content = getLS(LS.ECO_CONTENT);
+  content.push({ id: uid(), title, text, fileName: selectedFileName, fileData: selectedFileData, createdAt: Date.now() });
+  setLS(LS.ECO_CONTENT, content);
+  document.getElementById('contentTitle').value = '';
+  document.getElementById('contentText').value = '';
+  document.getElementById('fileNameDisplay').textContent = 'فایلی انتخاب نشده';
+  selectedFileData = null; selectedFileName = '';
+  document.getElementById('contentFile').value = '';
+  alert('📢 محتوا ارسال شد. در بخش «پیشنهاد امروز» نمایش داده می‌شود.');
+  renderSuggestion(); renderContentList();
+}
+function renderContentList() {
+  const box = document.getElementById('contentList');
+  const content = getLS(LS.ECO_CONTENT);
+  if (content.length === 0) { box.innerHTML = '<p style="color:var(--muted);font-style:italic;">محتوایی ارسال نشده است.</p>'; return; }
+  box.innerHTML = content.slice().reverse().map(c => `
+    <div class="report-list-item">
+      <h4 style="font-size:0.9rem;">📢 ${c.title}</h4>
+      <p style="font-size:0.82rem;color:var(--muted);">${c.text.substring(0, 100)}...</p>
+      <div class="meta" style="font-size:0.72rem;color:var(--muted);">${faDate(c.createdAt)}${c.fileName ? ' — 📎 ' + c.fileName : ''}</div>
+      <div class="actions">
+        <button style="background:#ff4757;color:#fff;" onclick="deleteContent('${c.id}')">🗑 حذف</button>
+      </div>
+    </div>
+  `).join('');
+}
+function deleteContent(id) {
+  if (!confirm('حذف این محتوا؟')) return;
+  let content = getLS(LS.ECO_CONTENT);
+  content = content.filter(c => c.id !== id);
+  setLS(LS.ECO_CONTENT, content);
+  renderSuggestion(); renderContentList();
+}
+
+function createReport() {
+  const title = document.getElementById('reportTitle').value.trim();
+  const body = document.getElementById('reportBody').value.trim();
+  if (!title || !body) return alert('موضوع و متن گزارش را وارد کنید.');
+  const reports = getLS(LS.ECO_REPORTS);
+  reports.push({ id: uid(), title, body, status: 'draft', createdAt: Date.now() });
+  setLS(LS.ECO_REPORTS, reports);
+  document.getElementById('reportTitle').value = '';
+  document.getElementById('reportBody').value = '';
+  renderReports();
+}
+function renderReports() {
+  const box = document.getElementById('reportsList');
+  const reports = getLS(LS.ECO_REPORTS);
+  if (reports.length === 0) { box.innerHTML = '<p style="color:var(--muted);font-style:italic;">گزارشی تهیه نشده است.</p>'; return; }
+  box.innerHTML = reports.slice().reverse().map(r => `
+    <div class="report-list-item">
+      <h4 style="font-size:0.9rem;">📄 ${r.title} <span style="font-size:0.7rem;padding:2px 8px;border-radius:10px;background:${r.status === 'sent' ? '#2ed573' : r.status === 'edited' ? '#ffa502' : '#999'};color:#fff;">${r.status === 'sent' ? 'ارسال شده' : r.status === 'edited' ? 'ویرایش شده' : 'پیش‌نویس'}</span></h4>
+      <p style="font-size:0.82rem;color:var(--muted);">${r.body.substring(0, 120)}...</p>
+      <div class="meta" style="font-size:0.72rem;color:var(--muted);">${faDate(r.createdAt)}</div>
+      <div class="actions">
+        ${r.status !== 'sent' ? `<button style="background:#2ed573;color:#fff;" onclick="approveReport('${r.id}')">✅ تایید و ارسال به مدیرکل</button><button style="background:#ffa502;color:#fff;" onclick="editReport('${r.id}')">✏️ ویرایش</button>` : ''}
+        <button style="background:#ff4757;color:#fff;" onclick="deleteReport('${r.id}')">🗑 حذف</button>
+      </div>
+    </div>
+  `).join('');
+}
+function approveReport(id) {
+  const reports = getLS(LS.ECO_REPORTS);
+  const r = reports.find(x => x.id === id);
+  if (!r) return;
+  r.status = 'sent';
+  r.sentAt = Date.now();
+  setLS(LS.ECO_REPORTS, reports);
+  const referrals = getLS(LS.ADMIN_REFERRALS);
+  referrals.push({ id: uid(), sourceType: 'empowerment_report', unit: 'ادمین', title: r.title, description: r.body, status: 'pending', createdAt: Date.now(), referredBy: 'رئیس توانمندسازی' });
+  setLS(LS.ADMIN_REFERRALS, referrals);
+  renderReports();
+  alert('✅ گزارش به مدیرکل ارسال شد.');
+}
+function editReport(id) {
+  const reports = getLS(LS.ECO_REPORTS);
+  const r = reports.find(x => x.id === id);
+  if (!r) return;
+  const newTitle = prompt('موضوع جدید:', r.title);
+  if (newTitle === null) return;
+  const newBody = prompt('متن جدید:', r.body);
+  if (newBody === null) return;
+  r.title = newTitle; r.body = newBody; r.status = 'edited';
+  setLS(LS.ECO_REPORTS, reports);
+  renderReports();
+}
+function deleteReport(id) {
+  if (!confirm('حذف این گزارش؟')) return;
+  let reports = getLS(LS.ECO_REPORTS);
+  reports = reports.filter(r => r.id !== id);
+  setLS(LS.ECO_REPORTS, reports);
+  renderReports();
+}
+
+function toggleSatisfaction() { const box = document.getElementById('satisfactionBox'); box.style.bottom = (box.style.bottom === '0px') ? '-220px' : '0px'; }
+function submitSatisfaction(score) { localStorage.setItem('eco_satisfaction', score); alert('امتیاز ' + score + ' ثبت شد. با تشکر!'); document.getElementById('satisfactionBox').style.bottom = '-220px'; }
+
+loadTheme();
+applyLang();
+renderArchive();
+renderSuggestion();
+updateStats();
+renderContentList();
+renderReports();
+</script>
+</body>
+</html>

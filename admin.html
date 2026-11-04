@@ -1,0 +1,1032 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>پنل مدیریت | اداره کل سرمایه انسانی</title>
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root {
+  --bg-gradient: linear-gradient(135deg, #e0f2f1 0%, #f1f8e9 50%, #fff8e1 100%);
+  --text-dark: #1a3b32;
+  --text-light: #5a7a6e;
+  --card-text: #fff;
+}
+body.dark {
+  --bg-gradient: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+  --text-dark: #e0f2f1;
+  --text-light: #a0b8b0;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', Tahoma, sans-serif; }
+body { background: var(--bg-gradient); color: var(--text-dark); min-height: 100vh; padding: 20px; overflow-x: hidden; position: relative; transition: background 0.5s; }
+body::before { content: ''; position: fixed; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%); transform: skewX(-25deg); animation: shinePage 8s infinite linear; pointer-events: none; z-index: 1; }
+@keyframes shinePage { 0% { left: -100%; } 100% { left: 200%; } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes borderRotate { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+@keyframes shineCard { 0% { left: -100%; } 100% { left: 200%; } }
+
+header { display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: #fff; padding: 15px 30px; border-radius: 20px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(79, 172, 254, 0.4); position: relative; overflow: hidden; animation: fadeInUp 0.6s ease forwards; z-index: 2; flex-wrap: wrap; gap: 10px; }
+header::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%); transform: skewX(-25deg); animation: shineCard 4s infinite; }
+header h1 { font-size: 1.3rem; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+.header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.back-btn { background: rgba(255,255,255,0.25); color: #fff; padding: 8px 18px; border-radius: 12px; text-decoration: none; font-weight: bold; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.5); transition: 0.3s; cursor: pointer; font-size: 0.85rem; }
+.back-btn:hover { background: #fff; color: #4facfe; transform: scale(1.05); }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 15px; position: relative; z-index: 2; }
+.card { border-radius: 20px; padding: 18px; background: var(--card-gradient); backdrop-filter: blur(15px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: relative; overflow: hidden; animation: fadeInUp 0.6s ease forwards; transition: transform 0.3s ease, box-shadow 0.3s ease; border: 2px solid transparent; color: #fff; }
+.card:hover { transform: translateY(-6px) scale(1.01); box-shadow: 0 15px 40px rgba(0,0,0,0.2); }
+.card::after { content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%); transform: skewX(-25deg); animation: shineCard 5s infinite; pointer-events: none; }
+.card::before { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: 20px; padding: 2px; background: linear-gradient(45deg, #ff9a9e, #fecfef, #a18cd1, #fbc2eb, #ff9a9e); background-size: 400% 400%; -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; animation: borderRotate 6s linear infinite; }
+.card:nth-child(1) { --card-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%); animation-delay: 0.1s; }
+.card:nth-child(2) { --card-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); animation-delay: 0.15s; }
+.card:nth-child(3) { --card-gradient: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); animation-delay: 0.2s; grid-column: 1 / -1; }
+.card:nth-child(4) { --card-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); animation-delay: 0.25s; grid-column: 1 / -1; }
+.card:nth-child(5) { --card-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); animation-delay: 0.3s; }
+.card:nth-child(6) { --card-gradient: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%); animation-delay: 0.35s; }
+.card:nth-child(7) { --card-gradient: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); animation-delay: 0.4s; color: #5a3b2e; }
+.card.decree-card-a, .card.decree-card-b { --card-gradient: linear-gradient(135deg, #2a3f6b 0%, #1a2a4a 100%); color: #fff; }
+.card.decree-card-a h2, .card.decree-card-b h2 { color: #f1c65e; border-bottom-color: rgba(241,198,94,0.4); }
+.card.decree-card-a .section-desc, .card.decree-card-b .section-desc { color: rgba(255,255,255,0.9); }
+.card.decree-card-a .report-item, .card.decree-card-b .report-item { background: rgba(0,0,0,0.3); }
+.card.decree-card-a .empty-msg, .card.decree-card-b .empty-msg { color: rgba(255,255,255,0.85); }
+.card:nth-child(7) h2, .card:nth-child(7) li { color: #5a3b2e; }
+.card.achievement-card { --card-gradient: linear-gradient(135deg, #1a2a4a 0%, #d4a843 100%); color: #fff; grid-column: 1 / -1; }
+
+.card h2 { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 10px; font-size: 1.05rem; font-weight: 800; color: #fff; }
+.card ul { list-style: none; padding: 0; }
+.card ul li { padding: 10px 8px; border-bottom: 1px dashed rgba(255,255,255,0.3); display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 0.88rem; border-radius: 8px; transition: 0.2s; flex-wrap: wrap; }
+.card ul li:hover { background: rgba(255,255,255,0.2); transform: translateX(-4px); }
+.card ul li:last-child { border-bottom: none; }
+.card ul li span { color: rgba(255,255,255,0.95); font-weight: 500; }
+.card ul li strong { color: #fff; font-weight: 800; }
+
+.action-btn { background: rgba(255,255,255,0.3); color: #fff; border: 1px solid #fff; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.78rem; transition: 0.3s; backdrop-filter: blur(5px); }
+.action-btn:hover { background: #fff; color: var(--text-dark); transform: scale(1.08); }
+.action-btn.danger { background: rgba(255,80,80,0.5); }
+
+.analyzer-input, .form-row { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+.analyzer-input input, .form-row input, .form-row textarea, .form-row select { flex: 1; padding: 10px 14px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.5); font-family: inherit; outline: none; transition: 0.3s; font-size: 0.88rem; background: rgba(255,255,255,0.85); min-width: 140px; }
+.form-row textarea { min-height: 70px; resize: vertical; }
+.analyzer-input input:focus, .form-row input:focus, .form-row textarea:focus { border-color: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.5); }
+.analyzer-input button, .form-row button { padding: 10px 24px; border: none; border-radius: 12px; background: #fff; color: var(--text-dark); font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(255,255,255,0.3); font-family: inherit; font-size: 0.88rem; }
+.analyzer-input button:hover, .form-row button:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(255,255,255,0.5); }
+
+.export-btns { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+.export-btns button { flex: 1; padding: 13px; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; color: #fff; transition: 0.3s; font-size: 0.88rem; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); font-family: inherit; min-width: 120px; }
+.btn-excel { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+.btn-word { background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%); }
+.btn-pdf { background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); }
+.export-btns button:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+
+.chart-container { position: relative; height: 200px; width: 100%; margin-top: 15px; background: rgba(255,255,255,0.2); border-radius: 15px; padding: 10px; }
+.list-box { max-height: 260px; overflow-y: auto; margin-top: 10px; padding-right: 5px; }
+.list-box::-webkit-scrollbar { width: 6px; }
+.list-box::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.5); border-radius: 3px; }
+.empty-msg { text-align: center; padding: 20px; font-size: 0.85rem; color: rgba(255,255,255,0.7); font-style: italic; }
+.report-item { background: rgba(255,255,255,0.2); border-radius: 10px; padding: 10px; margin-bottom: 8px; font-size: 0.82rem; }
+.report-item .report-title { font-weight: 800; margin-bottom: 4px; }
+.report-item .report-meta { font-size: 0.75rem; opacity: 0.85; margin-bottom: 6px; }
+.report-item .report-content { background: rgba(255,255,255,0.3); padding: 8px; border-radius: 6px; margin-top: 6px; max-height: 100px; overflow-y: auto; }
+.report-item .report-actions { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.report-item .report-actions button { padding: 4px 10px; font-size: 0.72rem; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: bold; }
+.badge.pending { background: #ffc107; color: #5a3b2e; }
+.badge.done { background: #28a745; color: #fff; }
+.badge.new { background: #dc3545; color: #fff; }
+.section-desc { font-size: 0.82rem; color: rgba(255,255,255,0.9); margin-bottom: 10px; }
+
+/* Achievement form specific */
+.ach-form textarea { min-height: 80px; resize: vertical; }
+.ach-form .file-note { background: rgba(255,200,0,0.25); padding: 10px 14px; border-radius: 10px; font-size: 0.78rem; line-height: 1.6; border-right: 4px solid #ffc107; margin-bottom: 12px; }
+.ach-form .file-note strong { color: #ffc107; }
+.ach-form select { background: rgba(255,255,255,0.95); color: #1a2a4a; font-weight: bold; }
+.ach-form input[type="file"] { background: rgba(255,255,255,0.9); color: #1a2a4a; padding: 8px; }
+.ach-item { background: rgba(0,0,0,0.3); border-radius: 12px; padding: 12px; margin-bottom: 10px; display: flex; gap: 12px; align-items: flex-start; }
+.ach-item .ach-thumb { width: 70px; height: 70px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 2rem; background: rgba(255,255,255,0.15); overflow: hidden; }
+.ach-item .ach-thumb img, .ach-item .ach-thumb video { width: 100%; height: 100%; object-fit: cover; }
+.ach-item .ach-body { flex: 1; }
+.ach-item h4 { font-size: 0.92rem; margin-bottom: 4px; }
+.ach-item .ach-meta { font-size: 0.72rem; opacity: 0.85; margin-bottom: 6px; }
+.ach-item .ach-desc { font-size: 0.8rem; line-height: 1.5; margin-bottom: 6px; }
+.ach-item .ach-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.ach-item .ach-actions button { padding: 4px 10px; font-size: 0.72rem; }
+
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay.active { display: flex; }
+.modal-box { background: #fff; color: #1a3b32; border-radius: 20px; padding: 25px; max-width: 600px; width: 100%; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.4); animation: fadeInUp 0.3s ease; }
+.modal-box h3 { margin-bottom: 15px; color: #1a3b32; font-size: 1.1rem; }
+.modal-box .modal-actions { display: flex; gap: 10px; margin-top: 15px; justify-content: flex-end; }
+.modal-box .modal-actions button { padding: 10px 20px; border-radius: 10px; border: none; cursor: pointer; font-family: inherit; font-weight: bold; }
+.modal-box .modal-actions .btn-cancel { background: #eee; color: #333; }
+.modal-box .modal-actions .btn-confirm { background: linear-gradient(135deg, #4facfe, #00f2fe); color: #fff; }
+
+@media (max-width: 768px) { .grid { grid-template-columns: 1fr; } header { flex-direction: column; text-align: center; } .header-actions { justify-content: center; } }
+</style>
+<script src="assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header>
+  <h1>👨‍💼 پنل مدیریت ارشد (مدیرکل)</h1>
+  <div class="header-actions">
+    <button onclick="toggleTheme()" class="back-btn" id="themeBtn">🌙 تم شب</button>
+    <button onclick="toggleLang()" class="back-btn" id="langBtn">🇬🇧 EN</button>
+    <button onclick="changePassword()" class="back-btn" style="background:#d4a843;color:#1a2a4a;border:none;">🔑 تغییر رمز</button>
+    <button onclick="history.back()" class="back-btn">⬅️ برگشت</button>
+    <a href="index.html" class="back-btn" data-fa="بازگشت به سایت" data-en="Back to site">بازگشت به سایت</a>
+  </div>
+</header>
+
+<div class="grid">
+
+  <div class="card">
+    <h2>📨 مدیریت اتوماسیون اداری</h2>
+    <ul>
+      <li><span>نامه ۱۴۰۵/۱ (مرخصی):</span> <button class="action-btn" onclick="referLetter('کارگزینی')">ارجاع به کارگزینی</button></li>
+      <li><span>نامه ۱۴۰۵/۲ (وام):</span> <button class="action-btn" onclick="referLetter('رفاه')">ارجاع به رفاه</button></li>
+      <li><span>نامه ۱۴۰۵/۳ (آموزش):</span> <button class="action-btn" onclick="referLetter('آموزش')">ارجاع به آموزش</button></li>
+      <li><span>نامه ۱۴۰۵/۴ (حکم):</span> <button class="action-btn" onclick="referLetter('جبران خدمت')">ارجاع به جبران خدمت</button></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>📊 خلاصه وضعیت اداره کل</h2>
+    <ul>
+      <li><span>احکام صادر شده امروز:</span> <strong>۱۲ حکم</strong></li>
+      <li><span>درخواست‌های مرخصی در انتظار:</span> <strong>۵ مورد</strong></li>
+      <li><span>دوره‌های آموزشی فعال:</span> <strong>۳ دوره</strong></li>
+      <li><span>شاخص رضایت کارکنان:</span> <strong>۸۵٪</strong></li>
+      <li><span>مشاورین فعال:</span> <strong id="activeConsultantsCount">۰</strong></li>
+      <li><span>گزارش‌های دریافتی:</span> <strong id="reportsCount">۰</strong></li>
+    </ul>
+    <div class="chart-container"><canvas id="myChart"></canvas></div>
+  </div>
+
+  <div class="card">
+    <h2>🧠 دستور به هوش تحلیل‌گر (تحلیل داده‌ها و پیش‌بینی)</h2>
+    <p class="section-desc">دستور خود را به زبان طبیعی بنویسید تا هوش تحلیل‌گر در پشت صحنه داده‌ها را بررسی کرده و گزارش دهد.</p>
+    <div class="analyzer-input">
+      <input type="text" id="analyzerCommand" placeholder="مثلاً: عملکرد بخش کارگزینی در ماه گذشته را تحلیل کن...">
+      <button onclick="sendCommandToAI()">ارسال دستور</button>
+    </div>
+    <div id="aiResult" style="margin-top:12px;"></div>
+  </div>
+
+  <div class="card">
+    <h2>📥 دریافت خروجی گزارش‌ها</h2>
+    <p class="section-desc">گزارش‌های آماری تولید شده توسط هوش تحلیل‌گر را در قالب‌های مختلف دریافت کنید.</p>
+    <div class="export-btns">
+      <button class="btn-excel" onclick="exportData('excel')">📥 خروجی Excel</button>
+      <button class="btn-word" onclick="exportData('word')">📄 خروجی Word</button>
+      <button class="btn-pdf" onclick="exportData('pdf')">📕 خروجی PDF</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🎫 تخصیص کد به مشاورین</h2>
+    <p class="section-desc">کد دسترسی اختصاصی برای هر مشاور ایجاد کنید.</p>
+    <div class="form-row">
+      <input type="text" id="consultantCode" placeholder="کد مشاور (مثلاً C-101)">
+      <input type="text" id="consultantName" placeholder="نام مشاور">
+      <button onclick="addConsultant()">➕ افزودن</button>
+    </div>
+    <div class="list-box" id="consultantsList"></div>
+  </div>
+
+  <div class="card">
+    <h2>📤 ارسال دستور به مشاور و گزارش‌ها</h2>
+    <p class="section-desc">دستور خود را برای یک مشاور ارسال کنید.</p>
+    <div class="form-row">
+      <select id="taskConsultantSelect"></select>
+      <input type="text" id="taskTitle" placeholder="عنوان دستور">
+    </div>
+    <div class="form-row">
+      <textarea id="taskDesc" placeholder="شرح کامل دستور..."></textarea>
+    </div>
+    <div class="form-row">
+      <button onclick="sendTaskToConsultant()" style="flex:1;">📨 ارسال دستور</button>
+    </div>
+    <h3 style="margin-top:15px;font-size:0.95rem;border-bottom:1px solid rgba(255,255,255,0.3);padding-bottom:8px;">📥 گزارش‌های دریافتی از مشاورین</h3>
+    <div class="list-box" id="reportsList"></div>
+  </div>
+
+  <div class="card decree-card-a">
+    <h2>📜 صدور کد اصلاح حکم</h2>
+    <p class="section-desc">برای هر پرسنل یک کد یکتا صادر کنید.</p>
+    <div class="form-row">
+      <input type="text" id="decreeEditorName" placeholder="نام و نام خانوادگی">
+      <input type="text" id="decreeEditorPersonnelCode" placeholder="کد پرسنلی">
+      <button onclick="issueDecreeCode()">🎫 صدور کد</button>
+    </div>
+    <div class="list-box" id="decreeEditorsList"></div>
+  </div>
+
+  <div class="card decree-card-a">
+    <h2>📨 درخواست‌های پرسنل <span id="adminPendingBadge" style="display:none;background:#ff4757;color:#fff;padding:2px 8px;border-radius:10px;font-size:0.7rem;margin-right:8px;">0</span></h2>
+    <p class="section-desc">درخواست‌های ارسالی از کارگزینی شخصی. تایید یا رد کنید و واحد مقصد را مشخص کنید.</p>
+    <div class="list-box" id="adminRequestsList"></div>
+    <button onclick="manualLoadRequests()" style="padding:10px 20px;border:none;border-radius:10px;background:#2ed573;color:#fff;font-weight:bold;cursor:pointer;font-family:inherit;margin-top:10px;">🔄 بارگذاری دستی</button>
+  </div>
+
+  <div class="card decree-card-b">
+    <h2>📥 احکام جدید ارسالی</h2>
+    <p class="section-desc">احکامی که پرسنل از صفحه decrees.html ارسال کرده‌اند.</p>
+    <div class="list-box" id="pendingDecreesList"></div>
+  </div>
+
+  <div class="card decree-card-b">
+    <h2>🌿 گزارش‌های اکوسیستم توانمندسازی</h2>
+    <p class="section-desc">گزارش‌های ارسالی از رئیس اکوسیستم برای مدیرکل.</p>
+    <div class="list-box" id="ecoReportsList"></div>
+  </div>
+
+  <div class="card achievement-card">
+    <h2>🏆 مدیریت دستاوردها</h2>
+    <p class="section-desc">دستاوردها و افتخارات اداره کل را به صفحه اصلی ارسال کنید تا در بخش «دستاوردها» به‌صورت چرخشی نمایش داده شوند.</p>
+
+    <div class="form-row ach-form" style="flex-direction: column; gap: 12px;">
+      <div class="file-note">
+        ⚠️ <strong>توجه مهم:</strong> برای جلوگیری از پر شدن حافظه مرورگر، لطفاً فایل‌ها را قبل از آپلود با ابزارهای فشرده‌سازی کوچک کنید:
+        <br>🖼️ <strong>عکس:</strong> TinyPNG.com — 📄 <strong>PDF:</strong> iLovePDF.com — 🎥 <strong>ویدیو/موشن/پادکست:</strong> HandBrake (رایگان) یا Online-Convert
+        <br>📊 <strong>پاورپوینت:</strong> به PDF تبدیل کنید و سپس فشرده کنید.
+        <br>💾 <strong>حجم پیشنهادی هر فایل:</strong> حداکثر ۵۰۰ کیلوبایت — وگرنه ذخیره‌سازی ممکن است با خطا مواجه شود.
+      </div>
+
+      <input type="text" id="achTitle" placeholder="عنوان دستاورد (مثلاً: انتخاب کارمند برتر)" required>
+      <textarea id="achDesc" placeholder="توضیح دستاورد (اختیاری)..." style="min-height: 60px;"></textarea>
+
+      <select id="achType">
+        <option value="text">📝 فقط متن</option>
+        <option value="image">🖼️ عکس</option>
+        <option value="video">🎥 ویدیو</option>
+        <option value="pdf">📄 PDF</option>
+        <option value="ppt">📊 پاورپوینت</option>
+        <option value="motion">🎞️ موشن‌گرافی</option>
+        <option value="podcast">🎙️ پادکست</option>
+      </select>
+
+      <input type="text" id="achAuthor" placeholder="نام فرد/واحد (مثلاً: علی رضایی — کارگزینی)">
+      <input type="file" id="achFile" onchange="previewFile()">
+      <div id="achPreview" style="margin-top: 8px;"></div>
+
+      <button onclick="addAchievement()" style="background: #2ed573; color: #fff;">✅ ثبت و انتشار در صفحه اصلی</button>
+    </div>
+
+    <h3 style="margin-top: 20px; font-size: 0.95rem; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 8px;">📋 دستاوردهای ثبت‌شده</h3>
+    <div class="list-box" id="achievementsList"></div>
+
+    <div style="margin-top: 15px; display: flex; gap: 8px; flex-wrap: wrap;">
+      <button onclick="exportAchievements()" class="action-btn" style="background: rgba(79,172,254,0.6);">📤 برون‌بری JSON</button>
+      <button onclick="importAchievements()" class="action-btn" style="background: rgba(46,213,115,0.6);">📥 درون‌ریزی JSON</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>💡 گزارش تحلیلی هم‌اندیشی</h2>
+    <p class="section-desc">موضوعات هم‌اندیشی و نظرات کارکنان را مدیریت کنید.</p>
+    <div class="form-row">
+      <input type="text" id="brainstormTitle" placeholder="عنوان موضوع هم‌اندیشی">
+    </div>
+    <div class="form-row">
+      <textarea id="brainstormDesc" placeholder="شرح موضوع..."></textarea>
+    </div>
+    <div class="form-row">
+      <button onclick="addBrainstormTopic()" style="flex:1;">➕ ایجاد موضوع هم‌اندیشی</button>
+    </div>
+    <h3 style="margin-top:15px;font-size:0.95rem;border-bottom:1px solid rgba(255,255,255,0.3);padding-bottom:8px;">📋 موضوعات و نظرات</h3>
+    <div class="list-box" id="brainstormList"></div>
+  </div>
+
+</div>
+
+<div class="modal-overlay" id="reportModal">
+  <div class="modal-box">
+    <h3 id="modalTitle">مشاهده گزارش</h3>
+    <div id="modalBody"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">بستن</button>
+      <button class="btn-confirm" onclick="downloadCurrentReport('word')">📄 Word</button>
+      <button class="btn-confirm" onclick="downloadCurrentReport('pdf')">📕 PDF</button>
+      <button class="btn-confirm" onclick="downloadCurrentReport('excel')">📥 Excel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const LS = {
+  CONSULTANTS: 'hr_consultants',
+  TASKS: 'hr_tasks',
+  REPORTS: 'hr_reports',
+  BRAIN_TOPICS: 'hr_brainstorm_topics',
+  BRAIN_IDEAS: 'hr_brainstorm_ideas',
+  BRAIN_REPORTS: 'hr_brainstorm_reports',
+  PERSONNEL: 'hr_personnel',
+  SURVEYS: 'hr_surveys',
+  SETTINGS: 'hr_settings',
+  DECREE_EDITORS: 'hr_decree_editors',
+  PENDING_DECREES: 'hr_pending_decrees',
+  ADMIN_REQUESTS: 'hr_admin_requests',
+  ADMIN_REFERRALS: 'hr_admin_referrals',
+  ACHIEVEMENTS: 'hr_achievements'
+};
+
+function getLS(key, fallback = []) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw === null || raw === undefined) return fallback;
+    const parsed = JSON.parse(raw);
+    return parsed === null ? fallback : parsed;
+  } catch { return fallback; }
+}
+function setLS(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+function faDate(ts) { try { return new Date(ts).toLocaleString('fa-IR'); } catch { return new Date(ts).toLocaleString(); } }
+
+if (!localStorage.getItem(LS.PERSONNEL)) {
+  setLS(LS.PERSONNEL, [
+    { code: '1001', name: 'علی رضایی', unit: 'کارگزینی' },
+    { code: '1002', name: 'مریم حسینی', unit: 'آموزش' },
+    { code: '1003', name: 'رضا کریمی', unit: 'رفاه' },
+    { code: '1004', name: 'زهرا محمدی', unit: 'جبران خدمت' },
+    { code: '1005', name: 'حسین نوری', unit: 'فناوری اطلاعات' }
+  ]);
+}
+
+let settings = getLS(LS.SETTINGS, { theme: 'light', lang: 'fa' });
+if (typeof settings !== 'object') settings = { theme: 'light', lang: 'fa' };
+
+function applySettings() {
+  if (settings.theme === 'dark') document.body.classList.add('dark');
+  else document.body.classList.remove('dark');
+  document.getElementById('themeBtn').textContent = settings.theme === 'dark' ? '☀️ تم روز' : '🌙 تم شب';
+  if (settings.lang === 'en') {
+    document.documentElement.lang = 'en';
+    document.documentElement.dir = 'ltr';
+    document.getElementById('langBtn').textContent = '🇮🇷 FA';
+  } else {
+    document.documentElement.lang = 'fa';
+    document.documentElement.dir = 'rtl';
+    document.getElementById('langBtn').textContent = '🇬🇧 EN';
+  }
+}
+function toggleTheme() {
+  settings.theme = settings.theme === 'dark' ? 'light' : 'dark';
+  setLS(LS.SETTINGS, settings); applySettings();
+}
+function toggleLang() {
+  settings.lang = settings.lang === 'fa' ? 'en' : 'fa';
+  setLS(LS.SETTINGS, settings); applySettings();
+  alert(settings.lang === 'en' ? 'Language switched to English (partial).' : 'زبان به فارسی تغییر یافت.');
+}
+applySettings();
+
+const ctx = document.getElementById('myChart').getContext('2d');
+new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد'],
+    datasets: [{
+      label: 'تعداد احکام صادر شده',
+      data: [12, 19, 15, 22, 25],
+      backgroundColor: 'rgba(255,255,255,0.3)',
+      borderColor: '#fff',
+      borderWidth: 3,
+      pointBackgroundColor: '#fa709a',
+      pointBorderColor: '#fff',
+      pointRadius: 6,
+      tension: 0.4,
+      fill: true
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { labels: { font: { family: 'Vazirmatn', size: 12 }, color: '#fff' } } },
+    scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.2)' }, ticks: { color: '#fff' } }, x: { grid: { display: false }, ticks: { color: '#fff' } } }
+  }
+});
+
+function referLetter(department) { alert('نامه با موفقیت به اداره ' + department + ' ارجاع داده شد.'); }
+
+function sendCommandToAI() {
+  const input = document.getElementById('analyzerCommand');
+  const text = input.value.trim();
+  if (!text) return alert('لطفاً دستور خود را وارد کنید.');
+  const box = document.getElementById('aiResult');
+  box.innerHTML = '<p style="color:#fff;font-size:0.85rem;">⏳ در حال پردازش داده‌ها...</p>';
+  setTimeout(() => {
+    const reports = getLS(LS.REPORTS);
+    const tasks = getLS(LS.TASKS);
+    const ideas = getLS(LS.BRAIN_IDEAS);
+    box.innerHTML = `
+      <div style="background:rgba(255,255,255,0.25);padding:12px;border-radius:10px;font-size:0.82rem;color:#fff;line-height:1.7;">
+        <strong>🧠 نتیجه تحلیل هوش مصنوعی (شبیه‌سازی):</strong><br>
+        دستور شما: «${text}»<br><br>
+        📊 داده‌های موجود: ${reports.length} گزارش، ${tasks.length} دستور، ${ideas.length} نظر هم‌اندیشی.<br>
+        📈 تحلیل: روند کلی عملکرد صعودی است.<br>
+        <em style="opacity:0.8;">(پاسخ نمونه؛ بعداً به API واقعی متصل می‌شود.)</em>
+      </div>`;
+    input.value = '';
+  }, 1200);
+}
+
+function exportData(type) {
+  const data = {
+    consultants: getLS(LS.CONSULTANTS),
+    tasks: getLS(LS.TASKS),
+    reports: getLS(LS.REPORTS),
+    brainstormTopics: getLS(LS.BRAIN_TOPICS),
+    brainstormIdeas: getLS(LS.BRAIN_IDEAS),
+    exportedAt: new Date().toISOString()
+  };
+  if (type === 'excel') {
+    let csv = 'Type,ID,Code,Title,Status,CreatedAt\n';
+    data.tasks.forEach(t => csv += `Task,${t.id},${t.code},"${t.title}",${t.status},${t.createdAt}\n`);
+    data.reports.forEach(r => csv += `Report,${r.id},${r.code},"${r.title}",sent,${r.createdAt}\n`);
+    downloadFile(csv, 'admin-export.csv', 'text/csv');
+  } else if (type === 'word') {
+    const html = `<html dir="rtl"><body><h2>گزارش پنل ادمین</h2><pre>${JSON.stringify(data, null, 2)}</pre></body></html>`;
+    downloadFile(html, 'admin-export.doc', 'application/msword');
+  } else {
+    alert('خروجی PDF در دمو شبیه‌سازی می‌شود. فایل متنی دانلود خواهد شد.');
+    downloadFile(`گزارش پنل ادمین\n\n${JSON.stringify(data, null, 2)}`, 'admin-export.txt', 'text/plain');
+  }
+}
+
+function downloadFile(content, filename, mime) {
+  const blob = new Blob([content], { type: mime + ';charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function addConsultant() {
+  const codeInput = document.getElementById('consultantCode');
+  const nameInput = document.getElementById('consultantName');
+  const code = codeInput.value.trim();
+  const name = nameInput.value.trim();
+  if (!code || !name) return alert('لطفاً کد و نام مشاور را وارد کنید.');
+  const consultants = getLS(LS.CONSULTANTS);
+  if (consultants.some(c => c.code === code)) return alert('این کد قبلاً ثبت شده است.');
+  consultants.push({ code, name, createdAt: Date.now() });
+  setLS(LS.CONSULTANTS, consultants);
+  codeInput.value = '';
+  nameInput.value = '';
+  renderConsultants();
+  renderTaskConsultantSelect();
+  renderStats();
+  alert(`✅ مشاور «${name}» با کد ${code} اضافه شد.`);
+}
+
+function removeConsultant(code) {
+  if (!confirm('آیا از حذف این مشاور مطمئن هستید؟')) return;
+  let consultants = getLS(LS.CONSULTANTS);
+  consultants = consultants.filter(c => c.code !== code);
+  setLS(LS.CONSULTANTS, consultants);
+  renderConsultants();
+  renderTaskConsultantSelect();
+  renderStats();
+}
+
+function renderConsultants() {
+  const box = document.getElementById('consultantsList');
+  const consultants = getLS(LS.CONSULTANTS);
+  if (consultants.length === 0) { box.innerHTML = '<p class="empty-msg">هنوز مشاوری ثبت نشده است.</p>'; return; }
+  box.innerHTML = consultants.map(c => `
+    <div class="report-item">
+      <div class="report-title">👤 ${c.name}</div>
+      <div class="report-meta">کد: <strong>${c.code}</strong> — تاریخ ثبت: ${faDate(c.createdAt)}</div>
+      <div class="report-actions">
+        <button class="action-btn danger" onclick="removeConsultant('${c.code}')">🗑 حذف</button>
+      </div>
+    </div>
+  `).join('');
+}
+function renderTaskConsultantSelect() {
+  const select = document.getElementById('taskConsultantSelect');
+  const consultants = getLS(LS.CONSULTANTS);
+  if (consultants.length === 0) { select.innerHTML = '<option value="">— ابتدا مشاور اضافه کنید —</option>'; return; }
+  select.innerHTML = consultants.map(c => `<option value="${c.code}">${c.name} (${c.code})</option>`).join('');
+}
+
+function sendTaskToConsultant() {
+  const code = document.getElementById('taskConsultantSelect').value;
+  const title = document.getElementById('taskTitle').value.trim();
+  const desc = document.getElementById('taskDesc').value.trim();
+  if (!code) return alert('لطفاً یک مشاور انتخاب کنید.');
+  if (!title || !desc) return alert('عنوان و شرح دستور را وارد کنید.');
+  const tasks = getLS(LS.TASKS);
+  tasks.push({ id: uid(), code, title, desc, createdAt: Date.now(), status: 'pending' });
+  setLS(LS.TASKS, tasks);
+  document.getElementById('taskTitle').value = '';
+  document.getElementById('taskDesc').value = '';
+  renderStats();
+  alert('📨 دستور با موفقیت برای مشاور ارسال شد.');
+}
+
+function renderReports() {
+  const box = document.getElementById('reportsList');
+  const reports = getLS(LS.REPORTS);
+  const consultants = getLS(LS.CONSULTANTS);
+  if (reports.length === 0) { box.innerHTML = '<p class="empty-msg">هنوز گزارشی دریافت نشده است.</p>'; return; }
+  box.innerHTML = reports.slice().reverse().map(r => {
+    const consultant = consultants.find(c => c.code === r.code);
+    const name = consultant ? consultant.name : r.code;
+    return `
+      <div class="report-item">
+        <div class="report-title">📄 ${r.title || 'بدون عنوان'}</div>
+        <div class="report-meta">از: ${name} (${r.code}) — کد رهگیری: <strong>${r.trackingCode}</strong><br>تاریخ: ${faDate(r.createdAt)}</div>
+        ${r.fileName ? `<div class="report-meta">📎 فایل: ${r.fileName}</div>` : ''}
+        <div class="report-actions">
+          <button class="action-btn" onclick="openReportModal('${r.id}')">👁 مشاهده</button>
+          <button class="action-btn" onclick="downloadReport('${r.id}', 'word')">📄 Word</button>
+          <button class="action-btn" onclick="downloadReport('${r.id}', 'pdf')">📕 PDF</button>
+          <button class="action-btn" onclick="downloadReport('${r.id}', 'excel')">📥 Excel</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+let currentReportId = null;
+function openReportModal(id) {
+  const reports = getLS(LS.REPORTS);
+  const report = reports.find(r => r.id === id);
+  if (!report) return;
+  currentReportId = id;
+  document.getElementById('modalTitle').textContent = `📄 ${report.title || 'گزارش'}`;
+  document.getElementById('modalBody').innerHTML = `
+    <p style="font-size:0.85rem;margin-bottom:10px;"><strong>از مشاور:</strong> ${report.code}<br><strong>کد رهگیری:</strong> ${report.trackingCode}<br><strong>تاریخ:</strong> ${faDate(report.createdAt)}</p>
+    <div style="background:#f5f5f5;padding:12px;border-radius:10px;white-space:pre-wrap;font-size:0.88rem;line-height:1.7;">${report.desc || '(بدون توضیح)'}</div>
+    ${report.content ? `<div style="background:#eef7ff;padding:12px;border-radius:10px;margin-top:10px;white-space:pre-wrap;font-size:0.88rem;line-height:1.7;">${report.content}</div>` : ''}
+  `;
+  document.getElementById('reportModal').classList.add('active');
+}
+function closeModal() { document.getElementById('reportModal').classList.remove('active'); currentReportId = null; }
+function downloadCurrentReport(format) { if (!currentReportId) return; downloadReport(currentReportId, format); }
+
+function downloadReport(id, format) {
+  const reports = getLS(LS.REPORTS);
+  const report = reports.find(r => r.id === id);
+  if (!report) return;
+  const header = `گزارش مشاور\nکد مشاور: ${report.code}\nکد رهگیری: ${report.trackingCode}\nتاریخ: ${faDate(report.createdAt)}\nعنوان: ${report.title}\n\n`;
+  if (format === 'word') {
+    const html = `<html dir="rtl"><head><meta charset="utf-8">
+</head><body><h2>${report.title}</h2><p><strong>کد مشاور:</strong> ${report.code}<br><strong>کد رهگیری:</strong> ${report.trackingCode}<br><strong>تاریخ:</strong> ${faDate(report.createdAt)}</p><hr><p style="white-space:pre-wrap;">${report.desc || ''}</p><p style="white-space:pre-wrap;">${report.content || ''}</p></body></html>`;
+    downloadFile(html, `report-${report.trackingCode}.doc`, 'application/msword');
+  } else if (format === 'excel') {
+    const csv = `Code,TrackingCode,Title,Description,Content,CreatedAt\n` + `"${report.code}","${report.trackingCode}","${(report.title||'').replace(/"/g,'""')}","${(report.desc||'').replace(/"/g,'""')}","${(report.content||'').replace(/"/g,'""')}","${faDate(report.createdAt)}"\n`;
+    downloadFile('\uFEFF' + csv, `report-${report.trackingCode}.csv`, 'text/csv');
+  } else {
+    downloadFile(header + (report.desc || '') + '\n\n' + (report.content || ''), `report-${report.trackingCode}.txt`, 'text/plain');
+  }
+}
+
+function addBrainstormTopic() {
+  const title = document.getElementById('brainstormTitle').value.trim();
+  const desc = document.getElementById('brainstormDesc').value.trim();
+  if (!title || !desc) return alert('عنوان و شرح موضوع را وارد کنید.');
+  const topics = getLS(LS.BRAIN_TOPICS);
+  topics.push({ id: uid(), title, desc, createdAt: Date.now(), status: 'open' });
+  setLS(LS.BRAIN_TOPICS, topics);
+  document.getElementById('brainstormTitle').value = '';
+  document.getElementById('brainstormDesc').value = '';
+  renderBrainstorm();
+  alert('💡 موضوع هم‌اندیشی ایجاد شد.');
+}
+
+function closeBrainstormTopic(id) {
+  if (!confirm('آیا از بستن این موضوع مطمئن هستید؟')) return;
+  const topics = getLS(LS.BRAIN_TOPICS);
+  const t = topics.find(x => x.id === id);
+  if (t) t.status = 'closed';
+  setLS(LS.BRAIN_TOPICS, topics);
+  renderBrainstorm();
+}
+
+function deleteBrainstormTopic(id) {
+  if (!confirm('حذف موضوع و همه نظرات آن؟')) return;
+  let topics = getLS(LS.BRAIN_TOPICS).filter(t => t.id !== id);
+  let ideas = getLS(LS.BRAIN_IDEAS).filter(i => i.topicId !== id);
+  setLS(LS.BRAIN_TOPICS, topics);
+  setLS(LS.BRAIN_IDEAS, ideas);
+  renderBrainstorm();
+  renderStats();
+}
+
+function renderBrainstorm() {
+  const box = document.getElementById('brainstormList');
+  const topics = getLS(LS.BRAIN_TOPICS);
+  const ideas = getLS(LS.BRAIN_IDEAS);
+  if (topics.length === 0) { box.innerHTML = '<p class="empty-msg">هنوز موضوعی ایجاد نشده است.</p>'; return; }
+  box.innerHTML = topics.slice().reverse().map(t => {
+    const tIdeas = ideas.filter(i => i.topicId === t.id);
+    const ideasHtml = tIdeas.length
+      ? tIdeas.map(i => `<div style="background:rgba(255,255,255,0.25);padding:6px 10px;border-radius:8px;margin-top:6px;font-size:0.78rem;"><strong>${i.personnelCode}</strong> — ${i.idea}<div style="opacity:0.8;font-size:0.7rem;">کد رهگیری: ${i.trackingCode}</div></div>`).join('')
+      : '<p style="font-size:0.78rem;opacity:0.8;margin-top:6px;">هنوز نظری ثبت نشده است.</p>';
+    const statusBadge = t.status === 'open' ? '<span class="badge pending">باز</span>' : '<span class="badge done">بسته</span>';
+    return `
+      <div class="report-item">
+        <div class="report-title">💡 ${t.title} ${statusBadge}</div>
+        <div class="report-meta">${faDate(t.createdAt)} — ${tIdeas.length} نظر</div>
+        <div class="report-content">${t.desc}</div>
+        <div style="margin-top:8px;">${ideasHtml}</div>
+        <div class="report-actions">
+          ${t.status === 'open' ? `<button class="action-btn" onclick="closeBrainstormTopic('${t.id}')">🔒 بستن</button>` : ''}
+          <button class="action-btn" onclick="downloadBrainstormReport('${t.id}')">📄 خروجی Word</button>
+          <button class="action-btn danger" onclick="deleteBrainstormTopic('${t.id}')">🗑 حذف</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function downloadBrainstormReport(topicId) {
+  const topics = getLS(LS.BRAIN_TOPICS);
+  const topic = topics.find(t => t.id === topicId);
+  if (!topic) return;
+  const ideas = getLS(LS.BRAIN_IDEAS).filter(i => i.topicId === topicId);
+  const ideasHtml = ideas.map(i => `<li><strong>${i.personnelCode}</strong>: ${i.idea} <em>(${i.trackingCode})</em></li>`).join('') || '<li>بدون نظر</li>';
+  const html = `<html dir="rtl"><head><meta charset="utf-8">
+</head><body><h2>گزارش هم‌اندیشی: ${topic.title}</h2><p><strong>تاریخ ایجاد:</strong> ${faDate(topic.createdAt)}</p><p><strong>شرح:</strong> ${topic.desc}</p><hr><h3>نظرات (${ideas.length}):</h3><ul>${ideasHtml}</ul></body></html>`;
+  downloadFile(html, `brainstorm-${topic.id}.doc`, 'application/msword');
+}
+
+function renderStats() {
+  const consultants = getLS(LS.CONSULTANTS);
+  const reports = getLS(LS.REPORTS);
+  document.getElementById('activeConsultantsCount').textContent = consultants.length;
+  document.getElementById('reportsCount').textContent = reports.length;
+}
+
+function changePassword() {
+  const oldPw = prompt('رمز فعلی را وارد کنید (دمو: admin):');
+  if (oldPw !== 'admin') { if (oldPw !== null) alert('❌ رمز فعلی اشتباه است.'); return; }
+  const newPw = prompt('رمز جدید را وارد کنید:');
+  if (!newPw || newPw.length < 4) { if (newPw !== null) alert('رمز جدید باید حداقل ۴ کاراکتر باشد.'); return; }
+  localStorage.setItem('hr_admin_password', newPw);
+  alert('✅ رمز با موفقیت تغییر کرد.');
+}
+
+function issueDecreeCode() {
+  const nameInput = document.getElementById('decreeEditorName');
+  const pcInput = document.getElementById('decreeEditorPersonnelCode');
+  const name = nameInput.value.trim();
+  const personnelCode = pcInput.value.trim();
+  if (!name || !personnelCode) return alert('لطفاً نام و کد پرسنلی را وارد کنید.');
+  const editors = getLS('hr_decree_editors');
+  let code;
+  do { code = 'DEC-' + Math.floor(1000 + Math.random() * 9000); } while (editors.some(e => e.code === code));
+  editors.push({ code, name, personnelCode, issuedAt: Date.now(), active: true });
+  setLS('hr_decree_editors', editors);
+  nameInput.value = '';
+  pcInput.value = '';
+  renderDecreeEditors();
+  alert(`✅ کد اصلاح حکم صادر شد:\n${code}\nبرای: ${name}\nکد پرسنلی: ${personnelCode}`);
+}
+
+function renderDecreeEditors() {
+  const box = document.getElementById('decreeEditorsList');
+  if (!box) return;
+  const editors = getLS('hr_decree_editors');
+  if (editors.length === 0) { box.innerHTML = '<p class="empty-msg">هنوز کدی صادر نشده است.</p>'; return; }
+  box.innerHTML = editors.slice().reverse().map(e => `
+    <div class="report-item">
+      <div class="report-title">👤 ${e.name}</div>
+      <div class="report-meta">کد اصلاح: <strong>${e.code}</strong> — کد پرسنلی: ${e.personnelCode}<br>تاریخ صدور: ${faDate(e.issuedAt)} — وضعیت: ${e.active ? 'فعال' : 'غیرفعال'}</div>
+      <div class="report-actions">
+        <button class="action-btn" onclick="copyDecreeCode('${e.code}')">📋 کپی کد</button>
+        <button class="action-btn danger" onclick="revokeDecreeCode('${e.code}')">🗑 ابطال</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function copyDecreeCode(code) {
+  navigator.clipboard.writeText(code).then(() => alert('کد کپی شد: ' + code)).catch(() => alert('کپی نشد. دستی یادداشت کنید: ' + code));
+}
+
+function revokeDecreeCode(code) {
+  if (!confirm('آیا از ابطال این کد مطمئن هستید؟')) return;
+  let editors = getLS('hr_decree_editors');
+  editors = editors.filter(e => e.code !== code);
+  setLS('hr_decree_editors', editors);
+  renderDecreeEditors();
+}
+
+function renderPendingDecrees() {
+  const box = document.getElementById('pendingDecreesList');
+  if (!box) return;
+  const pending = getLS('hr_pending_decrees');
+  if (pending.length === 0) { box.innerHTML = '<p class="empty-msg">هنوز حکمی ارسال نشده است.</p>'; return; }
+  box.innerHTML = pending.slice().reverse().map(d => {
+    const statusBadge = d.status === 'approved' ? '<span class="badge done">تایید شده</span>' : d.status === 'rejected' ? '<span class="badge new">رد شده</span>' : '<span class="badge pending">در انتظار</span>';
+    const actions = d.status === 'pending' ? `<div class="report-actions"><button class="action-btn" onclick="approveDecree('${d.id}')">✅ تایید</button><button class="action-btn danger" onclick="rejectDecree('${d.id}')">❌ رد</button></div>` : '';
+    return `
+      <div class="report-item">
+        <div class="report-title">📜 ${d.personnelName || 'بدون نام'} ${statusBadge}</div>
+        <div class="report-meta">کد رهگیری: <strong>${d.trackingCode}</strong><br>کد پرسنلی: ${d.personnelCode || '—'} — تاریخ ارسال: ${faDate(d.createdAt)}<br>هدف: ${d.goal || '—'} — بخش: ${d.section || '—'}</div>
+        ${d.reason ? `<div class="report-content">دلیل: ${d.reason}</div>` : ''}
+        ${d.sampleText ? `<div class="report-content" style="background:rgba(255,255,255,0.4);">${d.sampleText}</div>` : ''}
+        ${actions}
+      </div>
+    `;
+  }).join('');
+}
+
+function approveDecree(id) {
+  const pending = getLS('hr_pending_decrees');
+  const rec = pending.find(d => d.id === id);
+  if (!rec) return;
+  rec.status = 'approved';
+  rec.reviewedAt = Date.now();
+  setLS('hr_pending_decrees', pending);
+  renderPendingDecrees();
+  alert('✅ حکم تایید شد.');
+}
+
+function rejectDecree(id) {
+  if (!confirm('آیا از رد این حکم مطمئن هستید؟')) return;
+  const pending = getLS('hr_pending_decrees');
+  const rec = pending.find(d => d.id === id);
+  if (!rec) return;
+  rec.status = 'rejected';
+  rec.reviewedAt = Date.now();
+  setLS('hr_pending_decrees', pending);
+  renderPendingDecrees();
+  alert('❌ حکم رد شد.');
+}
+
+function renderAdminRequests() {
+  const box = document.getElementById('adminRequestsList');
+  const badge = document.getElementById('adminPendingBadge');
+  if (!box) return;
+  const requests = getLS(LS.ADMIN_REQUESTS);
+  const pendingCount = requests.filter(r => r.status === 'pending').length;
+  if (badge) {
+    badge.textContent = pendingCount;
+    badge.style.display = pendingCount > 0 ? 'inline-block' : 'none';
+  }
+  if (requests.length === 0) { box.innerHTML = '<p class="empty-msg">هنوز درخواستی از پرسنل دریافت نشده است.</p>'; return; }
+  const statusMap = { pending: 'در انتظار', approved: 'تایید شده', rejected: 'رد شده' };
+  box.innerHTML = requests.slice().reverse().map(r => `
+    <div class="report-item">
+      <div class="report-title">📨 ${r.personnelName || r.personnelCode} — ${r.type || 'درخواست'} ${r.status === 'pending' ? '<span class="badge new">جدید</span>' : r.status === 'approved' ? '<span class="badge done">تایید</span>' : '<span class="badge pending">رد</span>'}</div>
+      <div class="report-meta">کد رهگیری: <strong>${r.trackingCode}</strong><br>کد پرسنلی: ${r.personnelCode} — تاریخ: ${faDate(r.createdAt)}<br>وضعیت: ${statusMap[r.status] || r.status}</div>
+      <div class="report-content">${r.description || ''}</div>
+      ${r.destination ? `<div class="report-meta" style="color:#2ed573;">📍 ارجاع به: ${r.destination}</div>` : ''}
+      ${r.status === 'pending' ? `<div class="report-actions"><button class="action-btn" onclick="approveRequest('${r.id}')">✅ تایید و ارجاع</button><button class="action-btn danger" onclick="rejectRequest('${r.id}')">❌ رد</button></div>` : ''}
+    </div>
+  `).join('');
+}
+
+function approveRequest(id) {
+  const destination = prompt('درخواست به کدام واحد ارجاع شود؟\n(مثلاً: رفاه، کارگزینی، جبران خدمت، آموزش)', 'رفاه');
+  if (destination === null) return;
+  const answer = prompt('پیام به پرسنل (اختیاری):', 'درخواست شما تایید و به واحد مربوطه ارجاع شد.');
+  const requests = getLS(LS.ADMIN_REQUESTS);
+  const req = requests.find(r => r.id === id);
+  if (!req) return;
+  req.status = 'approved';
+  req.destination = destination || 'واحد مربوطه';
+  req.answer = answer || '';
+  req.reviewedAt = Date.now();
+  setLS(LS.ADMIN_REQUESTS, requests);
+  renderAdminRequests();
+  alert('✅ درخواست تایید و به ' + req.destination + ' ارجاع شد.');
+}
+
+function rejectRequest(id) {
+  const reason = prompt('دلیل رد درخواست را وارد کنید:');
+  if (reason === null) return;
+  const requests = getLS(LS.ADMIN_REQUESTS);
+  const req = requests.find(r => r.id === id);
+  if (!req) return;
+  req.status = 'rejected';
+  req.answer = reason || 'بدون دلیل';
+  req.reviewedAt = Date.now();
+  setLS(LS.ADMIN_REQUESTS, requests);
+  renderAdminRequests();
+  alert('درخواست رد شد.');
+}
+function manualLoadRequests() {
+  const raw = localStorage.getItem('hr_admin_requests');
+  const box = document.getElementById('adminRequestsList');
+  if (!raw || raw === 'null' || raw === '[]') {
+    box.innerHTML = '<p class="empty-msg">هیچ درخواستی در localStorage نیست. کلید hr_admin_requests خالی است.</p>';
+    return;
+  }
+  try {
+    const requests = JSON.parse(raw);
+    if (!Array.isArray(requests) || requests.length === 0) {
+      box.innerHTML = '<p class="empty-msg">آرایه خالی است.</p>';
+      return;
+    }
+    box.innerHTML = requests.slice().reverse().map(r => `
+      <div class="report-item">
+        <div class="report-title">📨 ${r.personnelName || r.personnelCode || '?'} — ${r.type || 'درخواست'}</div>
+        <div class="report-meta">کد رهگیری: <strong>${r.trackingCode || '—'}</strong><br>وضعیت: ${r.status || '—'}<br>${faDate(r.createdAt)}</div>
+        <div class="report-content">${r.description || ''}</div>
+        ${r.status === 'pending' ? `<div class="report-actions"><button class="action-btn" onclick="approveRequest('${r.id}')">✅ تایید و ارجاع</button><button class="action-btn danger" onclick="rejectRequest('${r.id}')">❌ رد</button></div>` : ''}
+      </div>
+    `).join('');
+  } catch(e) {
+    box.innerHTML = '<p class="empty-msg">خطا در خواندن: ' + e.message + '</p>';
+  }
+}
+
+function renderEcoReports() {
+  const box = document.getElementById('ecoReportsList');
+  if (!box) return;
+  const referrals = getLS(LS.ADMIN_REFERRALS).filter(r => r.sourceType === 'empowerment_report' || r.unit === 'ادمین');
+  if (referrals.length === 0) {
+    box.innerHTML = '<p class="empty-msg">گزارشی از اکوسیستم دریافت نشده است.</p>';
+    return;
+  }
+  box.innerHTML = referrals.slice().reverse().map(r => `
+    <div class="report-item">
+      <div class="report-title">📄 ${r.title || 'گزارش'}</div>
+      <div class="report-meta">از: ${r.referredBy || '—'} — ${faDate(r.createdAt)} — وضعیت: ${r.status || '—'}</div>
+      <div class="report-content">${(r.description || '').substring(0, 300)}</div>
+    </div>
+  `).join('');
+}
+
+/* ==================== دستاوردها ==================== */
+const TYPE_LABELS = { text:'📝 متن', image:'🖼️ عکس', video:'🎥 ویدیو', pdf:'📄 PDF', ppt:'📊 پاورپوینت', motion:'🎞️ موشن‌گرافی', podcast:'🎙️ پادکست' };
+let currentFileData = null;
+let currentFileType = null;
+
+function previewFile() {
+  const input = document.getElementById('achFile');
+  const preview = document.getElementById('achPreview');
+  currentFileData = null;
+  currentFileType = null;
+  if (!input.files || !input.files[0]) { preview.innerHTML = ''; return; }
+  const file = input.files[0];
+  currentFileType = file.type;
+  const reader = new FileReader();
+  reader.onload = e => {
+    currentFileData = e.target.result;
+    const sizeKB = Math.round(file.size / 1024);
+    if (file.size > 1024 * 1024) {
+      preview.innerHTML = `<span style="color:#ff6b6b;font-size:0.8rem;">⚠️ فایل ${sizeKB} کیلوبایت است — برای ذخیره‌سازی، لطفاً فشرده کنید (حداکثر پیشنهادی: ۵۰۰KB)</span>`;
+    } else {
+      preview.innerHTML = `<span style="color:#2ed573;font-size:0.8rem;">✅ فایل بارگذاری شد (${sizeKB} کیلوبایت)</span>`;
+    }
+    if (file.type.startsWith('image/')) {
+      preview.innerHTML += `<br><img src="${e.target.result}" style="max-width:100%;max-height:150px;border-radius:8px;margin-top:8px;">`;
+    } else if (file.type.startsWith('video/') || file.type.startsWith('audio/')) {
+      preview.innerHTML += `<br><span style="font-size:0.8rem;">🎬 ${file.name}</span>`;
+    } else {
+      preview.innerHTML += `<br><span style="font-size:0.8rem;">📎 ${file.name}</span>`;
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function addAchievement() {
+  const title = document.getElementById('achTitle').value.trim();
+  const desc = document.getElementById('achDesc').value.trim();
+  const type = document.getElementById('achType').value;
+  const author = document.getElementById('achAuthor').value.trim();
+  if (!title) return alert('عنوان دستاورد الزامی است.');
+  if (!author) return alert('نام فرد/واحد الزامی است.');
+
+  let item = {
+    id: uid('ach'),
+    title, description: desc, type, author,
+    fileData: currentFileData, fileName: null, fileType: currentFileType,
+    status: 'published',
+    createdAt: Date.now()
+  };
+  const fileInput = document.getElementById('achFile');
+  if (fileInput.files && fileInput.files[0]) {
+    item.fileName = fileInput.files[0].name;
+  }
+  if (type !== 'text' && !item.fileData) {
+    return alert('برای این نوع دستاورد، لطفاً فایل انتخاب کنید.');
+  }
+
+  const achievements = getLS(LS.ACHIEVEMENTS);
+  achievements.push(item);
+  try {
+    setLS(LS.ACHIEVEMENTS, achievements);
+  } catch(e) {
+    alert('❌ حافظه مرورگر پر شد. لطفاً فایل را بیشتر فشرده کنید یا دستاوردهای قدیمی را حذف کنید.\n\n' + e.message);
+    return;
+  }
+
+  document.getElementById('achTitle').value = '';
+  document.getElementById('achDesc').value = '';
+  document.getElementById('achAuthor').value = '';
+  document.getElementById('achFile').value = '';
+  document.getElementById('achPreview').innerHTML = '';
+  currentFileData = null; currentFileType = null;
+  renderAchievements();
+  alert('✅ دستاورد ثبت و در صفحه اصلی منتشر شد.');
+}
+
+function renderAchievements() {
+  const box = document.getElementById('achievementsList');
+  if (!box) return;
+  const list = getLS(LS.ACHIEVEMENTS);
+  if (list.length === 0) { box.innerHTML = '<p class="empty-msg">هنوز دستاوردی ثبت نشده است.</p>'; return; }
+  box.innerHTML = list.slice().reverse().map(a => {
+    const thumb = a.fileData && a.fileType && a.fileType.startsWith('image/')
+      ? `<img src="${a.fileData}" alt="">`
+      : (TYPE_LABELS[a.type] || '🏆').split(' ')[0];
+    return `
+      <div class="ach-item">
+        <div class="ach-thumb">${thumb}</div>
+        <div class="ach-body">
+          <h4>${a.title}</h4>
+          <div class="ach-meta">${TYPE_LABELS[a.type] || a.type} — ${a.author} — ${faDate(a.createdAt)}</div>
+          ${a.description ? `<div class="ach-desc">${a.description}</div>` : ''}
+          <div class="ach-actions">
+            ${a.fileData ? `<button class="action-btn" onclick="downloadAchievementFile('${a.id}')">📥 دانلود فایل</button>` : ''}
+            <button class="action-btn danger" onclick="deleteAchievement('${a.id}')">🗑 حذف</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function downloadAchievementFile(id) {
+  const list = getLS(LS.ACHIEVEMENTS);
+  const a = list.find(x => x.id === id);
+  if (!a || !a.fileData) return;
+  const link = document.createElement('a');
+  link.href = a.fileData;
+  link.download = a.fileName || 'achievement-file';
+  document.body.appendChild(link); link.click(); document.body.removeChild(link);
+}
+
+function deleteAchievement(id) {
+  if (!confirm('حذف این دستاورد؟')) return;
+  let list = getLS(LS.ACHIEVEMENTS);
+  list = list.filter(a => a.id !== id);
+  setLS(LS.ACHIEVEMENTS, list);
+  renderAchievements();
+}
+
+function exportAchievements() {
+  const data = { version: 1, lastUpdated: new Date().toISOString(), achievements: getLS(LS.ACHIEVEMENTS) };
+  const json = JSON.stringify(data, null, 2);
+  downloadFile(json, 'achievements-backup.json', 'application/json');
+  alert('📤 فایل پشتیبان دانلود شد. آن را در assets/data/achievements.json قرار دهید.');
+}
+
+function importAchievements() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json,application/json';
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        if (!data.achievements || !Array.isArray(data.achievements)) {
+          return alert('❌ فایل معتبر نیست.');
+        }
+        if (!confirm(`درون‌ریزی ${data.achievements.length} دستاورد؟ (دستاوردهای فعلی جایگزین می‌شوند)`)) return;
+        setLS(LS.ACHIEVEMENTS, data.achievements);
+        renderAchievements();
+        alert('✅ درون‌ریزی موفق.');
+      } catch(e) { alert('❌ خطا: ' + e.message); }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+function initAdmin() {
+  ['CONSULTANTS','TASKS','REPORTS','BRAIN_TOPICS','BRAIN_IDEAS','BRAIN_REPORTS','SURVEYS','ADMIN_REQUESTS','ADMIN_REFERRALS','ACHIEVEMENTS']
+    .forEach(k => { if (!localStorage.getItem(LS[k])) setLS(LS[k], []); });
+  try { renderConsultants(); } catch(e) { console.warn('renderConsultants:', e); }
+  try { renderTaskConsultantSelect(); } catch(e) { console.warn('renderTaskConsultantSelect:', e); }
+  try { renderReports(); } catch(e) { console.warn('renderReports:', e); }
+  try { renderBrainstorm(); } catch(e) { console.warn('renderBrainstorm:', e); }
+  try { renderStats(); } catch(e) { console.warn('renderStats:', e); }
+  try { renderDecreeEditors(); } catch(e) { console.warn('renderDecreeEditors:', e); }
+  try { renderPendingDecrees(); } catch(e) { console.warn('renderPendingDecrees:', e); }
+  try { renderAdminRequests(); } catch(e) { console.warn('renderAdminRequests:', e); }
+  try { renderEcoReports(); } catch(e) { console.warn('renderEcoReports:', e); }
+  try { renderAchievements(); } catch(e) { console.warn('renderAchievements:', e); }
+}
+
+document.addEventListener('DOMContentLoaded', initAdmin);
+document.getElementById('reportModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+</script>
+</body>
+</html>

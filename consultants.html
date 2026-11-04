@@ -1,0 +1,227 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مشاورین | اداره کل سرمایه انسانی</title>
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+<style>
+:root { --bg-gradient: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); --gold: #d4a843; --primary: #0d8a63; }
+body.dark { --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', Tahoma, sans-serif; }
+body { background: var(--bg-gradient); min-height: 100vh; padding: 20px; display: flex; flex-direction: column; align-items: center; transition: background 0.5s; }
+header { width: 100%; max-width: 800px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #1a2a4a 0%, #2a3f6b 100%); color: #fff; padding: 15px 25px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+header h1 { font-size: 1.2rem; color: var(--gold); }
+.back-btn { background: rgba(255,255,255,0.2); color: #fff; padding: 8px 20px; border-radius: 12px; text-decoration: none; font-weight: bold; transition: 0.3s; }
+.back-btn:hover { background: var(--gold); color: #1a2a4a; }
+
+/* کنترلرهای شناور */
+.floating-controls { position: fixed; top: 15px; left: 15px; display: flex; flex-direction: column; gap: 8px; z-index: 150; }
+.float-btn { width: 40px; height: 40px; border-radius: 50%; border: none; background: #fff; color: #1a2a4a; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.15); transition: 0.3s; }
+.float-btn:hover { background: var(--gold); color: #fff; transform: scale(1.1); }
+
+/* کارت اصلی */
+.main-card { width: 100%; max-width: 700px; background: #fff; border-radius: 25px; padding: 30px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); border: 2px solid var(--gold); position: relative; overflow: hidden; }
+body.dark .main-card { background: #102b20; color: #fff; border-color: #50d3a0; }
+
+/* مرحله ۱: ورود کد */
+#step1 { text-align: center; }
+#step1 h2 { color: #1a2a4a; margin-bottom: 15px; }
+body.dark #step1 h2 { color: #50d3a0; }
+#step1 input { padding: 12px; border-radius: 10px; border: 2px solid #ddd; font-family: inherit; font-size: 1rem; width: 200px; text-align: center; margin-bottom: 15px; outline: none; }
+#step1 button { padding: 12px 30px; border: none; border-radius: 10px; background: var(--primary); color: #fff; font-weight: bold; cursor: pointer; font-size: 1rem; transition: 0.3s; }
+#step1 button:hover { background: var(--gold); }
+
+/* مرحله ۲: دستور و آپلود */
+#step2 { display: none; text-align: right; }
+#step2 h3 { color: var(--primary); margin-bottom: 10px; }
+.order-box { background: #f0f8ff; border-right: 5px solid var(--gold); padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+body.dark .order-box { background: #1a3a2a; }
+.order-box p { font-size: 0.95rem; line-height: 1.7; color: #333; }
+body.dark .order-box p { color: #ddd; }
+
+.upload-area { border: 2px dashed #ddd; padding: 20px; border-radius: 15px; text-align: center; margin-bottom: 15px; cursor: pointer; transition: 0.3s; }
+.upload-area:hover { border-color: var(--gold); background: #fffdf5; }
+.upload-area input { display: none; }
+.upload-label { font-weight: bold; color: var(--primary); cursor: pointer; display: block; }
+#fileName { margin-top: 10px; font-size: 0.85rem; color: #666; }
+
+#step2 textarea { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #ddd; font-family: inherit; margin-bottom: 15px; min-height: 80px; outline: none; }
+#step2 button.submit-btn { width: 100%; padding: 15px; border: none; border-radius: 12px; background: linear-gradient(135deg, #0d8a63, #1f9e73); color: #fff; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.3s; }
+#step2 button.submit-btn:hover { transform: scale(1.02); box-shadow: 0 5px 20px rgba(13,138,99,0.4); }
+
+/* کد رهگیری */
+#trackingCode { display: none; text-align: center; padding: 20px; background: #e8f5e9; border-radius: 15px; margin-top: 20px; border: 2px solid var(--primary); }
+#trackingCode h3 { color: var(--primary); margin-bottom: 10px; }
+#trackingCode span { font-size: 1.5rem; font-weight: bold; letter-spacing: 2px; color: #1a2a4a; }
+
+/* نظرسنجی */
+#satisfactionToggle { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #1a2a4a 0%, #2a3f6b 100%); color: #fff; padding: 8px 25px; border-radius: 15px 15px 0 0; cursor: pointer; z-index: 9999; font-weight: bold; font-size: 0.85rem; border: 1px solid var(--gold); border-bottom: none; }
+#satisfactionBox { position: fixed; bottom: -200px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 500px; background: #fff; padding: 15px; border-radius: 15px 15px 0 0; box-shadow: 0 -10px 30px rgba(0,0,0,0.3); z-index: 9998; text-align: center; border: 2px solid var(--gold); border-bottom: none; transition: bottom 0.4s ease; }
+</style>
+<script src="assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header>
+  <h1>👨‍💼 بخش مشاورین</h1>
+  <a href="index.html" class="back-btn" data-fa="بازگشت به سایت" data-en="Back to site">بازگشت به سایت</a>
+</header>
+
+<div class="floating-controls">
+  <button class="float-btn" onclick="toggleTheme()">🌓</button>
+  <button class="float-btn" onclick="toggleLang()">🌐</button>
+</div>
+
+<div class="main-card">
+  <!-- مرحله ۱: ورود کد -->
+  <div id="step1">
+    <h2>🌟 خوش آمدید</h2>
+    <p style="margin-bottom: 20px; color: #666;">لطفاً کد اختصاصی خود را وارد کنید.</p>
+    <input type="text" id="consultantCode" placeholder="کد مشاور">
+    <br>
+    <button onclick="checkCode()" data-fa="ورود" data-en="Login">ورود</button>
+  </div>
+
+  <!-- مرحله ۲: نمایش دستور و آپلود -->
+  <div id="step2">
+    <h3>📋 آخرین دستور صادر شده برای شما:</h3>
+    <div class="order-box">
+      <p id="orderText">دستوری یافت نشد.</p>
+    </div>
+    
+    <h3>📤 آپلود گزارش کار:</h3>
+    <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+      <input type="file" id="fileInput" onchange="showFileName()">
+      <span class="upload-label">📁 برای انتخاب فایل کلیک کنید</span>
+      <div id="fileName">فایلی انتخاب نشده است.</div>
+    </div>
+    
+    <textarea id="reportDesc" placeholder="توضیحات مختصر در مورد گزارش..."></textarea>
+    
+    <button class="submit-btn" onclick="submitReport()">ارسال گزارش و دریافت کد رهگیری</button>
+    
+    <div id="trackingCode">
+      <h3>✅ گزارش شما با موفقیت ثبت شد.</h3>
+      <p>کد رهگیری شما:</p>
+      <span id="trackCodeDisplay">---</span>
+<br><br>
+<button onclick="copyTrackingCode()" style="padding:10px 20px; border:none; border-radius:10px; background:#0d8a63; color:#fff; font-weight:bold; cursor:pointer; font-family:inherit;">📋 کپی کد رهگیری</button>
+<button onclick="downloadTrackingCode()" style="padding:10px 20px; border:none; border-radius:10px; background:#d4a843; color:#1a2a4a; font-weight:bold; cursor:pointer; font-family:inherit; margin-right:8px;">💾 ذخیره در گوشی/کامپیوتر</button>
+    </div>
+  </div>
+</div>
+
+<!-- باکس نظرسنجی -->
+<div id="satisfactionToggle" onclick="toggleSatisfaction()">⭐ ثبت رضایتمندی</div>
+<div id="satisfactionBox">
+  <p style="margin-bottom: 10px; font-weight: bold; color: #1a2a4a;">میزان رضایت شما از این صفحه چقدر است؟</p>
+  <div style="display: flex; gap: 10px; justify-content: center;">
+    <button onclick="submitSatisfaction(0)" style="width: 45px; height: 45px; border-radius: 50%; border: none; background: #ff4757; color: #fff; cursor: pointer; font-weight: bold; font-size: 1.1rem;">۰</button>
+    <button onclick="submitSatisfaction(1)" style="width: 45px; height: 45px; border-radius: 50%; border: none; background: #ff6b81; color: #fff; cursor: pointer; font-weight: bold; font-size: 1.1rem;">۱</button>
+    <button onclick="submitSatisfaction(2)" style="width: 45px; height: 45px; border-radius: 50%; border: none; background: #ffa502; color: #fff; cursor: pointer; font-weight: bold; font-size: 1.1rem;">۲</button>
+    <button onclick="submitSatisfaction(3)" style="width: 45px; height: 45px; border-radius: 50%; border: none; background: #eccc68; color: #1a2a4a; cursor: pointer; font-weight: bold; font-size: 1.1rem;">۳</button>
+    <button onclick="submitSatisfaction(4)" style="width: 45px; height: 45px; border-radius: 50%; border: none; background: #7bed9f; color: #1a2a4a; cursor: pointer; font-weight: bold; font-size: 1.1rem;">۴</button>
+    <button onclick="submitSatisfaction(5)" style="width: 45px; height: 45px; border-radius: 50%; border: none; background: #2ed573; color: #fff; cursor: pointer; font-weight: bold; font-size: 1.1rem;">۵</button>
+  </div>
+</div>
+
+<script>
+const LS = {
+  CONSULTANTS: 'hr_consultants',
+  TASKS: 'hr_tasks',
+  REPORTS: 'hr_reports',
+  BRAIN_TOPICS: 'hr_brainstorm_topics',
+  BRAIN_IDEAS: 'hr_brainstorm_ideas',
+  BRAIN_REPORTS: 'hr_brainstorm_reports',
+  PERSONNEL: 'hr_personnel',
+  SURVEYS: 'hr_surveys',
+  SETTINGS: 'hr_settings'
+};
+// شبیه‌سازی دیتابیس مشاورین
+const consultantsDB = {
+  '101': { name: 'علی رضایی', order: 'تهیه گزارش تحلیلی از وضعیت مرخصی‌های اداره کارگزینی و ارائه راهکار برای کاهش غیبت.' },
+  '102': { name: 'سارا محمدی', order: 'بررسی عملکرد بخش آموزش و ارائه پیشنهاد برای بهبود دوره‌های آموزشی.' },
+  '103': { name: 'رضا کریمی', order: 'تحلیل داده‌های رفاهی کارکنان و ارائه گزارش به مدیرکل.' }
+};
+
+function checkCode() {
+  const code = document.getElementById('consultantCode').value.trim();
+  const data = consultantsDB[code];
+  if (data) {
+    document.getElementById('step1').style.display = 'none';
+    document.getElementById('step2').style.display = 'block';
+    document.getElementById('orderText').innerText = data.order;
+  } else {
+    alert('کد وارد شده اشتباه است. لطفاً کد اختصاصی خود را دوباره بررسی کنید.');
+  }
+}
+
+function showFileName() {
+  const input = document.getElementById('fileInput');
+  const fileName = document.getElementById('fileName');
+  if (input.files.length > 0) {
+    fileName.innerText = 'فایل انتخاب شده: ' + input.files[0].name;
+  }
+}
+
+function submitReport() {
+  const fileInput = document.getElementById('fileInput');
+  const desc = document.getElementById('reportDesc').value.trim();
+  if (fileInput.files.length === 0) {
+    alert('لطفاً فایل گزارش خود را انتخاب کنید.');
+    return;
+  }
+  if (!desc) {
+    alert('لطفاً توضیحات مختصر را وارد کنید.');
+    return;
+  }
+  // تولید کد رهگیری
+  const trackCode = 'TRK-' + Math.floor(Math.random() * 90000) + 10000;
+  document.getElementById('trackCodeDisplay').innerText = trackCode;
+  document.getElementById('trackingCode').style.display = 'block';
+  document.getElementById('step2').querySelector('.upload-area').style.display = 'none';
+  document.getElementById('step2').querySelector('textarea').style.display = 'none';
+  document.getElementById('step2').querySelector('.submit-btn').style.display = 'none';
+  alert('گزارش شما با موفقیت ارسال شد. کد رهگیری: ' + trackCode);
+}
+
+// تم و زبان
+function toggleTheme() { document.body.classList.toggle('dark'); }
+function toggleLang() { alert('تغییر زبان (شبیه‌سازی)'); }
+
+// نظرسنجی
+function toggleSatisfaction() {
+  const box = document.getElementById('satisfactionBox');
+  box.style.bottom = box.style.bottom === '0px' ? '-200px' : '0px';
+}
+function copyTrackingCode() {
+  const code = document.getElementById('trackCodeDisplay').innerText;
+  navigator.clipboard.writeText(code).then(function() {
+    alert('کد رهگیری کپی شد: ' + code);
+  }).catch(function() {
+    alert('کپی نشد. لطفاً دستی یادداشت کنید: ' + code);
+  });
+}
+
+function downloadTrackingCode() {
+  const code = document.getElementById('trackCodeDisplay').innerText;
+  const text = 'کد رهگیری گزارش شما:\n' + code + '\n\nتاریخ: ' + new Date().toLocaleString('fa-IR');
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'tracking-' + code + '.txt';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(link.href);
+}
+function submitSatisfaction(score) {
+  alert('امتیاز ' + score + ' شما ثبت شد. با تشکر!');
+  document.getElementById('satisfactionBox').style.bottom = '-200px';
+}
+</script>
+
+</body>
+</html>
+

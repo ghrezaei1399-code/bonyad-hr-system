@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مسیریاب هوشمند | اداره کل سرمایه انسانی</title>
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+<style>
+:root {
+  --text-dark: #1a3b32;
+  --text-light: #5a7a6e;
+  --gold: #d4a843;
+  --gold-light: #f1c65e;
+  --primary: #0d8a63;
+  --primary-light: #1f9e73;
+  --card-bg: rgba(255,255,255,0.75);
+  --muted: #666;
+  --line: rgba(13,138,99,0.15);
+  --shadow-sm: 0 4px 15px rgba(0,0,0,0.06);
+  --shadow-md: 0 10px 30px rgba(0,0,0,0.12);
+  --shadow-lg: 0 20px 50px rgba(0,0,0,0.18);
+}
+body.dark {
+  --text-dark: #e8f5e9;
+  --text-light: #b0d1c0;
+  --card-bg: rgba(20,40,35,0.75);
+  --muted: #a5c9b8;
+  --line: rgba(212,168,67,0.2);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', Tahoma, sans-serif; }
+
+html, body {
+  min-height: 100vh;
+}
+
+body {
+  color: var(--text-dark);
+  padding: 20px;
+  overflow-x: hidden;
+  position: relative;
+  transition: color 0.5s;
+  background: linear-gradient(-45deg, #a8e6cf, #d4edda, #fff3cd, #a8e6cf, #b8e0d2);
+  background-size: 400% 400%;
+  animation: gradientShift 20s ease infinite;
+}
+body.dark {
+  background: linear-gradient(-45deg, #0a3b2a, #1a4d3a, #3a2e1a, #0f2027, #1a2a4a);
+  background-size: 400% 400%;
+  animation: gradientShift 20s ease infinite;
+}
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Floating particles background */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(13,138,99,0.15) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(212,168,67,0.15) 0%, transparent 40%),
+    radial-gradient(circle at 50% 90%, rgba(79,172,254,0.12) 0%, transparent 40%);
+  pointer-events: none;
+  z-index: 0;
+  animation: particleFloat 15s ease-in-out infinite;
+}
+@keyframes particleFloat {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(20px, -20px); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes shineCard {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}
+@keyframes floatIcon {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-6px) rotate(3deg); }
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* ================= HEADER ================= */
+header {
+  display: flex; justify-content: space-between; align-items: center;
+  background: linear-gradient(135deg, #1a2a4a 0%, #2a3f6b 50%, #4facfe 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 15s ease infinite, fadeInDown 0.8s ease forwards;
+  color: #fff;
+  padding: 18px 30px; border-radius: 24px; margin-bottom: 25px;
+  box-shadow: 0 15px 40px rgba(26,42,74,0.35), inset 0 1px 0 rgba(255,255,255,0.15);
+  position: relative; overflow: hidden; z-index: 2;
+  flex-wrap: wrap; gap: 12px;
+  backdrop-filter: blur(10px);
+}
+header::before {
+  content: '';
+  position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+  background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+  transform: skewX(-25deg);
+  animation: shineCard 5s infinite;
+}
+header h1 {
+  font-size: 1.35rem; font-weight: 900;
+  background: linear-gradient(135deg, #fff 0%, var(--gold-light) 50%, #fff 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 4s linear infinite;
+  position: relative; z-index: 2;
+  display: flex; align-items: center; gap: 10px;
+}
+.header-actions { display: flex; gap: 8px; flex-wrap: wrap; position: relative; z-index: 2; }
+
+.back-btn {
+  background: rgba(255,255,255,0.18); color: #fff;
+  padding: 9px 20px; border-radius: 14px;
+  text-decoration: none; font-weight: bold;
+  border: 1px solid rgba(255,255,255,0.35);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: pointer; font-size: 0.85rem;
+  backdrop-filter: blur(10px);
+  position: relative; overflow: hidden;
+}
+.back-btn:hover {
+  background: var(--gold);
+  color: #1a2a4a;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(212,168,67,0.5);
+}
+
+/* ================= MAIN CARD ================= */
+.main-card {
+  max-width: 1200px; margin: 0 auto;
+  background: var(--card-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-radius: 28px; padding: 35px;
+  box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255,255,255,0.4);
+  border: 2px solid rgba(255,255,255,0.5);
+  position: relative; z-index: 2;
+  animation: fadeInUp 0.8s ease forwards;
+}
+body.dark .main-card { border-color: rgba(212,168,67,0.3); }
+
+/* ================= LOGIN ================= */
+#step1 { text-align: center; padding: 40px 20px; }
+#step1 h2 {
+  font-size: 1.8rem; font-weight: 900; margin-bottom: 15px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--gold) 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: fadeInUp 0.6s ease forwards;
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+}
+#step1 h2::before {
+  content: '🧭'; font-size: 2.5rem;
+  display: inline-block;
+  animation: floatIcon 3s ease-in-out infinite;
+  -webkit-text-fill-color: initial;
+}
+#step1 p {
+  color: var(--muted); margin-bottom: 25px; line-height: 1.9;
+  max-width: 600px; margin-left: auto; margin-right: auto;
+  animation: fadeInUp 0.8s ease forwards;
+}
+#step1 input {
+  padding: 14px 18px; border-radius: 14px;
+  border: 2px solid var(--line);
+  font-family: inherit; font-size: 1rem;
+  width: 280px; text-align: center; margin-bottom: 20px;
+  outline: none; background: rgba(255,255,255,0.9);
+  transition: all 0.3s;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.05);
+}
+#step1 input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(13,138,99,0.15), inset 0 2px 6px rgba(0,0,0,0.05);
+  transform: translateY(-2px);
+}
+#step1 button {
+  padding: 14px 40px; border: none; border-radius: 14px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: #fff; font-weight: 900; cursor: pointer; font-size: 1rem;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 8px 20px rgba(13,138,99,0.4);
+  position: relative; overflow: hidden;
+}
+#step1 button::after {
+  content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.5s;
+}
+#step1 button:hover::after { left: 100%; }
+#step1 button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(13,138,99,0.5);
+}
+#step1 .skip-link {
+  display: block; margin-top: 20px; font-size: 0.9rem;
+  color: var(--primary); text-decoration: none;
+  cursor: pointer; font-weight: bold;
+  transition: all 0.3s;
+  padding: 8px;
+  border-radius: 10px;
+}
+#step1 .skip-link:hover {
+  color: var(--gold);
+  background: rgba(212,168,67,0.1);
+  transform: translateY(-2px);
+}
+
+#step2 { display: none; animation: fadeInUp 0.6s ease; }
+
+/* ================= WELCOME BAR ================= */
+.welcome-bar {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, var(--gold) 150%);
+  background-size: 200% 200%;
+  animation: gradientShift 10s ease infinite;
+  color: #fff; padding: 18px 25px; border-radius: 18px;
+  margin-bottom: 22px;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 12px;
+  box-shadow: 0 10px 30px rgba(13,138,99,0.35);
+  position: relative; overflow: hidden;
+}
+.welcome-bar::after {
+  content: '✨'; position: absolute; right: 20px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 2rem; opacity: 0.3;
+  animation: pulse 2s infinite;
+}
+.welcome-bar h3 { font-size: 1.15rem; position: relative; z-index: 1; }
+.welcome-bar span { font-size: 0.85rem; opacity: 0.95; position: relative; z-index: 1; }
+
+/* ================= BREADCRUMB ================= */
+.breadcrumb {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 22px; font-size: 0.88rem;
+  padding: 12px 18px;
+  background: rgba(255,255,255,0.5);
+  backdrop-filter: blur(10px);
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+}
+body.dark .breadcrumb { background: rgba(0,0,0,0.2); }
+.breadcrumb a, .breadcrumb span {
+  color: var(--primary); cursor: pointer; text-decoration: none;
+  transition: all 0.2s; font-weight: 600;
+}
+.breadcrumb a:hover { color: var(--gold); transform: translateX(-2px); }
+.breadcrumb .sep { color: var(--muted); font-weight: normal; }
+.breadcrumb .current { color: var(--text-dark); font-weight: 900; }
+
+/* ================= SEARCH ================= */
+.search-box {
+  display: flex; gap: 10px; margin-bottom: 25px;
+  position: relative;
+}
+.search-box input {
+  flex: 1; padding: 15px 20px 15px 50px;
+  border-radius: 16px;
+  border: 2px solid var(--line);
+  font-family: inherit; font-size: 0.95rem;
+  outline: none;
+  background: rgba(255,255,255,0.85);
+  transition: all 0.3s;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.04);
+}
+.search-box input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px rgba(212,168,67,0.2), inset 0 2px 8px rgba(0,0,0,0.04);
+  transform: translateY(-2px);
+}
+.search-box::before {
+  content: '🔍'; position: absolute;
+  right: 20px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.2rem; opacity: 0.5; pointer-events: none;
+}
+.search-box button {
+  padding: 15px 30px; border-radius: 16px; border: none;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: #fff; font-weight: 900; cursor: pointer;
+  font-family: inherit; font-size: 0.95rem;
+  transition: all 0.3s;
+  box-shadow: 0 8px 20px rgba(13,138,99,0.3);
+}
+.search-box button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(13,138,99,0.4);
+}
+
+/* ================= INTRO CARD ================= */
+.intro-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #4facfe 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 12s ease infinite;
+  color: #fff; padding: 28px;
+  border-radius: 22px; margin-bottom: 30px;
+  box-shadow: 0 15px 40px rgba(102,126,234,0.35);
+  position: relative; overflow: hidden;
+}
+.intro-card::before {
+  content: '';
+  position: absolute; top: -50%; right: -20%;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(255,255,255,0.2), transparent 70%);
+  border-radius: 50%;
+  animation: pulse 4s infinite;
+}
+.intro-card h2 {
+  font-size: 1.35rem; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 12px;
+  position: relative; z-index: 1;
+}
+.intro-card h2::before {
+  content: '🏛️'; font-size: 2rem;
+  animation: floatIcon 3s ease-in-out infinite;
+}
+.intro-card p {
+  font-size: 0.92rem; line-height: 1.8;
+  opacity: 0.95; position: relative; z-index: 1;
+}
+
+/* ================= SECTION TITLE ================= */
+.section-title {
+  font-size: 1.2rem; font-weight: 900;
+  margin: 30px 0 20px;
+  padding-right: 18px;
+  border-right: 6px solid var(--gold);
+  display: flex; align-items: center; gap: 12px;
+  position: relative;
+  background: linear-gradient(90deg, rgba(212,168,67,0.1) 0%, transparent 100%);
+  padding-top: 8px; padding-bottom: 8px;
+  border-radius: 4px 12px 12px 4px;
+}
+.section-title .count {
+  font-size: 0.8rem; color: var(--muted); font-weight: normal;
+  background: rgba(13,138,99,0.1);
+  padding: 3px 10px; border-radius: 12px;
+}
+
+/* ================= UNIT GRID ================= */
+.unit-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 20px;
+  animation: fadeInUp 0.7s ease forwards;
+}
+.unit-card {
+  background: linear-gradient(135deg, var(--unit-c1, #4facfe) 0%, var(--unit-c2, #00f2fe) 100%);
+  background-size: 200% 200%;
+  border-radius: 22px; padding: 25px;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 2px solid rgba(255,255,255,0.5);
+  position: relative; overflow: hidden;
+  animation: slideInRight 0.6s ease forwards;
+  opacity: 0;
+  color: #fff;
+}
+.unit-card:hover {
+  background-size: 150% 150%;
+}
+body.dark .unit-card { border-color: var(--line); }
+.unit-card:nth-child(1) { animation-delay: 0.05s; }
+.unit-card:nth-child(2) { animation-delay: 0.1s; }
+.unit-card:nth-child(3) { animation-delay: 0.15s; }
+.unit-card:nth-child(4) { animation-delay: 0.2s; }
+.unit-card:nth-child(5) { animation-delay: 0.25s; }
+.unit-card:nth-child(6) { animation-delay: 0.3s; }
+.unit-card:nth-child(7) { animation-delay: 0.35s; }
+.unit-card:nth-child(8) { animation-delay: 0.4s; }
+.unit-card:nth-child(9) { animation-delay: 0.45s; }
+.unit-card:nth-child(10) { animation-delay: 0.5s; }
+.unit-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 6px;
+  background: linear-gradient(90deg, var(--gold), var(--primary), var(--gold));
+  background-size: 200% 100%;
+  animation: gradientShift 3s linear infinite;
+}
+.unit-card::after {
+  content: '';
+  position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+  background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+  transform: skewX(-25deg);
+  transition: 0.6s;
+  pointer-events: none;
+}
+.unit-card:hover::after { left: 120%; }
+.unit-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+  border-color: var(--gold);
+}
+.unit-card .unit-icon {
+  font-size: 2.8rem; margin-bottom: 15px;
+  display: inline-block;
+  animation: floatIcon 3s ease-in-out infinite;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+}
+.unit-card h3 {
+  font-size: 1.1rem; margin-bottom: 8px;
+  color: #fff; font-weight: 900;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  position: relative; z-index: 1;
+}
+.unit-card p {
+  font-size: 0.85rem; color: rgba(255,255,255,0.95);
+  line-height: 1.7; margin-bottom: 15px;
+  min-height: 42px;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  position: relative; z-index: 1;
+}
+.unit-card .badge {
+  font-size: 0.75rem; padding: 5px 12px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.3);
+  color: #fff;
+  font-weight: 900;
+  border: 1px solid rgba(255,255,255,0.5);
+  backdrop-filter: blur(10px);
+  position: relative; z-index: 1;
+}
+
+/* ================= PROCESS GRID ================= */
+.process-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 18px;
+}
+.process-card {
+  background: linear-gradient(135deg, var(--unit-c1, #4facfe) 0%, var(--unit-c2, #00f2fe) 100%);
+  background-size: 200% 200%;
+  border-radius: 20px; padding: 22px;
+  color: #fff; cursor: pointer;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 2px solid rgba(255,255,255,0.4);
+  position: relative; overflow: hidden;
+  animation: fadeInUp 0.5s ease forwards;
+}
+.process-card::before {
+  content: '';
+  position: absolute; top: -50%; right: -30%;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(255,255,255,0.25), transparent 70%);
+  border-radius: 50%;
+}
+.process-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  border-color: #fff;
+  animation: pulse 0.6s;
+}
+.process-card h3 {
+  font-size: 1.05rem; margin-bottom: 10px;
+  font-weight: 900;
+  position: relative; z-index: 1;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+.process-card p {
+  font-size: 0.85rem; opacity: 0.95;
+  line-height: 1.6; margin-bottom: 12px;
+  position: relative; z-index: 1;
+}
+.process-card .meta {
+  display: flex; gap: 6px; flex-wrap: wrap;
+  font-size: 0.75rem;
+  position: relative; z-index: 1;
+}
+.process-card .meta span {
+  background: rgba(255,255,255,0.28);
+  padding: 4px 12px; border-radius: 12px;
+  font-weight: bold;
+  backdrop-filter: blur(10px);
+}
+
+/* ================= PROCESS VIEW ================= */
+#processView { display: none; animation: fadeInUp 0.5s ease; }
+.process-header {
+  background: linear-gradient(135deg, #1a2a4a 0%, #2a3f6b 50%, #4facfe 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 15s ease infinite;
+  color: #fff; padding: 28px; border-radius: 22px;
+  margin-bottom: 25px;
+  box-shadow: 0 15px 40px rgba(26,42,74,0.35);
+  position: relative; overflow: hidden;
+}
+.process-header::after {
+  content: '✨'; position: absolute; top: 20px; left: 20px;
+  font-size: 2rem; opacity: 0.3;
+  animation: pulse 2s infinite;
+}
+.process-header h2 {
+  font-size: 1.4rem; margin-bottom: 10px;
+  font-weight: 900;
+  color: var(--gold-light);
+  display: flex; align-items: center; gap: 12px;
+}
+.process-header p {
+  font-size: 0.92rem; opacity: 0.92;
+  line-height: 1.7; margin-bottom: 15px;
+}
+.process-header .process-meta {
+  display: flex; gap: 10px; flex-wrap: wrap;
+}
+.process-header .process-meta span {
+  background: rgba(255,255,255,0.18);
+  padding: 6px 16px; border-radius: 14px;
+  font-size: 0.82rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.25);
+  font-weight: bold;
+}
+
+/* ================= PROGRESS ================= */
+.progress-label {
+  font-size: 0.85rem; color: var(--muted);
+  text-align: left; margin-bottom: 8px;
+  font-weight: bold;
+}
+.progress-bar {
+  height: 12px;
+  background: rgba(0,0,0,0.08);
+  border-radius: 8px; overflow: hidden;
+  margin-bottom: 25px;
+  position: relative;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #2ed573 0%, #4facfe 50%, #a8e6cf 100%);
+  background-size: 200% 100%;
+  animation: gradientShift 3s linear infinite;
+  border-radius: 8px;
+  transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 0 15px rgba(46,213,115,0.5);
+}
+
+/* ================= STEP ITEM ================= */
+.step-item {
+  display: flex; gap: 18px;
+  padding: 20px;
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 16px; margin-bottom: 15px;
+  border-right: 5px solid var(--gold);
+  transition: all 0.4s;
+  box-shadow: var(--shadow-sm);
+  animation: slideInRight 0.5s ease forwards;
+  opacity: 0;
+  position: relative;
+  overflow: hidden;
+}
+body.dark .step-item { background: rgba(0,0,0,0.2); }
+.step-item:nth-child(1) { animation-delay: 0.05s; }
+.step-item:nth-child(2) { animation-delay: 0.1s; }
+.step-item:nth-child(3) { animation-delay: 0.15s; }
+.step-item:nth-child(4) { animation-delay: 0.2s; }
+.step-item:nth-child(5) { animation-delay: 0.25s; }
+.step-item:nth-child(6) { animation-delay: 0.3s; }
+.step-item:nth-child(7) { animation-delay: 0.35s; }
+.step-item:nth-child(8) { animation-delay: 0.4s; }
+.step-item:nth-child(9) { animation-delay: 0.45s; }
+.step-item:nth-child(10) { animation-delay: 0.5s; }
+.step-item:hover {
+  transform: translateX(-5px);
+  box-shadow: var(--shadow-md);
+}
+.step-item.done {
+  border-right-color: #2ed573;
+  background: linear-gradient(135deg, rgba(46,213,115,0.12) 0%, rgba(79,172,254,0.08) 100%);
+  box-shadow: 0 8px 20px rgba(46,213,115,0.15);
+}
+.step-number {
+  width: 45px; height: 45px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+  color: #1a2a4a;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; flex-shrink: 0;
+  font-size: 1.1rem;
+  box-shadow: 0 6px 15px rgba(212,168,67,0.4);
+  transition: all 0.3s;
+}
+.step-item.done .step-number {
+  background: linear-gradient(135deg, #2ed573 0%, #4facfe 100%);
+  color: #fff;
+  box-shadow: 0 6px 15px rgba(46,213,115,0.4);
+  animation: pulse 0.5s;
+}
+.step-content { flex: 1; }
+.step-role {
+  display: inline-block; padding: 3px 12px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(79,172,254,0.18), rgba(168,230,207,0.18));
+  color: #1a4a8a;
+  font-size: 0.75rem; font-weight: 900;
+  margin-bottom: 8px;
+  border: 1px solid rgba(79,172,254,0.3);
+}
+body.dark .step-role { color: #a8e6cf; }
+.step-content h4 {
+  font-size: 1rem; margin-bottom: 8px;
+  color: var(--text-dark); font-weight: 900;
+}
+.step-content p {
+  font-size: 0.85rem; color: var(--muted);
+  line-height: 1.7; margin-bottom: 10px;
+}
+.step-note {
+  font-size: 0.8rem; color: #c0392b;
+  background: linear-gradient(135deg, rgba(255,80,80,0.1), rgba(255,167,38,0.1));
+  padding: 8px 14px; border-radius: 10px;
+  margin-top: 8px; margin-bottom: 10px;
+  border-right: 3px solid #ff6b6b;
+  font-weight: bold;
+}
+.step-actions {
+  display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px;
+}
+.step-actions button, .step-actions a {
+  padding: 8px 18px; border: none; border-radius: 10px;
+  font-family: inherit; font-weight: 900;
+  font-size: 0.8rem; cursor: pointer;
+  text-decoration: none; transition: all 0.3s;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-goto {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(13,138,99,0.3);
+}
+.btn-goto:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(13,138,99,0.4);
+  filter: brightness(1.1);
+}
+.btn-done-step {
+  background: rgba(46,213,115,0.2);
+  color: #166534;
+  border: 2px solid #2ed573;
+}
+.btn-done-step:hover {
+  background: #2ed573;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(46,213,115,0.4);
+}
+.step-item.done .btn-done-step { display: none; }
+
+/* ================= HELPFUL BOX ================= */
+.helpful-box {
+  margin-top: 25px; padding: 25px;
+  background: linear-gradient(135deg, rgba(79,172,254,0.12), rgba(168,230,207,0.12));
+  border-radius: 20px;
+  border: 3px dashed #4facfe;
+  text-align: center;
+  animation: fadeInUp 0.6s ease;
+  position: relative; overflow: hidden;
+}
+.helpful-box::before {
+  content: '💡'; position: absolute; top: -10px; right: -10px;
+  font-size: 4rem; opacity: 0.15;
+}
+.helpful-box p {
+  font-size: 1rem; margin-bottom: 15px;
+  color: var(--text-dark); font-weight: 900;
+  position: relative; z-index: 1;
+}
+.helpful-box button {
+  padding: 12px 28px; border: none; border-radius: 14px;
+  margin: 0 6px; font-family: inherit; font-weight: 900;
+  cursor: pointer; font-size: 0.9rem;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative; z-index: 1;
+}
+.btn-yes {
+  background: linear-gradient(135deg, #2ed573 0%, #4facfe 100%);
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(46,213,115,0.4);
+}
+.btn-yes:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 10px 30px rgba(46,213,115,0.5); }
+.btn-no {
+  background: linear-gradient(135deg, #ff4757 0%, #ffa502 100%);
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(255,71,87,0.4);
+}
+.btn-no:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 10px 30px rgba(255,71,87,0.5); }
+
+/* ================= BACK LINK ================= */
+.back-in-process {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 10px 20px;
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  color: var(--text-dark); text-decoration: none;
+  font-weight: 900; margin-bottom: 20px;
+  cursor: pointer; font-size: 0.88rem;
+  transition: all 0.3s;
+  border: 1px solid var(--line);
+}
+body.dark .back-in-process { background: rgba(0,0,0,0.3); }
+.back-in-process:hover {
+  background: var(--gold); color: #1a2a4a;
+  transform: translateX(5px);
+  box-shadow: 0 6px 15px rgba(212,168,67,0.4);
+}
+
+/* ================= ROLE GUIDE ================= */
+.role-guide {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 18px; margin-top: 25px;
+}
+.role-guide-card {
+  padding: 20px;
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border-right: 5px solid var(--gold);
+  transition: all 0.3s;
+  box-shadow: var(--shadow-sm);
+  position: relative; overflow: hidden;
+}
+body.dark .role-guide-card { background: rgba(0,0,0,0.2); }
+.role-guide-card::before {
+  content: '';
+  position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
+  transform: skewX(-25deg);
+  transition: 0.6s;
+}
+.role-guide-card:hover::before { left: 120%; }
+.role-guide-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+  border-right-color: var(--primary);
+}
+.role-guide-card h4 {
+  font-size: 1rem; margin-bottom: 8px;
+  color: var(--text-dark); font-weight: 900;
+  display: flex; align-items: center; gap: 8px;
+}
+.role-guide-card h4::before {
+  content: '👤';
+  font-size: 1.2rem;
+}
+.role-guide-card p {
+  font-size: 0.85rem; color: var(--muted);
+  line-height: 1.7;
+}
+
+/* ================= SATISFACTION ================= */
+#satisfactionToggle {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  background: linear-gradient(135deg, #1a2a4a 0%, #2a3f6b 100%);
+  color: #fff; padding: 10px 28px;
+  border-radius: 18px 18px 0 0;
+  cursor: pointer; z-index: 9999;
+  font-weight: 900; font-size: 0.88rem;
+  border: 2px solid var(--gold); border-bottom: none;
+  box-shadow: 0 -5px 20px rgba(0,0,0,0.25);
+  transition: all 0.3s;
+}
+#satisfactionToggle:hover {
+  padding: 12px 32px;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+  color: #1a2a4a;
+}
+#satisfactionBox {
+  position: fixed; bottom: -250px; left: 50%;
+  transform: translateX(-50%);
+  width: 90%; max-width: 520px;
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  padding: 20px;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -10px 40px rgba(0,0,0,0.3);
+  z-index: 9998; text-align: center;
+  border: 2px solid var(--gold); border-bottom: none;
+  transition: bottom 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+#satisfactionBox p {
+  margin-bottom: 15px; font-weight: 900;
+  color: var(--text-dark); font-size: 1rem;
+}
+#satisfactionBox button {
+  width: 45px; height: 45px; border-radius: 50%;
+  border: none; cursor: pointer; font-weight: 900;
+  font-size: 1.15rem;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+#satisfactionBox button:hover { transform: scale(1.15) translateY(-3px); }
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 640px) {
+  body { padding: 12px; }
+  .main-card { padding: 20px; }
+  header { padding: 15px 20px; flex-direction: column; text-align: center; }
+  header h1 { font-size: 1.1rem; justify-content: center; }
+  .unit-grid, .process-grid, .role-guide { grid-template-columns: 1fr; }
+  .step-item { flex-direction: column; }
+  .step-number { width: 40px; height: 40px; font-size: 1rem; }
+  #step1 h2 { font-size: 1.4rem; }
+  .process-header h2 { font-size: 1.15rem; }
+}
+</style>
+<script src="assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header>
+  <h1>🧭 مسیریاب هوشمند اداره کل</h1>
+  <div class="header-actions">
+    <button onclick="toggleTheme()" class="back-btn" title="تم">🌓</button>
+    <button onclick="toggleLang()" class="back-btn" title="زبان">🌐</button>
+    <a href="index.html" class="back-btn">🏠 صفحه اصلی</a>
+  </div>
+</header>
+
+<div class="main-card">
+
+  <div id="step1">
+    <h2>به مسیریاب هوشمند خوش آمدید</h2>
+    <p>کد پرسنلی خود را وارد کنید تا نقش شما تشخیص داده شود و مسیر درست برای کار شما نشان داده شود.<br>اگر تازه‌وارد هستید و کد ندارید، از گزینه زیر استفاده کنید.</p>
+    <input type="text" id="wfCode" placeholder="کد پرسنلی (مثلاً 1001)">
+    <br>
+    <button onclick="checkCode()">ورود</button>
+    <a class="skip-link" onclick="enterAsNewcomer()">🚪 من تازه‌وارد هستم (بدون کد)</a>
+  </div>
+
+  <div id="step2">
+    <div class="welcome-bar">
+      <h3 id="wfWelcome">پرسنل گرامی، خوش آمدید</h3>
+      <span id="wfRole"></span>
+    </div>
+
+    <div class="breadcrumb" id="breadcrumb">
+      <a onclick="goHome()">🏠 خانه</a>
+      <span class="sep">›</span>
+      <span class="current" id="crumbCurrent">فهرست واحدها</span>
+    </div>
+
+    <div id="catalogView">
+      <div class="search-box">
+        <input type="text" id="wfSearch" placeholder="جستجوی فرایند... (مثلاً: مرخصی، حکم، دوره، وام، کمیته)" oninput="renderSearch(this.value)">
+        <button onclick="renderSearch(document.getElementById('wfSearch').value)">جستجو</button>
+      </div>
+
+      <div class="intro-card">
+        <h2>اداره کل سرمایه انسانی بنیاد شهید و امور ایثارگران</h2>
+        <p>این مسیریاب، نقشه کامل اداره کل است: واحدها، کمیته‌ها، فرایندها و گام‌های واقعی هر کار. با انتخاب واحد یا جستجوی فرایند، مسیر را گام‌به‌گام ببینید.</p>
+      </div>
+
+      <div id="searchResults" style="display:none;"></div>
+
+      <div id="unitsList">
+        <div class="section-title">📚 واحدها و کمیته‌های اداره کل <span class="count" id="unitsCount"></span></div>
+        <div class="unit-grid" id="unitGrid"></div>
+      </div>
+
+      <div class="section-title">👤 راهنمای نقش‌ها</div>
+      <div class="role-guide">
+        <div class="role-guide-card">
+          <h4>پرسنل</h4>
+          <p>دسترسی به: کارگزینی شخصی، اکوسیستم توانمندسازی، هم‌اندیشی، احکام، مشاورین.</p>
+        </div>
+        <div class="role-guide-card">
+          <h4>کارشناس کارگزینی</h4>
+          <p>دسترسی به: کارگزینی هوشمند (پاسخ به سوالات، بررسی توانمندی‌ها، نیازهای آموزشی).</p>
+        </div>
+        <div class="role-guide-card">
+          <h4>رئیس رفاه</h4>
+          <p>دسترسی به: میز رئیس رفاه (بررسی درخواست وام، ارجاعات ادمین).</p>
+        </div>
+        <div class="role-guide-card">
+          <h4>رئیس اکوسیستم</h4>
+          <p>دسترسی به: اتاق فرمان اکوسیستم (تایید چالش، تولید محتوا، گزارش به مدیرکل).</p>
+        </div>
+        <div class="role-guide-card">
+          <h4>کمیته راهبری</h4>
+          <p>دسترسی به: وظایف کمیته، ثبت طرح درس، ابلاغ دوره به اکوسیستم.</p>
+        </div>
+        <div class="role-guide-card">
+          <h4>مدیرکل</h4>
+          <p>دسترسی به: پنل مدیریت (اتوماسیون، گزارش‌ها، مشاورین، احکام، درخواست‌های پرسنل).</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="unitView" style="display:none;">
+      <a class="back-in-process" onclick="goHome()">⬅️ بازگشت به فهرست واحدها</a>
+      <div class="intro-card" id="unitHeader"></div>
+      <div class="section-title">📋 فرایندهای این واحد</div>
+      <div class="process-grid" id="unitProcesses"></div>
+    </div>
+
+    <div id="processView" style="display:none;">
+      <a class="back-in-process" onclick="backToUnit()">⬅️ بازگشت به فرایندهای واحد</a>
+      <div class="process-header">
+        <h2 id="processTitle"></h2>
+        <p id="processDesc"></p>
+        <div class="process-meta" id="processMeta"></div>
+      </div>
+      <div class="progress-label" id="progressLabel">۰٪ تکمیل</div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div id="stepsList"></div>
+      <div class="helpful-box" id="helpfulBox" style="display:none;">
+        <p>آیا این مسیر به شما کمک کرد؟</p>
+        <button class="btn-yes" onclick="submitFeedback(true)">👍 بله</button>
+        <button class="btn-no" onclick="submitFeedback(false)">👎 خیر</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="satisfactionToggle" onclick="toggleSatisfaction()">⭐ ثبت رضایتمندی</div>
+<div id="satisfactionBox">
+  <p>میزان رضایت شما از مسیریاب چقدر است؟</p>
+  <div style="display: flex; gap: 8px; justify-content: center;">
+    <button onclick="submitSatisfaction(1)" style="background: linear-gradient(135deg,#ff4757,#ff6b81);color:#fff;">۱</button>
+    <button onclick="submitSatisfaction(2)" style="background: linear-gradient(135deg,#ff6b81,#ffa502);color:#fff;">۲</button>
+    <button onclick="submitSatisfaction(3)" style="background: linear-gradient(135deg,#ffa502,#f1c65e);color:#fff;">۳</button>
+    <button onclick="submitSatisfaction(4)" style="background: linear-gradient(135deg,#7bed9f,#2ed573);color:#fff;">۴</button>
+    <button onclick="submitSatisfaction(5)" style="background: linear-gradient(135deg,#2ed573,#4facfe);color:#fff;">۵</button>
+  </div>
+</div>
+
+<script>
+const LS = {
+  PERSONNEL: 'hr_personnel',
+  WF_PROCESSES: 'hr_wayfinder_processes',
+  WF_TRAILS: 'hr_wayfinder_trails',
+  WF_FEEDBACK: 'hr_wayfinder_feedback'
+};
+function getLS(key, fallback = []) { try { return JSON.parse(localStorage.getItem(key)) || fallback; } catch { return fallback; } }
+function setLS(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+function uid(p) { return (p || 'wf') + '-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 6); }
+function faDate(ts) { try { return new Date(ts).toLocaleString('fa-IR'); } catch { return new Date(ts).toLocaleString(); } }
+
+if (!localStorage.getItem('hr_personnel')) {
+  localStorage.setItem('hr_personnel', JSON.stringify([
+    { code: '1001', name: 'علی رضایی', unit: 'کارگزینی' },
+    { code: '1002', name: 'مریم حسینی', unit: 'آموزش' },
+    { code: '1003', name: 'رضا کریمی', unit: 'رفاه' },
+    { code: '1004', name: 'زهرا محمدی', unit: 'جبران خدمت' },
+    { code: '1005', name: 'حسین نوری', unit: 'فناوری اطلاعات' }
+  ]));
+}
+
+/* واحدها و فرایندها (همان قبلی — بدون تغییر) */
+const UNITS = [
+  { id:'newcomer',icon:'🆕',title:'تازه‌وارد',color1:'#4facfe',color2:'#00f2fe',desc:'آشنایی اولیه با ساختار سازمان، واحدها و اولین قدم‌های ورود.',processes:[
+    {id:'newcomer-overview',title:'آشنایی با ساختار اداره کل',desc:'مرور کلی واحدها و وظایف هر کدام',audience:'تازه‌وارد',duration:'۱۰ دقیقه',output:'شناخت کلی از سازمان',steps:[
+      {title:'مشاهده راهنمای نقش‌ها',desc:'در همین صفحه، بخش «راهنمای نقش‌ها» را بخوانید تا بدانید هر نقش چه دسترسی دارد.',role:'تازه‌وارد'},
+      {title:'مشاهده فهرست واحدها',desc:'در بخش «واحدها و کمیته‌ها»، هر کارت نماینده یک بخش است. کلیک کنید تا فرایندهای آن را ببینید.',role:'تازه‌وارد'},
+      {title:'آشنایی با اکوسیستم توانمندسازی',desc:'توضیحات کامل اکوسیستم و هوش‌های پشتیبان را در راهنما ببینید.',role:'تازه‌وارد',link:'learning_guide.html',linkLabel:'راهنمای توانمندسازی'},
+      {title:'دریافت کد پرسنلی',desc:'برای هر اقدام اداری، به کد پرسنلی نیاز دارید. از کارگزینی درخواست کنید.',role:'تازه‌وارد'}
+    ]},
+    {id:'newcomer-first-login',title:'اولین ورود به سامانه',desc:'ورود با کد پرسنلی به کارگزینی شخصی',audience:'تازه‌وارد',duration:'۵ دقیقه',output:'دسترسی به پرونده شخصی',steps:[
+      {title:'باز کردن کارگزینی شخصی',desc:'از صفحه اصلی، کارت «کارگزینی» → «کارگزینی شخصی».',role:'تازه‌وارد',link:'my_hr.html',linkLabel:'ورود به my_hr'},
+      {title:'ورود با کد پرسنلی',desc:'کد پرسنلی خود را در کادر بنویسید و «ورود» را بزنید.',role:'تازه‌وارد',link:'my_hr.html',linkLabel:'ورود'},
+      {title:'مشاهده پرونده',desc:'در تب «وضعیت من»، اطلاعات پرونده و هشدارهای هوشمند را ببینید.',role:'تازه‌وارد'}
+    ]}
+  ]},
+  { id:'personnel',icon:'📋',title:'کارگزینی',color1:'#43e97b',color2:'#38f9d7',desc:'پرونده پرسنلی، مرخصی، گواهی اشتغال، انتقال، درخواست‌های اداری.',processes:[
+    {id:'leave-request',title:'درخواست مرخصی',desc:'ثبت، پیگیری و تایید درخواست مرخصی',audience:'پرسنل',duration:'۱۰ دقیقه + بررسی کارشناس',output:'مرخصی تاییدشده و ثبت در پرونده',steps:[
+      {title:'ورود به کارگزینی شخصی',desc:'از صفحه اصلی → کارگزینی → کارگزینی شخصی. با کد پرسنلی وارد شوید.',role:'پرسنل',link:'my_hr.html',linkLabel:'ورود'},
+      {title:'بررسی مانده مرخصی',desc:'در تب «وضعیت من»، اطلاعات پرونده را ببینید.',role:'پرسنل'},
+      {title:'رفتن به تب درخواست‌ها',desc:'روی «📨 درخواست‌های من» کلیک کنید.',role:'پرسنل'},
+      {title:'انتخاب نوع درخواست',desc:'از منوی کشویی، «مرخصی» را انتخاب کنید.',role:'پرسنل'},
+      {title:'نوشتن توضیحات',desc:'تاریخ شروع، پایان و دلیل مرخصی را بنویسید.',role:'پرسنل'},
+      {title:'ثبت درخواست',desc:'روی «ثبت درخواست» کلیک کنید.',role:'پرسنل'},
+      {title:'دریافت کد رهگیری',desc:'کد R-XXXXX را یادداشت کنید یا با دکمه «کپی» ذخیره کنید.',role:'پرسنل'},
+      {title:'انتظار بررسی کارشناس',desc:'کارشناس کارگزینی درخواست شما را در پنل خود می‌بیند.',role:'پرسنل',note:'میانگین زمان بررسی: ۱ روز کاری'},
+      {title:'پیگیری وضعیت',desc:'با کد رهگیری، در تب «درخواست‌های من» یا بخش «پیگیری» وضعیت را ببینید.',role:'پرسنل'},
+      {title:'مشاهده نتیجه نهایی',desc:'در صورت تایید، ارجاع به واحد مقصد ثبت می‌شود. در صورت رد، دلیل نمایش داده می‌شود.',role:'پرسنل'}
+    ]},
+    {id:'employment-cert',title:'درخواست گواهی اشتغال',desc:'دریافت گواهی اشتغال به کار برای ارائه به مراجع بیرونی',audience:'پرسنل',duration:'۵ دقیقه + بررسی',output:'گواهی اشتغال تاییدشده',steps:[
+      {title:'ورود به کارگزینی شخصی',desc:'از صفحه اصلی → کارگزینی → کارگزینی شخصی.',role:'پرسنل',link:'my_hr.html',linkLabel:'ورود'},
+      {title:'رفتن به تب درخواست‌ها',desc:'روی «📨 درخواست‌های من» کلیک کنید.',role:'پرسنل'},
+      {title:'انتخاب نوع «گواهی اشتغال»',desc:'از منوی کشویی انتخاب کنید.',role:'پرسنل'},
+      {title:'نوشتن توضیحات',desc:'مرجع درخواست‌کننده و دلیل نیاز را بنویسید.',role:'پرسنل'},
+      {title:'ثبت و دریافت کد رهگیری',desc:'پس از ثبت، کد پیگیری را ذخیره کنید.',role:'پرسنل'},
+      {title:'پیگیری و دریافت نتیجه',desc:'کارشناس کارگزینی پس از تایید، پاسخ را ثبت می‌کند.',role:'پرسنل'}
+    ]},
+    {id:'transfer-request',title:'درخواست انتقال',desc:'درخواست انتقال بین واحدها یا شهرستان‌ها',audience:'پرسنل',duration:'۱۵ دقیقه + بررسی',output:'درخواست انتقال ثبت‌شده',steps:[
+      {title:'ورود به کارگزینی شخصی',desc:'از صفحه اصلی → کارگزینی → کارگزینی شخصی.',role:'پرسنل',link:'my_hr.html',linkLabel:'ورود'},
+      {title:'رفتن به تب درخواست‌ها',desc:'روی «📨 درخواست‌های من» کلیک کنید.',role:'پرسنل'},
+      {title:'انتخاب نوع «انتقال»',desc:'از منوی کشویی انتخاب کنید.',role:'پرسنل'},
+      {title:'توضیحات کامل',desc:'مقصد، دلیل و شرایط انتقال را بنویسید.',role:'پرسنل'},
+      {title:'ثبت درخواست',desc:'پس از ثبت، کد رهگیری دریافت کنید.',role:'پرسنل'},
+      {title:'ارجاع خودکار به مدیرکل',desc:'درخواست انتقال به‌طور خودکار در پنل مدیرکل برای بررسی قرار می‌گیرد.',role:'سیستم',note:'مدیرکل پس از بررسی، تایید یا رد می‌کند'}
+    ]},
+    {id:'hr-answer-query',title:'پاسخ به سوال پرسنل (کارشناس)',desc:'بررسی و پاسخ به سوالات پرسنل در کارگزینی هوشمند',audience:'کارشناس کارگزینی',duration:'۵ دقیقه',output:'پاسخ ثبت‌شده در پرونده پرسنل',steps:[
+      {title:'ورود به کارگزینی هوشمند',desc:'از صفحه اصلی → کارگزینی → کارگزینی هوشمند. کد ۱۰۰۱ را وارد کنید.',role:'کارشناس',link:'smart_hr.html',linkLabel:'ورود'},
+      {title:'تب سوالات پرسنل',desc:'تب «📨 سوالات پرسنل» را باز کنید.',role:'کارشناس'},
+      {title:'بررسی سوال',desc:'روی دکمه «پاسخ» کلیک کنید و پاسخ مناسب را بنویسید.',role:'کارشناس'},
+      {title:'ارجاع به مدیرکل (در صورت نیاز)',desc:'اگر سوال نیاز به تصمیم مدیرکل دارد، روی «ارجاع به مدیرکل» بزنید.',role:'کارشناس'},
+      {title:'مشاهده در پرسنل',desc:'پاسخ در پنل پرسنل، در «درخواست‌های من» نمایش داده می‌شود.',role:'کارشناس'}
+    ]}
+  ]},
+  { id:'learning',icon:'🎓',title:'آموزش و توانمندسازی',color1:'#fa709a',color2:'#fee140',desc:'اکوسیستم توانمندسازی، ثبت چالش، دوره‌ها، سوابق آموزشی.',processes:[
+    {id:'submit-challenge',title:'ثبت چالش در اکوسیستم',desc:'ثبت چالش یا ایده برای بررسی و تبدیل به دوره',audience:'پرسنل',duration:'۵ دقیقه',output:'چالش ثبت‌شده با کد پیگیری',steps:[
+      {title:'ورود به اکوسیستم',desc:'از صفحه اصلی، کارت «اکوسیستم یادگیری» را بزنید.',role:'پرسنل',link:'learning_ecosystem.html',linkLabel:'ورود'},
+      {title:'تکمیل فرم چالش',desc:'نام (اختیاری) و متن چالش را در بخش «ثبت چالش / ایده» بنویسید.',role:'پرسنل'},
+      {title:'ثبت چالش',desc:'روی «📤 ثبت چالش» کلیک کنید.',role:'پرسنل'},
+      {title:'دریافت نتیجه ایجنت همیاب',desc:'سیستم چالش شما را با موارد مشابه مقایسه می‌کند.',role:'سیستم'},
+      {title:'انتقال به دستور کار',desc:'چالش شما به دستور کار رئیس اکوسیستم اضافه می‌شود.',role:'سیستم'}
+    ]},
+    {id:'add-knowledge',title:'افزودن دانش به باغ دانش',desc:'ثبت تجربه، دانش یا ایده در باغ دانش',audience:'پرسنل',duration:'۵ دقیقه',output:'دانش ثبت‌شده در باغ دانش',steps:[
+      {title:'ورود به اکوسیستم',desc:'از صفحه اصلی → اکوسیستم یادگیری.',role:'پرسنل',link:'learning_ecosystem.html',linkLabel:'ورود'},
+      {title:'رفتن به باغ دانش',desc:'به بخش «🌱 باغ دانش» بروید.',role:'پرسنل'},
+      {title:'تکمیل فرم',desc:'عنوان دانش جدید و متن دانش را بنویسید.',role:'پرسنل'},
+      {title:'افزودن دانش',desc:'روی «➕ افزودن دانش» کلیک کنید.',role:'پرسنل'},
+      {title:'انتقال به دستور کار',desc:'دانش شما به دستور کار رئیس اضافه می‌شود و در آرشیو نمایش داده می‌شود.',role:'سیستم'}
+    ]},
+    {id:'view-courses',title:'مشاهده دوره‌های توانمندسازی',desc:'دیدن دوره‌های ابلاغ‌شده و جزئیات',audience:'پرسنل',duration:'۲ دقیقه',output:'آشنایی با دوره‌های فعال',steps:[
+      {title:'ورود به اکوسیستم',desc:'از صفحه اصلی → اکوسیستم یادگیری.',role:'پرسنل',link:'learning_ecosystem.html',linkLabel:'ورود'},
+      {title:'بخش دوره‌ها',desc:'به بخش «🎓 دوره‌های توانمندسازی فعال» بروید.',role:'پرسنل'},
+      {title:'مشاهده جزئیات',desc:'هر کارت شامل عنوان، استاد، مدت، زمان و خروجی است.',role:'پرسنل'}
+    ]},
+    {id:'view-training-records',title:'مشاهده سوابق آموزشی من',desc:'دیدن دوره‌های گذرانده‌شده، نمره و وضعیت',audience:'پرسنل',duration:'۲ دقیقه',output:'آگاهی از سوابق آموزشی شخصی',steps:[
+      {title:'ورود به کارگزینی شخصی',desc:'از صفحه اصلی → کارگزینی → کارگزینی شخصی.',role:'پرسنل',link:'my_hr.html',linkLabel:'ورود'},
+      {title:'تب سوابق آموزشی',desc:'روی تب «🎓 سوابق آموزشی من» کلیک کنید.',role:'پرسنل'},
+      {title:'مشاهده سوابق',desc:'دوره‌ها، استاد، مدت، نمره و وضعیت هر دوره نمایش داده می‌شود.',role:'پرسنل',note:'سوابق از سوی کمیته راهبری هنگام ابلاغ دوره ثبت می‌شود'}
+    ]},
+    {id:'chief-approve-work',title:'تایید چالش و ارجاع به کمیته (رئیس اکوسیستم)',desc:'بررسی دستور کار و ارسال به کمیته راهبری',audience:'رئیس اکوسیستم',duration:'۱۰ دقیقه',output:'دستور کار تاییدشده و ارسال‌شده به کمیته',steps:[
+      {title:'ورود به اتاق فرمان',desc:'از صفحه اصلی → اکوسیستم → ورود مدیر با کد ۱۰۰۲.',role:'رئیس اکوسیستم',link:'learning_ecosystem.html',linkLabel:'ورود مدیر'},
+      {title:'تب دستور کار',desc:'روی «📋 دستور کار و برنامه‌ریزی» کلیک کنید.',role:'رئیس اکوسیستم'},
+      {title:'بررسی موارد',desc:'هر مورد (چالش یا دانش) را با جزئیات ببینید.',role:'رئیس اکوسیستم'},
+      {title:'تایید و ارجاع',desc:'روی «✅ تایید و ارجاع به کمیته» کلیک کنید.',role:'رئیس اکوسیستم'},
+      {title:'ثبت در وظایف کمیته',desc:'مورد در `hr_steering_tasks` ثبت می‌شود و برای کمیته راهبری ارسال می‌شود.',role:'سیستم'}
+    ]},
+    {id:'chief-produce-content',title:'تولید محتوای پیشنهاد امروز',desc:'ارسال مقاله، فایل یا پیشنهاد برای نمایش در صفحه اکوسیستم',audience:'رئیس اکوسیستم',duration:'۱۰ دقیقه',output:'محتوای منتشرشده در «پیشنهاد امروز»',steps:[
+      {title:'ورود به اتاق فرمان',desc:'کد ۱۰۰۲ را وارد کنید.',role:'رئیس اکوسیستم',link:'learning_ecosystem.html',linkLabel:'ورود مدیر'},
+      {title:'تب تولید محتوا',desc:'روی «📢 تولید محتوا» کلیک کنید.',role:'رئیس اکوسیستم'},
+      {title:'تکمیل فرم',desc:'عنوان، متن و در صورت نیاز فایل پیوست را انتخاب کنید.',role:'رئیس اکوسیستم'},
+      {title:'ارسال محتوا',desc:'روی «📢 ارسال محتوا به صفحه اصلی» کلیک کنید.',role:'رئیس اکوسیستم'},
+      {title:'مشاهده در صفحه عمومی',desc:'محتوا در بخش «پیشنهاد امروز» صفحه اکوسیستم نمایش داده می‌شود.',role:'سیستم'}
+    ]},
+    {id:'chief-send-report',title:'ارسال گزارش به مدیرکل',desc:'تهیه و ارسال گزارش از اکوسیستم به مدیرکل',audience:'رئیس اکوسیستم',duration:'۱۵ دقیقه',output:'گزارش دریافت‌شده در پنل مدیرکل',steps:[
+      {title:'ورود به اتاق فرمان',desc:'کد ۱۰۰۲.',role:'رئیس اکوسیستم',link:'learning_ecosystem.html',linkLabel:'ورود مدیر'},
+      {title:'تب گزارش',desc:'روی «📤 گزارش به مدیرکل» کلیک کنید.',role:'رئیس اکوسیستم'},
+      {title:'تهیه گزارش',desc:'عنوان و متن گزارش را بنویسید و «ثبت گزارش» را بزنید.',role:'رئیس اکوسیستم'},
+      {title:'تایید و ارسال',desc:'روی «✅ تایید و ارسال به مدیرکل» کلیک کنید.',role:'رئیس اکوسیستم'},
+      {title:'ثبت در پنل مدیرکل',desc:'گزارش در `hr_admin_referrals` (با sourceType: empowerment_report) ثبت می‌شود.',role:'سیستم'},
+      {title:'مشاهده در پنل مدیرکل',desc:'گزارش در کارت «🌿 گزارش‌های اکوسیستم توانمندسازی» نمایش داده می‌شود.',role:'مدیرکل',link:'admin.html',linkLabel:'پنل مدیر'}
+    ]}
+  ]},
+  { id:'welfare',icon:'🤝',title:'رفاه',color1:'#a18cd1',color2:'#fbc2eb',desc:'وام، تسهیلات، ارجاعات ادمین به رفاه.',processes:[
+    {id:'loan-request',title:'درخواست وام',desc:'ثبت درخواست وام و بررسی توسط رئیس رفاه',audience:'پرسنل',duration:'۱۰ دقیقه + بررسی',output:'وام تاییدشده یا ردشده',steps:[
+      {title:'ورود به کارگزینی شخصی',desc:'از صفحه اصلی → کارگزینی → کارگزینی شخصی.',role:'پرسنل',link:'my_hr.html',linkLabel:'ورود'},
+      {title:'تب درخواست‌ها',desc:'روی «📨 درخواست‌های من» کلیک کنید.',role:'پرسنل'},
+      {title:'انتخاب نوع «وام»',desc:'از منوی کشویی انتخاب کنید.',role:'پرسنل'},
+      {title:'توضیحات و مبلغ',desc:'مبلغ، دلیل و شرایط بازپرداخت را بنویسید.',role:'پرسنل'},
+      {title:'ثبت و دریافت کد رهگیری',desc:'پس از ثبت، کد پیگیری را ذخیره کنید.',role:'پرسنل'},
+      {title:'بررسی رئیس رفاه',desc:'رئیس رفاه با کد ۱۰۰۳ وارد می‌شود و درخواست را در تب «وام» می‌بیند.',role:'رئیس رفاه',link:'welfare_chief.html',linkLabel:'میز رئیس رفاه'},
+      {title:'تایید / رد / ارجاع',desc:'رئیس رفاه با پیام به پرسنل، تایید یا رد می‌کند. در صورت نیاز، به مدیرکل ارجاع می‌دهد.',role:'رئیس رفاه'},
+      {title:'مشاهده نتیجه',desc:'پرسنل با کد رهگیری، نتیجه را در «درخواست‌های من» می‌بیند.',role:'پرسنل'}
+    ]}
+  ]},
+  { id:'compensation',icon:'💰',title:'جبران خدمت',color1:'#f6d365',color2:'#fda085',desc:'پرداخت‌ها، مزایا و امور مربوط به حقوق.',processes:[
+    {id:'salary-question',title:'سوال درباره فیش حقوقی',desc:'ثبت سوال در مورد حقوق و مزایا',audience:'پرسنل',duration:'۵ دقیقه',output:'پاسخ کارشناس',steps:[
+      {title:'ورود به کارگزینی شخصی',desc:'از صفحه اصلی → کارگزینی → کارگزینی شخصی.',role:'پرسنل',link:'my_hr.html',linkLabel:'ورود'},
+      {title:'گفتگو با همراه هوشمند',desc:'در تب «همراه هوشمند من» سوال خود را بپرسید.',role:'پرسنل'},
+      {title:'اگر پاسخ نبود',desc:'سوال به‌طور خودکار به کارشناس کارگزینی ارجاع می‌شود (کد پیگیری Q-XXXXX).',role:'سیستم'},
+      {title:'پاسخ کارشناس',desc:'کارشناس در پنل خود پاسخ می‌دهد و در پرونده پرسنل ثبت می‌شود.',role:'کارشناس',link:'smart_hr.html',linkLabel:'کارگزینی هوشمند'}
+    ]}
+  ]},
+  { id:'decrees',icon:'📜',title:'احکام',color1:'#5ee7df',color2:'#b490ca',desc:'صدور، اصلاح و بازنویسی احکام پرسنلی.',processes:[
+    {id:'decree-revision',title:'اصلاح حکم پرسنلی',desc:'بازنویسی حکم با دستیار هوشمند احکام',audience:'پرسنل',duration:'۱۰ دقیقه + بررسی',output:'حکم اصلاحی تاییدشده',steps:[
+      {title:'دریافت کد اصلاح از مدیرکل',desc:'کد DEC-XXXX را از مدیرکل دریافت کنید.',role:'پرسنل'},
+      {title:'ورود به دستیار احکام',desc:'از صفحه اصلی → دستیار احکام.',role:'پرسنل',link:'decrees.html',linkLabel:'ورود'},
+      {title:'وارد کردن کد',desc:'کد DEC-XXXX را در کادر بنویسید و «ورود» را بزنید.',role:'پرسنل',link:'decrees.html',linkLabel:'ورود'},
+      {title:'پاسخ به سوالات دستیار',desc:'به ۴ سوال (هدف، بخش، دلیل، تایید) پاسخ دهید.',role:'پرسنل'},
+      {title:'مشاهده پیش‌نویس',desc:'پیش‌نویس حکم تولید می‌شود.',role:'پرسنل'},
+      {title:'تایید و ارسال',desc:'روی «✅ تایید و ارسال برای ادمین» کلیک کنید.',role:'پرسنل'},
+      {title:'دریافت کد رهگیری',desc:'کد DECR-XXXXX را ذخیره کنید.',role:'پرسنل'},
+      {title:'بررسی مدیرکل',desc:'حکم در پنل مدیرکل، کارت «📥 احکام جدید ارسالی» نمایش داده می‌شود.',role:'مدیرکل',link:'admin.html',linkLabel:'پنل مدیر'},
+      {title:'تایید یا رد',desc:'مدیرکل با دکمه‌های تایید/رد، وضعیت حکم را نهایی می‌کند.',role:'مدیرکل'}
+    ]},
+    {id:'decree-code-issue',title:'صدور کد اصلاح حکم (مدیرکل)',desc:'ایجاد کد یکتا برای اصلاح حکم پرسنل',audience:'مدیرکل',duration:'۲ دقیقه',output:'کد اصلاح حکم برای پرسنل',steps:[
+      {title:'ورود به پنل مدیریت',desc:'از صفحه اصلی → داشبورد هوشمند مدیریت → رمز admin.',role:'مدیرکل',link:'index.html',linkLabel:'صفحه اصلی'},
+      {title:'کارت صدور کد',desc:'به کارت «📜 صدور کد اصلاح حکم» بروید.',role:'مدیرکل',link:'admin.html',linkLabel:'پنل مدیر'},
+      {title:'تکمیل فرم',desc:'نام، کد پرسنلی را وارد کنید و «🎫 صدور کد» را بزنید.',role:'مدیرکل'},
+      {title:'ارائه کد به پرسنل',desc:'کد DEC-XXXX را به پرسنل بدهید.',role:'مدیرکل'}
+    ]}
+  ]},
+  { id:'brainstorm',icon:'💡',title:'هم‌اندیشی',color1:'#f093fb',color2:'#f5576c',desc:'ثبت نظر، مشاهده نظرات همکاران، دریافت کد رهگیری.',processes:[
+    {id:'submit-opinion',title:'ثبت نظر در هم‌اندیشی',desc:'شرکت در موضوع هم‌اندیشی روز با کد پرسنلی',audience:'پرسنل',duration:'۵ دقیقه',output:'نظر ثبت‌شده با کد رهگیری',steps:[
+      {title:'ورود به هم‌اندیشی',desc:'از صفحه اصلی → هم‌اندیشی.',role:'پرسنل',link:'brainstorming.html',linkLabel:'ورود'},
+      {title:'وارد کردن کد پرسنلی',desc:'کد پرسنلی خود را وارد کنید. کدهای مجاز: 101 تا 105.',role:'پرسنل'},
+      {title:'مشاهده موضوع امروز',desc:'موضوع هم‌اندیشی و زمان باقی‌مانده نمایش داده می‌شود.',role:'پرسنل'},
+      {title:'ثبت نظر',desc:'نظر خود را در کادر بنویسید و «ثبت نظر» را بزنید.',role:'پرسنل'},
+      {title:'دریافت کد رهگیری',desc:'کد BRN-XXXXX را ذخیره یا کپی کنید.',role:'پرسنل'},
+      {title:'مشاهده نظرات دیگران',desc:'در بخش «نظرات سایر همکاران»، با کلیک روی هر نام، متن نظر باز می‌شود.',role:'پرسنل'}
+    ]}
+  ]},
+  { id:'steering',icon:'🏛️',title:'کمیته راهبری',color1:'#84fab0',color2:'#8fd3f4',desc:'ثبت طرح درس، ابلاغ دوره به اکوسیستم، مدیریت وظایف کمیته.',processes:[
+    {id:'steering-lesson',title:'ثبت طرح درس و ابلاغ دوره',desc:'تبدیل دستور کار تاییدشده به دوره توانمندسازی',audience:'کمیته راهبری',duration:'۱۵ دقیقه',output:'دوره ابلاغ‌شده + ثبت در سوابق آموزشی پرسنل',steps:[
+      {title:'ورود به کمیته راهبری',desc:'از صفحه اصلی → کمیته راهبری. کد SC-101 را وارد کنید.',role:'کمیته',link:'steering_committee.html',linkLabel:'ورود'},
+      {title:'تب وظایف کمیته',desc:'موارد ارجاع‌شده از رئیس اکوسیستم را ببینید.',role:'کمیته'},
+      {title:'رفتن به تب ثبت طرح درس',desc:'روی «➕ ثبت طرح درس» کلیک کنید.',role:'کمیته'},
+      {title:'تکمیل فرم',desc:'عنوان، استاد، تاریخ شروع، مدت و شاخص‌ها را وارد کنید.',role:'کمیته'},
+      {title:'انتخاب مخاطبین',desc:'از فهرست پرسنل، مخاطبین دوره را انتخاب کنید.',role:'کمیته'},
+      {title:'ارسال به رئیس اکوسیستم',desc:'روی «📤 ارسال به رئیس اکوسیستم» کلیک کنید.',role:'کمیته'},
+      {title:'ساخت خودکار دوره',desc:'سیستم دوره را در `hr_eco_courses` ثبت می‌کند.',role:'سیستم'},
+      {title:'ثبت در سوابق آموزشی',desc:'سیستم برای هر مخاطب، رکورد در `hr_training_records` می‌سازد.',role:'سیستم'},
+      {title:'مشاهده در اکوسیستم',desc:'پرسنل دوره را در بخش «دوره‌های توانمندسازی فعال» می‌بیند.',role:'پرسنل',link:'learning_ecosystem.html',linkLabel:'مشاهده'},
+      {title:'مشاهده در سوابق',desc:'پرسنل دوره را در «سوابق آموزشی من» می‌بیند.',role:'پرسنل',link:'my_hr.html',linkLabel:'سوابق من'}
+    ]}
+  ]},
+  { id:'admin',icon:'👨‍💼',title:'مدیریت ارشد',color1:'#ff9a9e',color2:'#fad0c4',desc:'اتوماسیون، گزارش‌ها، مشاورین، احکام، درخواست‌های پرسنل، هم‌اندیشی.',processes:[
+    {id:'admin-refer-letter',title:'ارجاع نامه اداری',desc:'ارجاع نامه‌های اتوماسیون به واحدهای مربوطه',audience:'مدیرکل',duration:'۲ دقیقه',output:'نامه ارجاع‌شده',steps:[
+      {title:'ورود به پنل مدیریت',desc:'از صفحه اصلی → داشبورد هوشمند مدیریت → رمز admin.',role:'مدیرکل',link:'index.html',linkLabel:'صفحه اصلی'},
+      {title:'کارت اتوماسیون',desc:'به کارت «📨 مدیریت اتوماسیون اداری» بروید.',role:'مدیرکل',link:'admin.html',linkLabel:'پنل مدیر'},
+      {title:'ارجاع نامه',desc:'روی دکمه ارجاع هر نامه (کارگزینی، رفاه، آموزش، جبران خدمت) کلیک کنید.',role:'مدیرکل'}
+    ]},
+    {id:'admin-approve-request',title:'تایید درخواست پرسنل',desc:'بررسی درخواست‌های پرسنل و تایید/رد/ارجاع',audience:'مدیرکل',duration:'۵ دقیقه',output:'درخواست تاییدشده و ارجاع‌شده',steps:[
+      {title:'ورود به پنل مدیریت',desc:'رمز admin.',role:'مدیرکل',link:'admin.html',linkLabel:'پنل مدیر'},
+      {title:'کارت درخواست‌های پرسنل',desc:'به کارت «📨 درخواست‌های پرسنل» بروید.',role:'مدیرکل'},
+      {title:'بررسی و تایید/رد',desc:'روی «✅ تایید و ارجاع» یا «❌ رد» کلیک کنید. در صورت تایید، واحد مقصد را وارد کنید.',role:'مدیرکل'},
+      {title:'ارسال به واحد مقصد',desc:'درخواست به‌طور خودکار در پنل واحد مقصد نمایش داده می‌شود.',role:'سیستم'}
+    ]},
+    {id:'admin-add-consultant',title:'افزودن مشاور',desc:'تخصیص کد دسترسی به مشاور جدید',audience:'مدیرکل',duration:'۳ دقیقه',output:'مشاور با کد اختصاصی',steps:[
+      {title:'ورود به پنل مدیریت',desc:'رمز admin.',role:'مدیرکل',link:'admin.html',linkLabel:'پنل مدیر'},
+      {title:'کارت تخصیص کد',desc:'به کارت «🎫 تخصیص کد به مشاورین» بروید.',role:'مدیرکل'},
+      {title:'تکمیل فرم',desc:'کد مشاور (مثلاً C-101) و نام مشاور را وارد کنید.',role:'مدیرکل'},
+      {title:'افزودن',desc:'روی «➕ افزودن» کلیک کنید.',role:'مدیرکل'},
+      {title:'ارسال دستور به مشاور',desc:'در کارت «📤 ارسال دستور به مشاور»، مشاور را انتخاب و دستور را ارسال کنید.',role:'مدیرکل'}
+    ]},
+    {id:'admin-view-reports',title:'مشاهده گزارش‌های اکوسیستم',desc:'بررسی گزارش‌های ارسالی از رئیس توانمندسازی',audience:'مدیرکل',duration:'۵ دقیقه',output:'گزارش بررسی‌شده',steps:[
+      {title:'ورود به پنل مدیریت',desc:'رمز admin.',role:'مدیرکل',link:'admin.html',linkLabel:'پنل مدیر'},
+      {title:'کارت گزارش‌های اکوسیستم',desc:'به کارت «🌿 گزارش‌های اکوسیستم توانمندسازی» بروید.',role:'مدیرکل'},
+      {title:'مشاهده گزارش‌ها',desc:'همه گزارش‌های ارسالی از رئیس اکوسیستم (با فیلتر sourceType: empowerment_report) نمایش داده می‌شوند.',role:'مدیرکل'}
+    ]},
+    {id:'admin-view-eco-referrals',title:'مشاهده ارجاعات اکوسیستم',desc:'ارجاعات ارسالی به واحدهای مختلف',audience:'مدیرکل',duration:'۳ دقیقه',output:'ارجاعات بررسی‌شده',steps:[
+      {title:'ورود به پنل مدیریت',desc:'رمز admin.',role:'مدیرکل',link:'admin.html',linkLabel:'پنل مدیر'},
+      {title:'مشاهده ارجاعات',desc:'ارجاعات به کارگزینی در smart_hr.html، به رفاه در welfare_chief.html و به ادمین در همین پنل نمایش داده می‌شوند.',role:'مدیرکل'}
+    ]}
+  ]},
+  { id:'consultants',icon:'🧑‍🏫',title:'مشاورین',color1:'#4facfe',color2:'#43e97b',desc:'دریافت دستور از مدیرکل، آپلود گزارش کار، دریافت کد رهگیری.',processes:[
+    {id:'consultant-submit-report',title:'ارسال گزارش کار (مشاور)',desc:'آپلود گزارش و دریافت کد رهگیری',audience:'مشاور',duration:'۱۰ دقیقه',output:'گزارش ارسال‌شده به مدیرکل',steps:[
+      {title:'ورود به بخش مشاورین',desc:'از صفحه اصلی → مشاورین. کد اختصاصی خود را وارد کنید (مثلاً 101).',role:'مشاور',link:'consultants.html',linkLabel:'ورود'},
+      {title:'مشاهده دستور',desc:'آخرین دستور صادرشده توسط مدیرکل را ببینید.',role:'مشاور'},
+      {title:'انتخاب فایل گزارش',desc:'روی «📁 برای انتخاب فایل کلیک کنید» بزنید و فایل را انتخاب کنید.',role:'مشاور'},
+      {title:'نوشتن توضیحات',desc:'خلاصه‌ای از گزارش را بنویسید.',role:'مشاور'},
+      {title:'ارسال گزارش',desc:'روی «ارسال گزارش و دریافت کد رهگیری» کلیک کنید.',role:'مشاور'},
+      {title:'دریافت کد رهگیری',desc:'کد TRK-XXXXX را ذخیره کنید.',role:'مشاور'},
+      {title:'مشاهده در پنل مدیرکل',desc:'گزارش در کارت «📥 گزارش‌های دریافتی از مشاورین» نمایش داده می‌شود.',role:'مدیرکل',link:'admin.html',linkLabel:'پنل مدیر'}
+    ]}
+  ]}
+];
+
+if (!localStorage.getItem(LS.WF_PROCESSES)) {
+  setLS(LS.WF_PROCESSES, UNITS.map(u => ({ id: u.id, processes: u.processes })));
+}
+
+const LS_THEME = 'theme';
+const LS_LANG = 'lang';
+function loadTheme() { if (localStorage.getItem(LS_THEME) === 'dark') document.body.classList.add('dark'); }
+function toggleTheme() { document.body.classList.toggle('dark'); localStorage.setItem(LS_THEME, document.body.classList.contains('dark') ? 'dark' : 'light'); }
+let currentLang = localStorage.getItem(LS_LANG) || 'fa';
+function applyLang() { document.documentElement.lang = currentLang; document.documentElement.dir = currentLang === 'fa' ? 'rtl' : 'ltr'; }
+function toggleLang() { currentLang = currentLang === 'fa' ? 'en' : 'fa'; localStorage.setItem(LS_LANG, currentLang); applyLang(); }
+
+let currentUser = null;
+let currentUnit = null;
+let currentProcess = null;
+let currentTrail = null;
+
+function checkCode() {
+  const code = document.getElementById('wfCode').value.trim();
+  const personnel = getLS(LS.PERSONNEL);
+  const found = personnel.find(p => p.code === code);
+  if (found) {
+    currentUser = found;
+    document.getElementById('step1').style.display = 'none';
+    document.getElementById('step2').style.display = 'block';
+    document.getElementById('wfWelcome').textContent = 'پرسنل گرامی، ' + found.name;
+    document.getElementById('wfRole').textContent = 'واحد: ' + found.unit;
+    renderUnits();
+  } else {
+    alert('کد پرسنلی یافت نشد. کدهای مجاز: 1001 تا 1005');
+  }
+}
+function enterAsNewcomer() {
+  currentUser = { code: 'NEW', name: 'تازه‌وارد', unit: '—' };
+  document.getElementById('step1').style.display = 'none';
+  document.getElementById('step2').style.display = 'block';
+  document.getElementById('wfWelcome').textContent = 'به اداره کل سرمایه انسانی خوش آمدید!';
+  document.getElementById('wfRole').textContent = 'حالت تازه‌وارد — همه واحدها نمایش داده می‌شوند';
+  renderUnits();
+}
+
+function renderUnits() {
+  const grid = document.getElementById('unitGrid');
+  document.getElementById('unitsCount').textContent = '(' + UNITS.length + ' واحد)';
+  grid.innerHTML = UNITS.map(u => `
+  <div class="unit-card" style="--unit-c1:${u.color1};--unit-c2:${u.color2};" onclick="openUnit('${u.id}')">
+         <div class="unit-icon">${u.icon}</div>
+      <h3>${u.title}</h3>
+      <p>${u.desc}</p>
+      <div class="badges">
+        <span class="badge">${u.processes.length} فرایند</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openUnit(id) {
+  const unit = UNITS.find(u => u.id === id);
+  if (!unit) return;
+  currentUnit = unit;
+  document.getElementById('catalogView').style.display = 'none';
+  document.getElementById('unitView').style.display = 'block';
+  document.getElementById('breadcrumb').innerHTML = `<a onclick="goHome()">🏠 خانه</a> <span class="sep">›</span> <span class="current">${unit.title}</span>`;
+  document.getElementById('unitHeader').innerHTML = `<h2>${unit.icon} ${unit.title}</h2><p>${unit.desc}</p>`;
+  const grid = document.getElementById('unitProcesses');
+  grid.innerHTML = unit.processes.map(p => `
+    <div class="process-card" style="--unit-c1:${unit.color1};--unit-c2:${unit.color2};" onclick="openProcess('${p.id}')">
+      <h3>${p.title}</h3>
+      <p>${p.desc}</p>
+      <div class="meta">
+        <span>${p.steps.length} گام</span>
+        <span>${p.duration || '—'}</span>
+        <span>${p.audience}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openProcess(id) {
+  const proc = currentUnit.processes.find(p => p.id === id);
+  if (!proc) return;
+  currentProcess = proc;
+  currentTrail = {
+    id: uid('trail'),
+    personnelCode: currentUser ? currentUser.code : 'NEW',
+    personnelName: currentUser ? currentUser.name : 'تازه‌وارد',
+    unitId: currentUnit.id,
+    unitTitle: currentUnit.title,
+    processId: proc.id,
+    processTitle: proc.title,
+    startedAt: Date.now(),
+    completedSteps: [],
+    finished: false
+  };
+  saveTrail();
+  document.getElementById('unitView').style.display = 'none';
+  document.getElementById('processView').style.display = 'block';
+  document.getElementById('breadcrumb').innerHTML = `<a onclick="goHome()">🏠 خانه</a> <span class="sep">›</span> <a onclick="backToUnit()">${currentUnit.title}</a> <span class="sep">›</span> <span class="current">${proc.title}</span>`;
+  document.getElementById('processTitle').textContent = currentUnit.icon + ' ' + proc.title;
+  document.getElementById('processDesc').textContent = proc.desc;
+  document.getElementById('processMeta').innerHTML = `
+    <span>👤 ${proc.audience}</span>
+    <span>⏱️ ${proc.duration || '—'}</span>
+    <span>📤 ${proc.output || '—'}</span>
+  `;
+  renderSteps();
+}
+
+function renderSteps() {
+  const box = document.getElementById('stepsList');
+  box.innerHTML = currentProcess.steps.map((s, i) => {
+    const done = currentTrail.completedSteps.includes(i);
+    return `
+      <div class="step-item ${done ? 'done' : ''}" style="animation-delay:${0.05 * i}s;">
+        <div class="step-number">${done ? '✓' : (i + 1)}</div>
+        <div class="step-content">
+          <span class="step-role">${s.role || currentProcess.audience}</span>
+          <h4>${s.title}</h4>
+          <p>${s.desc}</p>
+          ${s.note ? `<div class="step-note">💡 ${s.note}</div>` : ''}
+          <div class="step-actions">
+            ${s.link ? `<a href="${s.link}" class="btn-goto">${s.linkLabel || 'رفتن'} ←</a>` : ''}
+            ${!done ? `<button class="btn-done-step" onclick="markStepDone(${i})">✅ انجام دادم</button>` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  const pct = Math.round((currentTrail.completedSteps.length / currentProcess.steps.length) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = toFaNum(pct) + '٪ تکمیل (' + toFaNum(currentTrail.completedSteps.length) + ' از ' + toFaNum(currentProcess.steps.length) + ')';
+  if (currentTrail.completedSteps.length === currentProcess.steps.length && !currentTrail.finished) {
+    currentTrail.finished = true;
+    saveTrail();
+    document.getElementById('helpfulBox').style.display = 'block';
+  } else if (currentTrail.finished) {
+    document.getElementById('helpfulBox').style.display = 'block';
+  }
+}
+
+function toFaNum(n) { return String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]); }
+
+function markStepDone(idx) {
+  if (!currentTrail.completedSteps.includes(idx)) {
+    currentTrail.completedSteps.push(idx);
+    saveTrail();
+    renderSteps();
+  }
+}
+function saveTrail() {
+  const trails = getLS(LS.WF_TRAILS);
+  const idx = trails.findIndex(t => t.id === currentTrail.id);
+  if (idx > -1) trails[idx] = currentTrail;
+  else trails.push(currentTrail);
+  setLS(LS.WF_TRAILS, trails);
+}
+function submitFeedback(helpful) {
+  const feedbacks = getLS(LS.WF_FEEDBACK);
+  feedbacks.push({
+    id: uid('fb'), trailId: currentTrail.id, processId: currentProcess.id,
+    processTitle: currentProcess.title, unitId: currentUnit.id,
+    personnelCode: currentUser ? currentUser.code : 'NEW',
+    helpful: !!helpful, at: Date.now()
+  });
+  setLS(LS.WF_FEEDBACK, feedbacks);
+  alert(helpful ? '✅ سپاس! بازخورد شما ثبت شد.' : '🙏 سپاس! از این بازخورد برای بهبود استفاده می‌کنیم.');
+  backToUnit();
+}
+
+function goHome() {
+  document.getElementById('unitView').style.display = 'none';
+  document.getElementById('processView').style.display = 'none';
+  document.getElementById('catalogView').style.display = 'block';
+  document.getElementById('breadcrumb').innerHTML = `<a onclick="goHome()">🏠 خانه</a> <span class="sep">›</span> <span class="current">فهرست واحدها</span>`;
+  document.getElementById('searchResults').style.display = 'none';
+  document.getElementById('unitsList').style.display = 'block';
+  document.getElementById('wfSearch').value = '';
+  currentUnit = null;
+  currentProcess = null;
+}
+function backToUnit() {
+  document.getElementById('processView').style.display = 'none';
+  document.getElementById('unitView').style.display = 'block';
+  document.getElementById('helpfulBox').style.display = 'none';
+  openUnit(currentUnit.id);
+}
+
+function renderSearch(query) {
+  const q = (query || '').trim();
+  if (!q) {
+    document.getElementById('searchResults').style.display = 'none';
+    document.getElementById('unitsList').style.display = 'block';
+    return;
+  }
+  const results = [];
+  UNITS.forEach(unit => {
+    unit.processes.forEach(proc => {
+      const text = (proc.title + ' ' + proc.desc + ' ' + proc.steps.map(s => s.title + ' ' + s.desc).join(' ')).toLowerCase();
+      if (text.includes(q.toLowerCase())) results.push({ unit, proc });
+    });
+  });
+  const sr = document.getElementById('searchResults');
+  sr.style.display = 'block';
+  document.getElementById('unitsList').style.display = 'none';
+  if (results.length === 0) {
+    sr.innerHTML = '<p style="text-align:center;color:var(--muted);font-style:italic;padding:30px;">فرایندی یافت نشد. سوال خود را در دستیار هوشمند صفحه اصلی بپرسید.</p>';
+    return;
+  }
+  sr.innerHTML = `<div class="section-title">🔍 ${toFaNum(results.length)} نتیجه برای «${q}»</div>
+    <div class="process-grid">
+      ${results.map(r => `
+        <div class="process-card" style="--unit-c1:${r.unit.color1};--unit-c2:${r.unit.color2};" onclick="openUnit('${r.unit.id}'); setTimeout(()=>openProcess('${r.proc.id}'),50);">
+          <h3>${r.unit.icon} ${r.proc.title}</h3>
+          <p>${r.unit.title} — ${r.proc.desc}</p>
+          <div class="meta">
+            <span>${r.proc.steps.length} گام</span>
+            <span>${r.proc.audience}</span>
+          </div>
+        </div>
+      `).join('')}
+    </div>`;
+}
+
+function toggleSatisfaction() { const box = document.getElementById('satisfactionBox'); box.style.bottom = (box.style.bottom === '0px') ? '-250px' : '0px'; }
+function submitSatisfaction(score) { localStorage.setItem('wayfinder_satisfaction', score); alert('امتیاز ' + score + ' ثبت شد. با تشکر!'); document.getElementById('satisfactionBox').style.bottom = '-250px'; }
+
+loadTheme();
+applyLang();
+</script>
+</body>
+</html>

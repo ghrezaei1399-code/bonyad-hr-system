@@ -1,0 +1,602 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>کمیته راهبری | بنیاد شهید</title>
+<style>
+  :root{
+    --bg:#f4f6fb; --card:#ffffff; --ink:#12203a; --muted:#6b7a90;
+    --line:#e2e8f0; --brand:#1e3a8a; --brand2:#2563eb; --ok:#16a34a;
+    --warn:#d97706; --danger:#dc2626; --chip:#eef2ff;
+  }
+  [data-theme="dark"]{
+    --bg:#0b1220; --card:#121a2b; --ink:#e6edf7; --muted:#94a3b8;
+    --line:#1e293b; --brand:#3b82f6; --brand2:#60a5fa; --chip:#1e293b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Vazirmatn,Tahoma,system-ui,sans-serif;background:var(--bg);color:var(--ink);}
+  header.top{
+    display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+    padding:12px 20px;background:var(--card);border-bottom:1px solid var(--line);
+    position:sticky;top:0;z-index:10;
+  }
+  header.top h1{font-size:16px;margin:0;color:var(--brand);}
+  .spacer{flex:1}
+  .btn{
+    border:1px solid var(--line);background:var(--card);color:var(--ink);
+    padding:8px 14px;border-radius:10px;cursor:pointer;font-size:13px;
+    display:inline-flex;align-items:center;gap:6px;transition:.15s;
+  }
+  .btn:hover{border-color:var(--brand2);color:var(--brand2)}
+  .btn.primary{background:var(--brand2);color:#fff;border-color:var(--brand2)}
+  .btn.primary:hover{background:var(--brand);color:#fff}
+  .btn.ok{background:var(--ok);color:#fff;border-color:var(--ok)}
+  .btn.ok:hover{filter:brightness(.95);color:#fff}
+  .btn.danger{color:var(--danger);border-color:var(--danger)}
+  main{max-width:1100px;margin:0 auto;padding:20px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px}
+  .card h2{margin:0 0 12px;font-size:15px;color:var(--brand)}
+  .tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+  .tab{
+    padding:9px 16px;border-radius:10px;border:1px solid var(--line);
+    background:var(--card);cursor:pointer;font-size:13px;
+  }
+  .tab.active{background:var(--brand2);color:#fff;border-color:var(--brand2)}
+  .field{margin-bottom:12px}
+  .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+  .field input,.field select,.field textarea{
+    width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;
+    background:var(--bg);color:var(--ink);font-family:inherit;font-size:13px;
+  }
+  .field textarea{min-height:70px;resize:vertical}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:640px){.row{grid-template-columns:1fr}}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{padding:9px 8px;text-align:right;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600;font-size:12px}
+  .chip{display:inline-block;padding:2px 8px;border-radius:999px;background:var(--chip);font-size:11px;color:var(--brand2)}
+  .empty{text-align:center;color:var(--muted);padding:24px;font-size:13px}
+  .people-picker{
+    max-height:180px;overflow:auto;border:1px solid var(--line);border-radius:9px;
+    padding:6px;background:var(--bg);
+  }
+  .people-picker label{
+    display:flex;align-items:center;gap:8px;padding:5px 6px;border-radius:6px;font-size:12.5px;cursor:pointer;
+  }
+  .people-picker label:hover{background:var(--chip)}
+  .toast{
+    position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+    background:var(--ok);color:#fff;padding:10px 18px;border-radius:10px;
+    font-size:13px;opacity:0;pointer-events:none;transition:.3s;z-index:99;
+  }
+  .toast.show{opacity:1}
+  .toast.err{background:var(--danger)}
+  .login-wrap{max-width:380px;margin:60px auto}
+  .hidden{display:none!important}
+</style>
+<script src="assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="top">
+  <h1>🏛️ کمیته راهبری توانمندسازی</h1>
+  <span class="spacer"></span>
+  <button class="btn" id="btnBack">→ برگشت</button>
+  <button class="btn" id="btnTheme">🌓 تم</button>
+  <button class="btn" id="btnLang">🌐 EN</button>
+  <button class="btn danger hidden" id="btnLogout" data-fa="خروج" data-en="Logout">خروج</button>
+</header>
+
+<main>
+
+  <!-- ============ LOGIN ============ -->
+  <section id="loginView" class="login-wrap">
+    <div class="card">
+      <h2>ورود اعضای کمیته راهبری</h2>
+      <div class="field">
+        <label>کد دسترسی</label>
+        <input id="scCode" placeholder="SC-101" autocomplete="off" />
+      </div>
+      <button class="btn primary" style="width:100%" id="btnLogin" data-fa="ورود" data-en="Login">ورود</button>
+      <p style="font-size:11.5px;color:var(--muted);margin-top:10px">
+        کد پیش‌فرض نمونه: <b>SC-101</b>
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ APP ============ -->
+  <section id="appView" class="hidden">
+
+    <div class="tabs">
+      <button class="tab active" data-tab="tasks">📋 وظایف کمیته</button>
+      <button class="tab" data-tab="newLesson">➕ ثبت طرح درس</button>
+      <button class="tab" data-tab="courses">🎓 دوره‌های اکوسیستم</button>
+      <button class="tab" data-tab="records">📚 سوابق آموزشی</button>
+    </div>
+
+    <!-- TAB: tasks -->
+    <div id="tab-tasks" class="tab-pane">
+      <div class="card">
+        <h2>وظایف ارجاع‌شده به کمیته</h2>
+        <div id="tasksList"></div>
+      </div>
+    </div>
+
+    <!-- TAB: newLesson -->
+    <div id="tab-newLesson" class="tab-pane hidden">
+      <div class="card">
+        <h2>ثبت طرح درس جدید</h2>
+        <div class="row">
+          <div class="field">
+            <label>عنوان دوره *</label>
+            <input id="lcTitle" placeholder="مثال: مهارت‌های ارتباط مؤثر" />
+          </div>
+          <div class="field">
+            <label>استاد / مدرس *</label>
+            <input id="lcInstructor" placeholder="نام مدرس" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>تاریخ شروع</label>
+            <input id="lcStart" type="date" />
+          </div>
+          <div class="field">
+            <label>مدت (ساعت)</label>
+            <input id="lcHours" type="number" min="1" value="8" />
+          </div>
+        </div>
+        <div class="field">
+          <label>شاخص‌های ارزیابی (با کاما جدا کنید)</label>
+          <input id="lcIndicators" placeholder="مثال: حضور فعال، آزمون پایانی، پروژه عملی" />
+        </div>
+        <div class="field">
+          <label>توضیحات / سرفصل‌ها</label>
+          <textarea id="lcDesc" placeholder="سرفصل‌ها و اهداف دوره..."></textarea>
+        </div>
+        <div class="field">
+          <label>مخاطبین (از پرسنل) — چند انتخابی</label>
+          <div class="people-picker" id="peoplePicker"></div>
+          <div style="font-size:11.5px;color:var(--muted);margin-top:6px">
+            انتخاب‌شده‌ها: <b id="pickedCount">0</b> نفر
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+          <button class="btn primary" id="btnSaveDraft">💾 ذخیره پیش‌نویس</button>
+          <button class="btn ok" id="btnSendEco">📤 ارسال به رئیس اکوسیستم</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: courses -->
+    <div id="tab-courses" class="tab-pane hidden">
+      <div class="card">
+        <h2>دوره‌های ساخته‌شده در اکوسیستم</h2>
+        <div id="coursesList"></div>
+      </div>
+    </div>
+
+    <!-- TAB: records -->
+    <div id="tab-records" class="tab-pane hidden">
+      <div class="card">
+        <h2>سوابق آموزشی ثبت‌شده</h2>
+        <div id="recordsList"></div>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   CONFIG & STORAGE KEYS
+============================================================ */
+const LS = {
+  PERSONNEL:        'hr_personnel',
+  STEERING_TASKS:   'hr_steering_tasks',
+  TRAINING_RECORDS: 'hr_training_records',
+  ECO_COURSES:      'hr_eco_courses',
+  ECO_REPORTS:      'hr_eco_reports',
+  SC_SESSION:       'sc_session',
+  LANG:             'sc_lang',
+  THEME:            'sc_theme'
+};
+
+const SC_VALID_CODE = 'SC-101';
+
+/* ============================================================
+   HELPERS
+============================================================ */
+const $  = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>Array.from(r.querySelectorAll(s));
+
+function readLS(key, fallback=[]){
+  try{ const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+  catch(e){ console.warn('LS read err', key, e); return fallback; }
+}
+function writeLS(key, val){
+  try{ localStorage.setItem(key, JSON.stringify(val)); }
+  catch(e){ console.warn('LS write err', key, e); }
+}
+function uid(prefix='id'){
+  return prefix + '-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,7);
+}
+function nowISO(){ return new Date().toISOString(); }
+function faDate(iso){
+  if(!iso) return '—';
+  try{ return new Date(iso).toLocaleDateString('fa-IR'); }catch{ return iso; }
+}
+function esc(s){
+  return String(s==null?'':s).replace(/[&<>"']/g, m=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[m]));
+}
+function toast(msg, isErr=false){
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.toggle('err', !!isErr);
+  t.classList.add('show');
+  clearTimeout(t._tm);
+  t._tm = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+/* ============================================================
+   THEME / LANG
+============================================================ */
+function applyTheme(){
+  const t = localStorage.getItem(LS.THEME) || 'light';
+  document.documentElement.setAttribute('data-theme', t);
+}
+function toggleTheme(){
+  const cur = localStorage.getItem(LS.THEME) || 'light';
+  const nxt = cur === 'light' ? 'dark' : 'light';
+  localStorage.setItem(LS.THEME, nxt);
+  applyTheme();
+}
+function applyLang(){
+  const lang = localStorage.getItem(LS.LANG) || 'fa';
+  document.documentElement.lang = lang;
+  document.documentElement.dir  = (lang === 'fa') ? 'rtl' : 'ltr';
+  $('#btnLang').textContent = (lang === 'fa') ? '🌐 EN' : '🌐 FA';
+}
+function toggleLang(){
+  const cur = localStorage.getItem(LS.LANG) || 'fa';
+  localStorage.setItem(LS.LANG, cur === 'fa' ? 'en' : 'fa');
+  applyLang();
+}
+
+/* ============================================================
+   AUTH
+============================================================ */
+function isLoggedIn(){
+  const s = readLS(LS.SC_SESSION, null);
+  return !!(s && s.code === SC_VALID_CODE);
+}
+function login(code){
+  if((code||'').trim().toUpperCase() !== SC_VALID_CODE){
+    toast('کد دسترسی نامعتبر است', true); return false;
+  }
+  writeLS(LS.SC_SESSION, { code: SC_VALID_CODE, at: nowISO() });
+  return true;
+}
+function logout(){
+  localStorage.removeItem(LS.SC_SESSION);
+  location.reload();
+}
+
+/* ============================================================
+   RENDER: TASKS
+============================================================ */
+function renderTasks(){
+  const tasks = readLS(LS.STEERING_TASKS, []);
+  const box = $('#tasksList');
+  if(!tasks.length){
+    box.innerHTML = '<div class="empty">وظیفه‌ای برای کمیته ثبت نشده است.</div>';
+    return;
+  }
+  const rows = tasks.map(t=>{
+    const status = t.status || 'open';
+    const chip = status === 'done'
+      ? '<span class="chip" style="background:#dcfce7;color:#166534">انجام‌شده</span>'
+      : status === 'in_progress'
+      ? '<span class="chip" style="background:#fef3c7;color:#92400e">در جریان</span>'
+      : '<span class="chip">باز</span>';
+    return `<tr>
+      <td>${esc(t.title || t.subject || '—')}</td>
+      <td>${esc(t.from || t.source || '—')}</td>
+      <td>${faDate(t.createdAt || t.date)}</td>
+      <td>${chip}</td>
+      <td>
+        ${status!=='done'
+          ? `<button class="btn ok" data-mark-done="${esc(t.id)}">✔ انجام شد</button>`
+          : '—'}
+      </td>
+    </tr>`;
+  }).join('');
+  box.innerHTML = `
+    <table>
+      <thead><tr><th data-fa="موضوع" data-en="Subject">موضوع</th><th>ارجاع‌دهنده</th><th data-fa="تاریخ" data-en="Date">تاریخ</th><th data-fa="وضعیت" data-en="Status">وضعیت</th><th data-fa="عملیات" data-en="Action">عملیات</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+
+  $$('[data-mark-done]', box).forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const id = b.getAttribute('data-mark-done');
+      const all = readLS(LS.STEERING_TASKS, []);
+      const idx = all.findIndex(x=>x.id===id);
+      if(idx>-1){
+        all[idx].status = 'done';
+        all[idx].doneAt = nowISO();
+        writeLS(LS.STEERING_TASKS, all);
+        toast('وظیفه انجام‌شده علامت‌گذاری شد');
+        renderTasks();
+      }
+    });
+  });
+}
+
+/* ============================================================
+   RENDER: PEOPLE PICKER (from hr_personnel)
+============================================================ */
+function renderPeoplePicker(){
+  const people = readLS(LS.PERSONNEL, []);
+  const box = $('#peoplePicker');
+  if(!people.length){
+    box.innerHTML = '<div class="empty" style="padding:12px">پرسنلی یافت نشد.</div>';
+    return;
+  }
+  box.innerHTML = people.map(p=>{
+    const id = p.id || p.personnelCode || p.code || uid('p');
+    const name = p.fullName || p.name || `${p.firstName||''} ${p.lastName||''}`.trim() || 'بدون نام';
+    const unit = p.unit || p.department || '';
+    return `<label>
+      <input type="checkbox" value="${esc(id)}" data-name="${esc(name)}" />
+      <span>${esc(name)} ${unit?`<span class="chip">${esc(unit)}</span>`:''}</span>
+    </label>`;
+  }).join('');
+  updatePickedCount();
+  $$('input[type=checkbox]', box).forEach(cb=>{
+    cb.addEventListener('change', updatePickedCount);
+  });
+}
+function getPickedPeople(){
+  return $$('#peoplePicker input[type=checkbox]:checked').map(cb=>({
+    id: cb.value,
+    name: cb.getAttribute('data-name')
+  }));
+}
+function updatePickedCount(){
+  $('#pickedCount').textContent = getPickedPeople().length;
+}
+
+/* ============================================================
+   SAVE DRAFT / SEND TO ECO
+============================================================ */
+function collectLessonForm(){
+  return {
+    title:      $('#lcTitle').value.trim(),
+    instructor: $('#lcInstructor').value.trim(),
+    startDate:  $('#lcStart').value,
+    hours:      Number($('#lcHours').value) || 0,
+    indicators: $('#lcIndicators').value.split(',').map(s=>s.trim()).filter(Boolean),
+    desc:       $('#lcDesc').value.trim(),
+    audience:   getPickedPeople()
+  };
+}
+function validateLessonForm(f){
+  if(!f.title){ toast('عنوان دوره الزامی است', true); return false; }
+  if(!f.instructor){ toast('نام استاد الزامی است', true); return false; }
+  if(!f.audience.length){ toast('حداقل یک مخاطب انتخاب کنید', true); return false; }
+  return true;
+}
+
+function saveDraft(){
+  const f = collectLessonForm();
+  if(!f.title){ toast('عنوان دوره الزامی است', true); return; }
+  const drafts = readLS('sc_lesson_drafts', []);
+  drafts.push({
+    id: uid('draft'),
+    ...f,
+    status: 'draft',
+    createdAt: nowISO()
+  });
+  writeLS('sc_lesson_drafts', drafts);
+  toast('پیش‌نویس ذخیره شد');
+}
+function sendToEco(){
+  const f = collectLessonForm();
+  if(!validateLessonForm(f)) return;
+
+  const courseId = uid('course');
+
+  // 1) ساخت دوره در hr_eco_courses
+  const courses = readLS(LS.ECO_COURSES, []);
+  const courseObj = {
+    id: courseId,
+    title: f.title,
+    instructor: f.instructor,
+    startDate: f.startDate,
+    hours: f.hours,
+    indicators: f.indicators,
+    desc: f.desc,
+    audience: f.audience,
+    source: 'steering_committee',
+    createdBy: 'SC-101',
+    createdAt: nowISO(),
+    status: 'active'
+  };
+  courses.push(courseObj);
+  writeLS(LS.ECO_COURSES, courses);
+
+  // 2) ثبت در hr_training_records برای هر مخاطب
+  const records = readLS(LS.TRAINING_RECORDS, []);
+  f.audience.forEach(a=>{
+    records.push({
+      id: uid('rec'),
+      personnelId: a.id,
+      personnelName: a.name,
+      courseId: courseId,
+      courseTitle: f.title,
+      instructor: f.instructor,
+      startDate: f.startDate,
+      hours: f.hours,
+      score: null,
+      status: 'enrolled',
+      indicators: f.indicators,
+      recordedBy: 'steering_committee',
+      createdAt: nowISO()
+    });
+  });
+  writeLS(LS.TRAINING_RECORDS, records);
+
+  // 3) ثبت پیام/ارجاع به رئیس اکوسیستم در hr_eco_reports (اختیاری، پیام)
+  const reports = readLS(LS.ECO_REPORTS, []);
+  reports.push({
+    id: uid('rep'),
+    type: 'lesson_plan_from_steering',
+    courseId: courseId,
+    title: f.title,
+    audience: f.audience,
+    createdAt: nowISO(),
+    from: 'SC-101',
+    to: 'eco_chief'
+  });
+  writeLS(LS.ECO_REPORTS, reports);
+
+  toast(`دوره «${f.title}» در اکوسیستم ثبت و برای ${f.audience.length} نفر رکورد آموزشی ساخته شد`);
+
+  // reset form
+  $('#lcTitle').value = '';
+  $('#lcInstructor').value = '';
+  $('#lcStart').value = '';
+  $('#lcHours').value = 8;
+  $('#lcIndicators').value = '';
+  $('#lcDesc').value = '';
+  $$('#peoplePicker input[type=checkbox]').forEach(cb=>cb.checked=false);
+  updatePickedCount();
+
+  // refresh tabs
+  renderCourses();
+  renderRecords();
+  switchTab('courses');
+}
+
+/* ============================================================
+   RENDER: COURSES
+============================================================ */
+function renderCourses(){
+  const courses = readLS(LS.ECO_COURSES, []).slice().reverse();
+  const box = $('#coursesList');
+  if(!courses.length){
+    box.innerHTML = '<div class="empty">هنوز دوره‌ای ساخته نشده است.</div>'; return;
+  }
+  box.innerHTML = `
+    <table>
+      <thead><tr><th>عنوان</th><th>استاد</th><th>شروع</th><th>ساعت</th><th>مخاطبین</th><th>منبع</th></tr></thead>
+      <tbody>
+      ${courses.map(c=>`
+        <tr>
+          <td>${esc(c.title)}</td>
+          <td>${esc(c.instructor||'—')}</td>
+          <td>${faDate(c.startDate)}</td>
+          <td>${esc(c.hours||'—')}</td>
+          <td>${(c.audience||[]).length} نفر</td>
+          <td><span class="chip">${esc(c.source||'—')}</span></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+/* ============================================================
+   RENDER: RECORDS
+============================================================ */
+function renderRecords(){
+  const recs = readLS(LS.TRAINING_RECORDS, []).slice().reverse();
+  const box = $('#recordsList');
+  if(!recs.length){
+    box.innerHTML = '<div class="empty">سابقه‌ای ثبت نشده است.</div>'; return;
+  }
+  box.innerHTML = `
+    <table>
+      <thead><tr><th data-fa="پرسنل" data-en="Personnel">پرسنل</th><th data-fa="دوره" data-en="Course">دوره</th><th>استاد</th><th data-fa="تاریخ" data-en="Date">تاریخ</th><th>ساعت</th><th data-fa="وضعیت" data-en="Status">وضعیت</th></tr></thead>
+      <tbody>
+      ${recs.map(r=>`
+        <tr>
+          <td>${esc(r.personnelName||r.personnelId||'—')}</td>
+          <td>${esc(r.courseTitle||'—')}</td>
+          <td>${esc(r.instructor||'—')}</td>
+          <td>${faDate(r.startDate||r.createdAt)}</td>
+          <td>${esc(r.hours||'—')}</td>
+          <td><span class="chip">${esc(r.status||'—')}</span></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+/* ============================================================
+   TABS
+============================================================ */
+function switchTab(name){
+  $$('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===name));
+  $$('.tab-pane').forEach(p=>p.classList.add('hidden'));
+  const el = $('#tab-'+name);
+  if(el) el.classList.remove('hidden');
+
+  if(name==='tasks')   renderTasks();
+  if(name==='courses') renderCourses();
+  if(name==='records') renderRecords();
+  if(name==='newLesson'){ renderPeoplePicker(); }
+}
+
+/* ============================================================
+   INIT
+============================================================ */
+function boot(){
+  applyTheme();
+  applyLang();
+
+  if(isLoggedIn()){
+    $('#loginView').classList.add('hidden');
+    $('#appView').classList.remove('hidden');
+    $('#btnLogout').classList.remove('hidden');
+    switchTab('tasks');
+  }else{
+    $('#loginView').classList.remove('hidden');
+    $('#appView').classList.add('hidden');
+  }
+}
+
+/* ============================================================
+   EVENTS
+============================================================ */
+document.addEventListener('DOMContentLoaded', ()=>{
+
+  boot();
+
+  $('#btnBack').addEventListener('click', ()=> location.href='index.html');
+  $('#btnTheme').addEventListener('click', toggleTheme);
+  $('#btnLang').addEventListener('click', toggleLang);
+  $('#btnLogout').addEventListener('click', logout);
+
+  $('#btnLogin').addEventListener('click', ()=>{
+    const code = $('#scCode').value;
+    if(login(code)){ boot(); }
+  });
+  $('#scCode').addEventListener('keydown', e=>{
+    if(e.key==='Enter'){ $('#btnLogin').click(); }
+  });
+
+  $$('.tab').forEach(t=>{
+    t.addEventListener('click', ()=> switchTab(t.dataset.tab));
+  });
+
+  $('#btnSaveDraft').addEventListener('click', saveDraft);
+  $('#btnSendEco').addEventListener('click', sendToEco);
+});
+</script>
+</body>
+</html>
+

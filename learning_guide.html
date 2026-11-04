@@ -1,0 +1,176 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>راهنمای توانمندسازی در اکوسیستم یادگیری زنده و ارگانیک</title>
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+<style>
+:root {
+  --bg-gradient: linear-gradient(135deg, #e0f2f1 0%, #f1f8e9 50%, #fff8e1 100%);
+  --text-dark: #1a3b32;
+  --gold: #d4a843;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', Tahoma, sans-serif; }
+body { background: var(--bg-gradient); color: var(--text-dark); min-height: 100vh; padding: 20px; overflow-x: hidden; position: relative; }
+body::before { content: ''; position: fixed; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%); transform: skewX(-25deg); animation: shinePage 10s infinite linear; pointer-events: none; z-index: 1; }
+@keyframes shinePage { 0% { left: -100%; } 100% { left: 200%; } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes shineCard { 0% { left: -100%; } 100% { left: 200%; } }
+
+header { display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #1a2a4a 0%, #2a3f6b 100%); color: #fff; padding: 15px 30px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(26, 42, 74, 0.4); position: relative; overflow: hidden; animation: fadeInUp 0.6s ease forwards; z-index: 2; }
+header::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%); transform: skewX(-25deg); animation: shineCard 5s infinite; }
+header h1 { font-size: 1.2rem; font-weight: 800; color: var(--gold); }
+.back-btn { background: rgba(255,255,255,0.2); color: #fff; padding: 8px 20px; border-radius: 12px; text-decoration: none; font-weight: bold; border: 1px solid rgba(255,255,255,0.4); transition: 0.3s; }
+.back-btn:hover { background: var(--gold); color: #1a2a4a; transform: scale(1.05); }
+
+.ticker-wrap { background: linear-gradient(90deg, var(--gold), #f1c65e, var(--gold)); color: #fff; padding: 6px 0; border-radius: 15px; overflow: hidden; font-weight: 600; font-size: 0.85rem; white-space: nowrap; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(212, 168, 67, 0.3); position: relative; z-index: 2; }
+.ticker { display: inline-block; animation: tickerScroll 25s linear infinite; }
+.ticker span { padding: 0 25px; }
+@keyframes tickerScroll { 0% { transform: translateX(0); } 100% { transform: translateX(100%); } }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; position: relative; z-index: 2; }
+.card { border-radius: 18px; padding: 20px; background: var(--card-gradient); backdrop-filter: blur(10px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; overflow: hidden; animation: fadeInUp 0.6s ease forwards; transition: transform 0.3s ease, box-shadow 0.3s ease; color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+.card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
+.card::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%); transform: skewX(-25deg); animation: shineCard 4s infinite; pointer-events: none; }
+
+.card:nth-child(1) { --card-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+.card:nth-child(2) { --card-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+.card:nth-child(3) { --card-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+.card:nth-child(4) { --card-gradient: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); }
+.card:nth-child(5) { --card-gradient: linear-gradient(135deg, #f6d365 0%, #fda085 100%); }
+.card:nth-child(6) { --card-gradient: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%); }
+.card:nth-child(7) { --card-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+.card:nth-child(8) { --card-gradient: linear-gradient(135deg, #5ee7df 0%, #b490ca 100%); }
+
+.card h3 { font-size: 1rem; font-weight: 800; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.card p { font-size: 0.85rem; line-height: 1.7; color: rgba(255,255,255,0.95); margin-bottom: 10px; }
+.card ul { padding-right: 20px; margin-bottom: 10px; }
+.card ul li { font-size: 0.85rem; line-height: 1.6; margin-bottom: 5px; }
+.card code { background: rgba(255,255,255,0.25); padding: 2px 8px; border-radius: 6px; font-family: monospace; font-size: 0.82rem; }
+.card .highlight { background: rgba(255,255,255,0.2); padding: 8px 12px; border-radius: 8px; border-right: 3px solid #fff; margin-top: 10px; font-weight: bold; }
+
+@media (max-width: 768px) { header { flex-direction: column; gap: 10px; text-align: center; } }
+</style>
+<script src="assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header>
+  <h1>📘 راهنمای توانمندسازی در اکوسیستم یادگیری</h1>
+  <a href="index.html" class="back-btn">بازگشت به صفحه اصلی</a>
+</header>
+
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span>✦ یادگیری ارگانیک، از دل کار واقعی ✦</span>
+    <span>✦ کمیته راهبری، قلب تپنده برنامه‌ریزی ✦</span>
+    <span>✦ دانش خود را با همکاران به اشتراک بگذارید ✦</span>
+  </div>
+</div>
+
+<div class="grid">
+
+  <div class="card">
+    <h3>🎓 سوابق آموزشی من</h3>
+    <p>هر پرسنل می‌تواند در صفحه <code>my_hr.html</code>، تب <b>«سوابق آموزشی من»</b> را ببیند: دوره‌های ثبت‌شده، استاد، مدت، نمره و وضعیت.</p>
+    <p><strong>منبع داده:</strong> <code>hr_training_records</code> — که کمیته راهبری هنگام ابلاغ دوره ایجاد می‌کند.</p>
+    <div class="highlight">مسیر: صفحه اصلی → کارگزینی → کارگزینی شخصی → سوابق آموزشی من</div>
+  </div>
+
+  <div class="card">
+    <h3>🌿 چرا اکوسیستم یادگیری؟</h3>
+    <p>در این اکوسیستم، یادگیری همچون نفس کشیدن طبیعی و بی‌وقفه جریان دارد. برخلاف دوره‌های سنتی، محتوا از دل چالش‌های واقعی کارکنان بیرون می‌آید و توسط خود آن‌ها تولید می‌شود.</p>
+    <p><strong>مزیت اصلی:</strong> کاهش هزینه‌های آموزش، افزایش مشارکت کارکنان و تولید دانش سازمانی پایدار.</p>
+    <div class="highlight">خروجی: کارکنانی توانمند که در لحظه نیاز، به دانش مورد نظر دسترسی دارند.</div>
+  </div>
+
+  <div class="card">
+    <h3>🚪 ورودی‌های سامانه (سه نقش اصلی)</h3>
+    <ul>
+      <li><strong>۱. پرسنل:</strong> از طریق سامانه آموزش با کد پرسنلی وارد می‌شود و چالش‌های خود را ثبت می‌کند.</li>
+      <li><strong>۲. ادمین/رئیس اداره آموزش:</strong> بر فرآیندها نظارت داشته و گزارش‌ها را دریافت می‌کند.</li>
+      <li><strong>۳. رئیس اکوسیستم:</strong> دستور کارها را تایید کرده و به کمیته راهبری ارسال می‌کند.</li>
+    </ul>
+    <div class="highlight">خروجی: هر نقش با دسترسی مشخص، در چرخه یادگیری مشارکت می‌کند.</div>
+  </div>
+
+  <div class="card">
+    <h3>📤 خروجی‌های اصلی</h3>
+    <p><strong>۱. گزارش برای ادمین اصلی:</strong> شامل آمار مشارکت، چالش‌های حل‌شده و دانش‌های تولیدشده.</p>
+    <p><strong>۲. ثبت در پرونده آموزشی کارکنان:</strong> تمام فعالیت‌ها (مطالعه، آزمون، مشارکت) در پرونده ثبت می‌شود و بعداً از طریق دیتابیس بنیاد متصل می‌گردد.</p>
+    <div class="highlight">خروجی: داده‌های قابل استناد برای ارزیابی عملکرد و توسعه شغلی.</div>
+  </div>
+
+  <div class="card">
+    <h3>🏛️ کمیته راهبری و نقش دبیر</h3>
+    <p>کمیته راهبری توانمندسازی، متشکل از نمایندگان منابع انسانی، آموزش، فناوری اطلاعات و رئیس اکوسیستم است. وظیفه آن تصویب طرح‌های درس، تعیین مخاطبین و ابلاغ دوره‌هاست.</p>
+    <p><strong>دسترسی:</strong> از صفحه اصلی، دکمه <b>«کمیته راهبری»</b> (کد ورود: <code>SC-101</code>).</p>
+    <p><strong>خروجی:</strong> ایجاد دوره در اکوسیستم + ثبت خودکار در سوابق آموزشی پرسنل.</p>
+    <div class="highlight">دسترسی مستقیم: <code>steering_committee.html</code></div>
+  </div>
+
+  <div class="card">
+    <h3>📜 آموزش‌های بالادستی (دستور مقامات)</h3>
+    <p>برخی آموزش‌ها بر اساس دستورات مقامات بالادست (مثلاً آموزش پدافند غیرعامل) ابلاغ می‌شود. این بخش در اکوسیستم پیش‌بینی شده است تا این دوره‌ها به صورت خودکار در برنامه آموزشی کارکنان قرار گیرد.</p>
+    <p>هوش مصنوعی برنامه‌ریز، با دریافت دستور، زمان‌بندی و نحوه برگزاری (حضوری/آنلاین/مطالعه PDF) را پیشنهاد می‌دهد.</p>
+    <div class="highlight">خروجی: اجرای دقیق و به‌موقع آموزش‌های ابلاغی.</div>
+  </div>
+
+  <div class="card">
+    <h3>🤖 هوش‌های پشتیبان در اکوسیستم</h3>
+    <ul>
+      <li><strong>ایجنت همیاب:</strong> تطبیق چالش‌ها با همکاران مرتبط.</li>
+      <li><strong>ایجنت باغبان:</strong> استخراج دانش از مکالمات و ذخیره در باغ دانش.</li>
+      <li><strong>ایجنت ترغیب‌گر:</strong> ایجاد انگیزه و پیشنهاد محتوا بر اساس فعالیت کاربر.</li>
+      <li><strong>هوش برنامه‌ریز:</strong> پیش‌بینی طرح درس، استاد، زمان و مکان بر اساس نتایج کمیته.</li>
+    </ul>
+    <div class="highlight">خروجی: خودکارسازی فرآیندها و شخصی‌سازی یادگیری.</div>
+  </div>
+
+  <div class="card">
+    <h3>🛠️ ابزارهای پشتیبان گزارش</h3>
+    <ul>
+      <li><strong>پنل مدیریت:</strong> دریافت گزارش‌های اکوسیستم از رئیس توانمندسازی (کارت «گزارش‌های اکوسیستم توانمندسازی»).</li>
+      <li><strong>کارگزینی هوشمند:</strong> نمایش ارجاعات ادمین و درخواست‌های پرسنل در دو تب اختصاصی.</li>
+      <li><strong>خروجی Word/Excel/PDF:</strong> دریافت گزارش در قالب‌های مختلف.</li>
+    </ul>
+    <div class="highlight">خروجی: شفافیت کامل بین اکوسیستم، کارگزینی و مدیریت ارشد.</div>
+  </div>
+
+</div>
+
+<!-- باکس نظرسنجی رضایتمندی (کشویی و باریک) -->
+<div id="satisfactionToggle" onclick="toggleSatisfaction()" style="position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #1a2a4a 0%, #2a3f6b 100%); color: #fff; padding: 8px 25px; border-radius: 15px 15px 0 0; cursor: pointer; z-index: 9999; font-weight: bold; font-size: 0.85rem; box-shadow: 0 -5px 15px rgba(0,0,0,0.2); border: 1px solid #d4a843; border-bottom: none; direction: rtl;">
+  ⭐ ثبت رضایتمندی
+</div>
+
+<div id="satisfactionBox" style="position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 500px; background: #fff; padding: 15px; border-radius: 15px 15px 0 0; box-shadow: 0 -10px 30px rgba(0,0,0,0.3); z-index: 9998; text-align: center; direction: rtl; border: 2px solid #d4a843; border-bottom: none; transition: bottom 0.4s ease;">
+  <p style="margin-bottom: 10px; font-weight: bold; color: #1a2a4a; font-size: 0.9rem;">میزان رضایت شما از این صفحه چقدر است؟ (۰ = عدم رضایت، ۵ = رضایت بسیار زیاد)</p>
+  <div style="display: flex; gap: 10px; justify-content: center;">
+    <button onclick="submitSatisfaction(0)" style="width: 45px; height: 45px; border-radius: 50%; border: none; background: #ff4757; color: #fff; cursor: pointer; font-weight: bold; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(255,71,87,0.4);">۰</button>
+    <button onclick="submitSatisfaction(1)" style="width: 45px; height: 45px; border-radius: 50%; border: none; background: #ff6b81; color: #fff; cursor: pointer; font-weight: bold; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(255,107,129,0.4);">۱</button>
+    <button onclick="submitSatisfaction(2)" style="width: 45px; height: 45px; border-radius: 50%; border: none; background: #ffa502; color: #fff; cursor: pointer; font-weight: bold; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(255,165,2,0.4);">۲</button>
+    <button onclick="submitSatisfaction(3)" style="width: 45px; height: 45px; border-radius: 50%; border: none; background: #eccc68; color: #1a2a4a; cursor: pointer; font-weight: bold; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(236,204,104,0.4);">۳</button>
+    <button onclick="submitSatisfaction(4)" style="width: 45px; height: 45px; border-radius: 50%; border: none; background: #7bed9f; color: #1a2a4a; cursor: pointer; font-weight: bold; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(123,237,159,0.4);">۴</button>
+    <button onclick="submitSatisfaction(5)" style="width: 45px; height: 45px; border-radius: 50%; border: none; background: #2ed573; color: #fff; cursor: pointer; font-weight: bold; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(46,213,115,0.4);">۵</button>
+  </div>
+</div>
+
+<script>
+function toggleSatisfaction() {
+  const box = document.getElementById('satisfactionBox');
+  if (box.style.bottom === '0px') {
+    box.style.bottom = '-200px';
+  } else {
+    box.style.bottom = '0px';
+  }
+}
+
+function submitSatisfaction(score) {
+  alert('امتیاز ' + score + ' شما ثبت شد. با تشکر از همکاری شما!');
+  document.getElementById('satisfactionBox').style.bottom = '-200px';
+}
+</script>
+</body>
+</html>

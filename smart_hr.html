@@ -1,0 +1,683 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>کارگزینی هوشمند | اداره کل سرمایه انسانی</title>
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+<style>
+:root {
+  --bg-gradient: linear-gradient(135deg, #e0f2f1 0%, #f1f8e9 50%, #fff8e1 100%);
+  --gold: #d4a843;
+  --primary: #0d8a63;
+  --card-bg: #fff;
+  --text: #1a2a4a;
+  --muted: #666;
+}
+body.dark {
+  --bg-gradient: linear-gradient(135deg, #0a3b2a 0%, #1a4d3a 50%, #3a2e1a 100%);
+  --card-bg: #102b20;
+  --text: #e8f5e9;
+  --muted: #a5c9b8;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', Tahoma, sans-serif; }
+body {
+  background: var(--bg-gradient); min-height: 100vh; padding: 20px;
+  display: flex; flex-direction: column; align-items: center;
+  transition: background 0.5s; color: var(--text); position: relative; overflow-x: hidden;
+}
+body::before {
+  content: ''; position: fixed; top: 0; left: -100%; width: 50%; height: 100%;
+  background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+  transform: skewX(-25deg); animation: shinePage 10s infinite linear; pointer-events: none; z-index: 1;
+}
+@keyframes shinePage { 0% { left: -100%; } 100% { left: 200%; } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes shineCard { 0% { left: -100%; } 100% { left: 200%; } }
+
+header {
+  width: 100%; max-width: 1100px; display: flex; justify-content: space-between; align-items: center;
+  background: linear-gradient(135deg, #1a2a4a 0%, #2a3f6b 100%); color: #fff;
+  padding: 15px 25px; border-radius: 20px; margin-bottom: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25); position: relative; overflow: hidden;
+  z-index: 2; animation: fadeInUp 0.6s ease forwards;
+}
+header::before {
+  content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+  background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0) 100%);
+  transform: skewX(-25deg); animation: shineCard 5s infinite;
+}
+header h1 { font-size: 1.2rem; color: var(--gold); position: relative; z-index: 2; }
+.back-btn {
+  background: rgba(255,255,255,0.2); color: #fff; padding: 8px 20px; border-radius: 12px;
+  text-decoration: none; font-weight: bold; transition: 0.3s; position: relative; z-index: 2;
+  border: 1px solid rgba(255,255,255,0.4); cursor: pointer; font-size: 0.85rem;
+}
+.back-btn:hover { background: var(--gold); color: #1a2a4a; transform: scale(1.05); }
+
+.floating-controls { position: fixed; top: 15px; left: 15px; display: flex; flex-direction: column; gap: 8px; z-index: 150; }
+.float-btn {
+  width: 40px; height: 40px; border-radius: 50%; border: none; background: #fff; color: #1a2a4a;
+  font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15); transition: 0.3s;
+}
+.float-btn:hover { background: var(--gold); color: #fff; transform: scale(1.1) rotate(10deg); }
+
+.main-card {
+  width: 100%; max-width: 1100px; background: var(--card-bg); border-radius: 25px; padding: 30px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.1); border: 2px solid var(--gold);
+  position: relative; overflow: hidden; z-index: 2; animation: fadeInUp 0.7s ease forwards;
+}
+
+#step1 { text-align: center; padding: 30px 20px; }
+#step1 h2 { color: var(--text); margin-bottom: 15px; }
+#step1 p { color: var(--muted); margin-bottom: 20px; line-height: 1.7; }
+#step1 input {
+  padding: 12px; border-radius: 10px; border: 2px solid #ddd; font-family: inherit;
+  font-size: 1rem; width: 250px; text-align: center; margin-bottom: 15px; outline: none;
+}
+#step1 button {
+  padding: 12px 30px; border: none; border-radius: 10px; background: var(--primary);
+  color: #fff; font-weight: bold; cursor: pointer; font-size: 1rem; transition: 0.3s;
+}
+#step1 button:hover { background: var(--gold); }
+
+#step2 { display: none; }
+.welcome-bar {
+  background: linear-gradient(135deg, #0d8a63, #1f9e73); color: #fff;
+  padding: 15px 20px; border-radius: 15px; margin-bottom: 20px;
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+}
+.welcome-bar h3 { font-size: 1.1rem; }
+.welcome-bar span { font-size: 0.85rem; opacity: 0.9; }
+
+.tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.tab-btn {
+  padding: 10px 20px; border: 2px solid var(--gold); border-radius: 12px;
+  background: transparent; color: var(--text); font-family: inherit; font-weight: bold;
+  cursor: pointer; transition: 0.3s; font-size: 0.9rem;
+}
+.tab-btn.active { background: var(--gold); color: #1a2a4a; }
+.tab-btn:hover { background: var(--gold); color: #1a2a4a; }
+
+.tab-content { display: none; animation: fadeInUp 0.4s ease forwards; }
+.tab-content.active { display: block; }
+
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.stat-card {
+  padding: 15px; border-radius: 15px; color: #fff; text-align: center;
+  position: relative; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+.stat-card:nth-child(1) { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+.stat-card:nth-child(2) { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+.stat-card:nth-child(3) { background: linear-gradient(135deg, #fa709a, #fee140); }
+.stat-card:nth-child(4) { background: linear-gradient(135deg, #a18cd1, #fbc2eb); }
+.stat-card:nth-child(5) { background: linear-gradient(135deg, #f6d365, #fda085); }
+.stat-card:nth-child(6) { background: linear-gradient(135deg, #84fab0, #8fd3f4); }
+.stat-card .num { font-size: 2rem; font-weight: 900; margin-bottom: 5px; }
+.stat-card .label { font-size: 0.85rem; opacity: 0.95; }
+
+.list-box { background: rgba(0,0,0,0.03); border-radius: 15px; padding: 15px; margin-top: 15px; max-height: 400px; overflow-y: auto; }
+body.dark .list-box { background: rgba(255,255,255,0.05); }
+.list-item {
+  background: #fff; border-radius: 12px; padding: 12px 15px; margin-bottom: 10px;
+  border-right: 4px solid var(--gold); box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+body.dark .list-item { background: #1a3a2a; }
+.list-item h4 { font-size: 0.95rem; color: var(--text); margin-bottom: 5px; }
+.list-item p { font-size: 0.82rem; color: var(--muted); line-height: 1.6; margin-bottom: 8px; }
+.list-item .meta { font-size: 0.75rem; color: var(--muted); margin-bottom: 8px; }
+.list-item .actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.list-item .actions button {
+  padding: 5px 12px; border: none; border-radius: 8px; font-family: inherit;
+  font-weight: bold; cursor: pointer; font-size: 0.75rem; transition: 0.3s;
+}
+.btn-approve { background: #2ed573; color: #fff; }
+.btn-reject { background: #ff4757; color: #fff; }
+.btn-refer { background: #4facfe; color: #fff; }
+.btn-view { background: #f6d365; color: #1a2a4a; }
+.list-item .actions button:hover { transform: scale(1.05); }
+
+.empty-msg { text-align: center; padding: 30px; color: var(--muted); font-style: italic; }
+
+.assistant-box {
+  background: linear-gradient(135deg, #1a2a4a, #2a3f6b); border-radius: 15px;
+  padding: 15px; margin-top: 20px; color: #fff;
+}
+.assistant-box h4 { color: var(--gold); margin-bottom: 10px; }
+.assistant-chat {
+  background: rgba(0,0,0,0.3); border-radius: 10px; padding: 10px;
+  height: 120px; overflow-y: auto; margin-bottom: 10px; font-size: 0.82rem;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.assistant-chat .msg { padding: 6px 10px; border-radius: 8px; max-width: 85%; line-height: 1.5; }
+.assistant-chat .msg.bot { background: rgba(255,255,255,0.15); align-self: flex-start; }
+.assistant-chat .msg.user { background: var(--gold); color: #1a2a4a; align-self: flex-end; }
+.assistant-input { display: flex; gap: 8px; }
+.assistant-input input {
+  flex: 1; padding: 8px 12px; border-radius: 8px; border: none;
+  font-family: inherit; font-size: 0.85rem; outline: none;
+}
+.assistant-input button {
+  padding: 8px 18px; border-radius: 8px; border: none; background: var(--gold);
+  color: #1a2a4a; font-weight: bold; cursor: pointer; font-family: inherit; font-size: 0.85rem;
+}
+
+#satisfactionToggle { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #1a2a4a 0%, #2a3f6b 100%); color: #fff; padding: 8px 25px; border-radius: 15px 15px 0 0; cursor: pointer; z-index: 9999; font-weight: bold; font-size: 0.85rem; border: 1px solid var(--gold); border-bottom: none; }
+#satisfactionBox { position: fixed; bottom: -220px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 500px; background: var(--card-bg); padding: 15px; border-radius: 15px 15px 0 0; box-shadow: 0 -10px 30px rgba(0,0,0,0.3); z-index: 9998; text-align: center; border: 2px solid var(--gold); border-bottom: none; transition: bottom 0.4s ease; }
+
+@media (max-width: 600px) {
+  .main-card { padding: 18px; }
+  .welcome-bar h3 { font-size: 0.95rem; }
+  .stat-card .num { font-size: 1.5rem; }
+}
+</style>
+<script src="assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header>
+  <h1 data-fa="⚙️ کارگزینی هوشمند" data-en="⚙️ Smart Personnel">⚙️ کارگزینی هوشمند</h1>
+  <a href="personnel_hub.html" class="back-btn" data-fa="بازگشت" data-en="Back">بازگشت</a>
+</header>
+
+<div class="floating-controls">
+  <button class="float-btn" onclick="toggleTheme()" title="تم روز/شب">🌓</button>
+  <button class="float-btn" onclick="toggleLang()" title="تغییر زبان">🌐</button>
+</div>
+
+<div class="main-card">
+
+  <div id="step1">
+    <h2 data-fa="🌟 خوش آمدید، کارشناس کارگزینی" data-en="🌟 Welcome, HR Expert">🌟 خوش آمدید، کارشناس کارگزینی</h2>
+    <p data-fa="لطفاً کد پرسنلی خود را وارد کنید تا به داشبورد نظارتی دسترسی پیدا کنید." data-en="Please enter your personnel code to access the supervisory dashboard.">لطفاً کد پرسنلی خود را وارد کنید تا به داشبورد نظارتی دسترسی پیدا کنید.</p>
+    <input type="text" id="hrCode" placeholder="کد پرسنلی (مثلاً 1001)" data-fa-placeholder="کد پرسنلی" data-en-placeholder="Personnel code">
+    <br>
+    <button onclick="checkHRCode()" data-fa="ورود" data-en="Enter">ورود</button>
+  </div>
+
+  <div id="step2">
+    <div class="welcome-bar">
+      <h3 id="welcomeText">کارشناس گرامی، خوش آمدید</h3>
+      <span id="dateText"></span>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('queries', this)" data-fa="📨 سوالات پرسنل" data-en="📨 Employee Queries">📨 سوالات پرسنل</button>
+      <button class="tab-btn" onclick="showTab('promotions', this)" data-fa="📋 ارجاعی‌ها" data-en="📋 Referrals">📋 ارجاعی‌ها</button>
+      <button class="tab-btn" onclick="showTab('ican', this)" data-fa="💪 من می‌توانم" data-en="💪 I Can">💪 من می‌توانم</button>
+      <button class="tab-btn" onclick="showTab('learning', this)" data-fa="🌿 نیازهای آموزشی" data-en="🌿 Learning">🌿 نیازهای آموزشی</button>
+      <button class="tab-btn" onclick="showTab('knowledge', this)" data-fa="📚 دانش و تجربه" data-en="📚 Knowledge">📚 دانش و تجربه</button>
+      <button class="tab-btn" onclick="showTab('adminRef', this)" data-fa="📥 ارجاعات ادمین" data-en="📥 Admin Referrals">📥 ارجاعات ادمین</button>
+      <button class="tab-btn" onclick="showTab('hrReq', this)" data-fa="📨 درخواست‌های کارگزینی" data-en="📨 Personnel Requests">📨 درخواست‌های کارگزینی</button>
+    </div>
+
+    <div id="tab-queries" class="tab-content active">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="num" id="statQueries">0</div><div class="label" data-fa="سوالات در انتظار" data-en="Pending">سوالات در انتظار</div></div>
+        <div class="stat-card"><div class="num" id="statPromotions">0</div><div class="label" data-fa="ارجاعی‌ها" data-en="Referrals">ارجاعی‌ها</div></div>
+        <div class="stat-card"><div class="num" id="statIcan">0</div><div class="label" data-fa="موارد توانمندی" data-en="I Can">موارد توانمندی</div></div>
+        <div class="stat-card"><div class="num" id="statLearning">0</div><div class="label" data-fa="نیازهای آموزشی" data-en="Learning">نیازهای آموزشی</div></div>
+        <div class="stat-card"><div class="num" id="statKnowledge">0</div><div class="label" data-fa="دانش‌ها" data-en="Knowledge">دانش‌ها</div></div>
+        <div class="stat-card"><div class="num" id="statPersonnel">0</div><div class="label" data-fa="پرونده‌ها" data-en="Personnel">پرونده‌ها</div></div>
+      </div>
+      <h3 style="margin-bottom:10px;" data-fa="📨 سوالات پرسنل از کارشناس" data-en="📨 Employee Queries">📨 سوالات پرسنل از کارشناس</h3>
+      <div class="list-box" id="queriesList"></div>
+    </div>
+
+    <div id="tab-promotions" class="tab-content">
+      <h3 style="margin-bottom:10px;" data-fa="📋 موارد ارجاع‌شده به مدیرکل" data-en="📋 Referred to Director">📋 موارد ارجاع‌شده به مدیرکل</h3>
+      <div class="list-box" id="promotionsList"></div>
+    </div>
+
+    <div id="tab-ican" class="tab-content">
+      <h3 style="margin-bottom:10px;" data-fa="💪 موارد توانمندی ثبت‌شده" data-en="💪 I Can Cases">💪 موارد توانمندی ثبت‌شده</h3>
+      <div class="list-box" id="icanList"></div>
+    </div>
+
+    <div id="tab-learning" class="tab-content">
+      <h3 style="margin-bottom:10px;" data-fa="🌿 نیازهای آموزشی پرسنل" data-en="🌿 Learning Needs">🌿 نیازهای آموزشی پرسنل</h3>
+      <div class="list-box" id="learningList"></div>
+    </div>
+
+    <div id="tab-knowledge" class="tab-content">
+      <h3 style="margin-bottom:10px;" data-fa="📚 دانش‌های ارسالی پرسنل" data-en="📚 Submitted Knowledge">📚 دانش‌های ارسالی پرسنل</h3>
+      <div class="list-box" id="knowledgeList"></div>
+    </div>
+
+    <div id="tab-adminRef" class="tab-content">
+      <h3 style="margin-bottom:10px;" data-fa="📥 ارجاعات ادمین به کارگزینی" data-en="📥 Admin Referrals to HR">📥 ارجاعات ادمین به کارگزینی</h3>
+      <div class="list-box" id="adminRefList"></div>
+    </div>
+
+    <div id="tab-hrReq" class="tab-content">
+      <h3 style="margin-bottom:10px;" data-fa="📨 درخواست‌های کارگزینی (سوالات پرسنل)" data-en="📨 Personnel Requests">📨 درخواست‌های کارگزینی (سوالات پرسنل)</h3>
+      <div class="list-box" id="hrReqList"></div>
+    </div>
+
+    <div class="assistant-box">
+      <h4 data-fa="🌟 دستیار هوشمند کارشناس" data-en="🌟 Smart Expert Assistant">🌟 دستیار هوشمند کارشناس</h4>
+      <div class="assistant-chat" id="assistantChat">
+        <div class="msg bot" data-fa="سلام! من دستیار هوشمند کارشناس کارگزینی هستم. می‌توانم در تحلیل داده‌ها، بررسی موارد و ارائه پیشنهاد کمک کنم. سوال خود را بپرسید." data-en="Hello! I am the smart HR expert assistant. I can help analyze data, review cases and provide suggestions.">سلام! من دستیار هوشمند کارشناس کارگزینی هستم. می‌توانم در تحلیل داده‌ها، بررسی موارد و ارائه پیشنهاد کمک کنم. سوال خود را بپرسید.</div>
+      </div>
+      <div class="assistant-input">
+        <input type="text" id="assistantInput" placeholder="سوال خود را بنویسید..." onkeypress="if(event.key==='Enter') sendAssistant()">
+        <button onclick="sendAssistant()" data-fa="ارسال" data-en="Send">ارسال</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="satisfactionToggle" onclick="toggleSatisfaction()" data-fa="⭐ ثبت رضایتمندی" data-en="⭐ Rate us">⭐ ثبت رضایتمندی</div>
+<div id="satisfactionBox">
+  <p style="margin-bottom: 10px; font-weight: bold; color: var(--text);" data-fa="میزان رضایت شما از این صفحه چقدر است؟" data-en="How satisfied are you?">میزان رضایت شما از این صفحه چقدر است؟</p>
+  <div style="display: flex; gap: 8px; justify-content: center;">
+    <button onclick="submitSatisfaction(1)" style="width: 40px; height: 40px; border-radius: 50%; border: none; background: #ff4757; color: #fff; cursor: pointer; font-weight: bold;">۱</button>
+    <button onclick="submitSatisfaction(2)" style="width: 40px; height: 40px; border-radius: 50%; border: none; background: #ff6b81; color: #fff; cursor: pointer; font-weight: bold;">۲</button>
+    <button onclick="submitSatisfaction(3)" style="width: 40px; height: 40px; border-radius: 50%; border: none; background: #ffa502; color: #fff; cursor: pointer; font-weight: bold;">۳</button>
+    <button onclick="submitSatisfaction(4)" style="width: 40px; height: 40px; border-radius: 50%; border: none; background: #7bed9f; color: #1a2a4a; cursor: pointer; font-weight: bold;">۴</button>
+    <button onclick="submitSatisfaction(5)" style="width: 40px; height: 40px; border-radius: 50%; border: none; background: #2ed573; color: #fff; cursor: pointer; font-weight: bold;">۵</button>
+  </div>
+</div>
+
+<script src="assets/js/site_knowledge.js"></script>
+<script src="assets/js/smart_assistant.js"></script>
+<script>
+const LS = {
+  PERSONNEL: 'hr_personnel',
+  QUERIES: 'hr_personal_queries',
+  PROMOTIONS: 'hr_promotion_cases',
+  ICAN: 'hr_ican_cases',
+  LEARNING: 'hr_learning_requests',
+  KNOWLEDGE: 'hr_knowledge_entries',
+  SETTINGS: 'hr_settings',
+  ADMIN_REFERRALS: 'hr_admin_referrals'
+};
+
+function getLS(key, fallback = []) {
+  try { return JSON.parse(localStorage.getItem(key)) || fallback; }
+  catch { return fallback; }
+}
+function setLS(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+function faDate(ts) { try { return new Date(ts).toLocaleString('fa-IR'); } catch { return new Date(ts).toLocaleString(); } }
+
+const LS_THEME = 'theme';
+const LS_LANG = 'lang';
+function loadTheme() { if (localStorage.getItem(LS_THEME) === 'dark') document.body.classList.add('dark'); }
+function toggleTheme() {
+  document.body.classList.toggle('dark');
+  localStorage.setItem(LS_THEME, document.body.classList.contains('dark') ? 'dark' : 'light');
+}
+let currentLang = localStorage.getItem(LS_LANG) || 'fa';
+function applyLang() {
+  document.documentElement.lang = currentLang;
+  document.documentElement.dir = currentLang === 'fa' ? 'rtl' : 'ltr';
+  document.querySelectorAll('[data-fa]').forEach(el => {
+    el.textContent = currentLang === 'fa' ? el.dataset.fa : el.dataset.en;
+  });
+  document.querySelectorAll('[data-fa-placeholder]').forEach(el => {
+    el.placeholder = currentLang === 'fa' ? el.dataset.faPlaceholder : el.dataset.enPlaceholder;
+  });
+}
+function toggleLang() {
+  currentLang = currentLang === 'fa' ? 'en' : 'fa';
+  localStorage.setItem(LS_LANG, currentLang);
+  applyLang();
+}
+
+let currentExpert = null;
+if (!localStorage.getItem('hr_personnel')) {
+  localStorage.setItem('hr_personnel', JSON.stringify([
+    { code: '1001', name: 'علی رضایی', unit: 'کارگزینی' },
+    { code: '1002', name: 'مریم حسینی', unit: 'آموزش' },
+    { code: '1003', name: 'رضا کریمی', unit: 'رفاه' },
+    { code: '1004', name: 'زهرا محمدی', unit: 'جبران خدمت' },
+    { code: '1005', name: 'حسین نوری', unit: 'فناوری اطلاعات' }
+  ]));
+}
+
+function checkHRCode() {
+  const code = document.getElementById('hrCode').value.trim();
+  const personnel = getLS(LS.PERSONNEL);
+  const found = personnel.find(p => p.code === code);
+  if (found) {
+    currentExpert = found;
+    document.getElementById('step1').style.display = 'none';
+    document.getElementById('step2').style.display = 'block';
+    document.getElementById('welcomeText').textContent = (currentLang === 'fa' ? 'کارشناس گرامی، ' : 'Dear expert, ') + found.name + ' — ' + found.unit;
+    document.getElementById('dateText').textContent = faDate(Date.now());
+    renderAll();
+  } else {
+       alert(currentLang === 'fa'
+      ? 'کد پرسنلی یافت نشد. لطفاً ابتدا از داشبورد مدیریت، پرونده پرسنلی ثبت کنید. کدهای پیش‌فرض: 1001 تا 1005'
+      : 'Personnel code not found. Default codes: 1001 to 1005');
+  }
+}
+
+function showTab(name, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'adminRef') renderAdminRef();
+  if (name === 'hrReq') renderHrReq();
+}
+
+function renderAll() {
+  renderQueries();
+  renderPromotions();
+  renderIcan();
+  renderLearning();
+  renderKnowledge();
+  renderAdminRef();
+  renderHrReq();
+  updateStats();
+}
+
+function updateStats() {
+  document.getElementById('statQueries').textContent = getLS(LS.QUERIES).filter(q => q.status === 'pending').length;
+  document.getElementById('statPromotions').textContent = getLS(LS.PROMOTIONS).filter(p => p.status === 'pending').length;
+  document.getElementById('statIcan').textContent = getLS(LS.ICAN).filter(i => i.status === 'pending').length;
+  document.getElementById('statLearning').textContent = getLS(LS.LEARNING).filter(l => l.status === 'pending').length;
+  document.getElementById('statKnowledge').textContent = getLS(LS.KNOWLEDGE).length;
+  document.getElementById('statPersonnel').textContent = getLS(LS.PERSONNEL).length;
+}
+
+function renderQueries() {
+  const box = document.getElementById('queriesList');
+  const queries = getLS(LS.QUERIES);
+  if (queries.length === 0) {
+    box.innerHTML = '<p class="empty-msg">' + (currentLang === 'fa' ? 'سوالی ثبت نشده است.' : 'No queries.') + '</p>';
+    return;
+  }
+  box.innerHTML = queries.slice().reverse().map(q => `
+    <div class="list-item">
+      <h4>${q.personnelCode ? 'پرسنل ' + q.personnelCode : 'کاربر'} — ${q.trackingCode || ''}</h4>
+      <p>${q.question || q.text || '(بدون متن)'}</p>
+      <div class="meta">${faDate(q.createdAt)} — وضعیت: ${q.status === 'answered' ? 'پاسخ داده شده' : 'در انتظار'}</div>
+      ${q.answer ? `<div class="meta" style="color:#0d8a63;">پاسخ: ${q.answer}</div>` : ''}
+      ${q.status === 'pending' ? `
+        <div class="actions">
+          <button class="btn-approve" onclick="answerQuery('${q.id}')">پاسخ</button>
+          <button class="btn-refer" onclick="referQuery('${q.id}')">ارجاع به مدیرکل</button>
+        </div>` : ''}
+    </div>
+  `).join('');
+}
+
+function answerQuery(id) {
+  const answer = prompt('پاسخ خود را وارد کنید:');
+  if (!answer) return;
+  const queries = getLS(LS.QUERIES);
+  const q = queries.find(x => x.id === id);
+  if (!q) return;
+  q.answer = answer;
+  q.status = 'answered';
+  q.answeredAt = Date.now();
+  q.answeredBy = currentExpert ? currentExpert.name : 'کارشناس';
+  setLS(LS.QUERIES, queries);
+  renderQueries();
+  updateStats();
+  alert('پاسخ ثبت شد.');
+}
+
+function referQuery(id) {
+  const queries = getLS(LS.QUERIES);
+  const q = queries.find(x => x.id === id);
+  if (!q) return;
+  const promotions = getLS(LS.PROMOTIONS);
+  promotions.push({
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+    type: 'query',
+    sourceId: id,
+    title: 'ارجاع سوال پرسنل: ' + (q.question || q.text || '').substring(0, 50),
+    personnelCode: q.personnelCode,
+    question: q.question || q.text,
+    status: 'pending',
+    createdAt: Date.now(),
+    referredBy: currentExpert ? currentExpert.name : 'کارشناس'
+  });
+  setLS(LS.PROMOTIONS, promotions);
+  q.status = 'referred';
+  setLS(LS.QUERIES, queries);
+  renderQueries();
+  renderPromotions();
+  updateStats();
+  alert('به مدیرکل ارجاع شد.');
+}
+
+function renderPromotions() {
+  const box = document.getElementById('promotionsList');
+  const promotions = getLS(LS.PROMOTIONS);
+  if (promotions.length === 0) {
+    box.innerHTML = '<p class="empty-msg">موردی ارجاع نشده است.</p>';
+    return;
+  }
+  box.innerHTML = promotions.slice().reverse().map(p => `
+    <div class="list-item">
+      <h4>${p.title || 'مورد ارجاعی'}</h4>
+      <p>${p.question || p.description || ''}</p>
+      <div class="meta">${faDate(p.createdAt)} — ارجاع‌دهنده: ${p.referredBy || '—'} — وضعیت: ${p.status === 'approved' ? 'تایید شده' : p.status === 'rejected' ? 'رد شده' : 'در انتظار'}</div>
+    </div>
+  `).join('');
+}
+
+function renderIcan() {
+  const box = document.getElementById('icanList');
+  const ican = getLS(LS.ICAN);
+  if (ican.length === 0) {
+    box.innerHTML = '<p class="empty-msg">موردی ثبت نشده است.</p>';
+    return;
+  }
+  box.innerHTML = ican.slice().reverse().map(i => `
+    <div class="list-item">
+      <h4>${i.personnelCode ? 'پرسنل ' + i.personnelCode : 'کاربر'} — ${i.type || 'توانمندی'}</h4>
+      <p>${i.description || i.text || ''}</p>
+      <div class="meta">${faDate(i.createdAt)} — وضعیت: ${i.status === 'approved' ? 'تایید' : i.status === 'rejected' ? 'رد' : 'در انتظار'}</div>
+      ${i.status === 'pending' ? `
+        <div class="actions">
+          <button class="btn-approve" onclick="approveIcan('${i.id}')">تایید</button>
+          <button class="btn-reject" onclick="rejectIcan('${i.id}')">رد</button>
+          <button class="btn-refer" onclick="referIcan('${i.id}')">ارجاع به مدیرکل</button>
+        </div>` : ''}
+    </div>
+  `).join('');
+}
+
+function approveIcan(id) {
+  const ican = getLS(LS.ICAN);
+  const item = ican.find(x => x.id === id);
+  if (!item) return;
+  item.status = 'approved';
+  item.reviewedAt = Date.now();
+  setLS(LS.ICAN, ican);
+  renderIcan();
+  updateStats();
+  alert('تایید شد.');
+}
+
+function rejectIcan(id) {
+  const ican = getLS(LS.ICAN);
+  const item = ican.find(x => x.id === id);
+  if (!item) return;
+  item.status = 'rejected';
+  item.reviewedAt = Date.now();
+  setLS(LS.ICAN, ican);
+  renderIcan();
+  updateStats();
+  alert('رد شد.');
+}
+
+function referIcan(id) {
+  const ican = getLS(LS.ICAN);
+  const item = ican.find(x => x.id === id);
+  if (!item) return;
+  const promotions = getLS(LS.PROMOTIONS);
+  promotions.push({
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+    type: 'ican',
+    sourceId: id,
+    title: 'ارجاع توانمندی: ' + (item.type || ''),
+    personnelCode: item.personnelCode,
+    question: item.description || item.text || '',
+    status: 'pending',
+    createdAt: Date.now(),
+    referredBy: currentExpert ? currentExpert.name : 'کارشناس'
+  });
+  setLS(LS.PROMOTIONS, promotions);
+  item.status = 'referred';
+  setLS(LS.ICAN, ican);
+  renderIcan();
+  renderPromotions();
+  updateStats();
+  alert('به مدیرکل ارجاع شد.');
+}
+
+function renderLearning() {
+  const box = document.getElementById('learningList');
+  const learning = getLS(LS.LEARNING);
+  if (learning.length === 0) {
+    box.innerHTML = '<p class="empty-msg">نیازی ثبت نشده است.</p>';
+    return;
+  }
+  box.innerHTML = learning.slice().reverse().map(l => `
+    <div class="list-item">
+      <h4>${l.personnelCode ? 'پرسنل ' + l.personnelCode : 'کاربر'} — ${l.skill || l.title || 'نیاز آموزشی'}</h4>
+      <p>${l.reason || l.description || ''}</p>
+      <div class="meta">${faDate(l.createdAt)} — وضعیت: ${l.status === 'approved' ? 'تایید' : l.status === 'rejected' ? 'رد' : 'در انتظار'}</div>
+      ${l.status === 'pending' ? `
+        <div class="actions">
+          <button class="btn-approve" onclick="approveLearning('${l.id}')">تایید</button>
+          <button class="btn-reject" onclick="rejectLearning('${l.id}')">رد</button>
+        </div>` : ''}
+    </div>
+  `).join('');
+}
+
+function approveLearning(id) {
+  const learning = getLS(LS.LEARNING);
+  const item = learning.find(x => x.id === id);
+  if (!item) return;
+  item.status = 'approved';
+  setLS(LS.LEARNING, learning);
+  renderLearning();
+  updateStats();
+  alert('تایید شد.');
+}
+
+function rejectLearning(id) {
+  const learning = getLS(LS.LEARNING);
+  const item = learning.find(x => x.id === id);
+  if (!item) return;
+  item.status = 'rejected';
+  setLS(LS.LEARNING, learning);
+  renderLearning();
+  updateStats();
+  alert('رد شد.');
+}
+
+function renderKnowledge() {
+  const box = document.getElementById('knowledgeList');
+  const knowledge = getLS(LS.KNOWLEDGE);
+  if (knowledge.length === 0) {
+    box.innerHTML = '<p class="empty-msg">دانشی ثبت نشده است.</p>';
+    return;
+  }
+  box.innerHTML = knowledge.slice().reverse().map(k => `
+    <div class="list-item">
+      <h4>${k.title || 'دانش'}</h4>
+      <p>${k.text || k.content || ''}</p>
+      <div class="meta">${faDate(k.createdAt)} — ${k.personnelCode || ''} — وضعیت: ${k.status === 'approved' ? 'تایید' : 'در انتظار'}</div>
+      ${k.status !== 'approved' ? `
+        <div class="actions">
+          <button class="btn-approve" onclick="approveKnowledge('${k.id}')">تایید برای انتشار</button>
+        </div>` : ''}
+    </div>
+  `).join('');
+}
+
+function approveKnowledge(id) {
+  const knowledge = getLS(LS.KNOWLEDGE);
+  const item = knowledge.find(x => x.id === id);
+  if (!item) return;
+  item.status = 'approved';
+  item.approvedAt = Date.now();
+  setLS(LS.KNOWLEDGE, knowledge);
+  renderKnowledge();
+  alert('برای انتشار تایید شد.');
+}
+
+function renderAdminRef() {
+  const box = document.getElementById('adminRefList');
+  if (!box) return;
+  const refs = getLS(LS.ADMIN_REFERRALS).filter(r => r.unit === 'کارگزینی');
+  if (refs.length === 0) {
+    box.innerHTML = '<p class="empty-msg">ارجاعی از ادمین نیامده است.</p>';
+    return;
+  }
+  box.innerHTML = refs.slice().reverse().map(r => `
+    <div class="list-item">
+      <h4>📥 ${r.title || 'ارجاع'}</h4>
+      <p>${r.description || ''}</p>
+      <div class="meta">${faDate(r.createdAt)} — از: ${r.referredBy || '—'} — وضعیت: ${r.status || '—'}</div>
+    </div>
+  `).join('');
+}
+
+function renderHrReq() {
+  const box = document.getElementById('hrReqList');
+  if (!box) return;
+  const queries = getLS(LS.QUERIES);
+  if (queries.length === 0) {
+    box.innerHTML = '<p class="empty-msg">درخواستی ثبت نشده است.</p>';
+    return;
+  }
+  box.innerHTML = queries.slice().reverse().map(q => `
+    <div class="list-item">
+      <h4>📨 ${q.personnelCode || 'کاربر'} — ${q.trackingCode || ''}</h4>
+      <p>${q.question || q.text || ''}</p>
+      <div class="meta">${faDate(q.createdAt)} — وضعیت: ${q.status === 'answered' ? 'پاسخ داده شده' : q.status === 'referred' ? 'ارجاع شده' : 'در انتظار'}</div>
+      ${q.answer ? `<div class="meta" style="color:#0d8a63;">پاسخ: ${q.answer}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+async function sendAssistant() {
+  const input = document.getElementById('assistantInput');
+  const text = input.value.trim();
+  if (!text) return;
+  addAssistantMsg(text, 'user');
+  input.value = '';
+  addAssistantMsg('⏳ در حال جستجو...', 'bot');
+  const response = await getBotResponse(text);
+  const chat = document.getElementById('assistantChat');
+  const last = chat.lastElementChild;
+  if (last && last.textContent.includes('در حال جستجو')) chat.removeChild(last);
+  addAssistantMsg(response, 'bot');
+}
+
+function addAssistantMsg(text, sender) {
+  const chat = document.getElementById('assistantChat');
+  const msg = document.createElement('div');
+  msg.className = 'msg ' + sender;
+  msg.textContent = text;
+  chat.appendChild(msg);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function toggleSatisfaction() {
+  const box = document.getElementById('satisfactionBox');
+  box.style.bottom = (box.style.bottom === '0px') ? '-220px' : '0px';
+}
+function submitSatisfaction(score) {
+  localStorage.setItem('smart_hr_satisfaction', score);
+  alert('امتیاز ' + score + ' شما ثبت شد. با تشکر!');
+  document.getElementById('satisfactionBox').style.bottom = '-220px';
+}
+
+loadTheme();
+applyLang();
+</script>
+</body>
+</html>

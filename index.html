@@ -1,0 +1,838 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سامانه یکپارچه اداره کل سرمایه انسانی</title>
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+<style>
+:root {
+  --primary: #0d8a63;
+  --secondary: #1f9e73;
+  --gold: #d4a843;
+  --gold-light: #f1c65e;
+  --bg-gradient: linear-gradient(135deg, #a8e6cf 0%, #d4edda 50%, #fff3cd 100%);
+  --card-bg: rgba(255, 255, 255, 0.9);
+  --text-dark: #1a3b32;
+  --text-light: #4a6b5d;
+  --header-bg: rgba(255, 255, 255, 0.7);
+  --border-light: rgba(13, 138, 99, 0.2);
+}
+body.dark {
+  --bg-gradient: linear-gradient(135deg, #0a3b2a 0%, #1a4d3a 50%, #3a2e1a 100%);
+  --card-bg: rgba(20, 45, 35, 0.9);
+  --text-dark: #edfff5;
+  --text-light: #b0d1c0;
+  --header-bg: rgba(16, 43, 32, 0.8);
+  --border-light: rgba(52, 184, 127, 0.3);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', Tahoma, sans-serif; }
+body { 
+  background: var(--bg-gradient); 
+  color: var(--text-dark); 
+  min-height: 100vh; 
+  display: flex; 
+  flex-direction: column; 
+  overflow: hidden;
+  transition: background 0.5s ease;
+}
+
+/* ====== انیمیشن‌ها ====== */
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes floatLogo { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+@keyframes slideInRight { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes slideInLeft { from { opacity: 0; transform: translateX(-100px); } to { opacity: 1; transform: translateX(0); } }
+
+/* ====== Splash Screen ====== */
+#splash {
+  position: fixed; inset: 0; z-index: 9999;
+  background: linear-gradient(135deg, #0d5c41 0%, #13865f 40%, #d4a843 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: #fff; text-align: center; transition: opacity 0.8s ease, visibility 0.8s;
+  overflow: hidden;
+}
+#splash.hidden { opacity: 0; visibility: hidden; }
+#splash::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(120deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 40%, rgba(255,255,255,0) 60%, rgba(255,255,255,0.2) 100%);
+  animation: shineSplash 6s infinite linear;
+}
+@keyframes shineSplash { 0% { transform: translateX(-100%) skewX(-20deg); } 100% { transform: translateX(200%) skewX(-20deg); } }
+
+.splash-logo { 
+  width: 130px; height: 130px; border-radius: 50%; background: #fff; padding: 10px; 
+  margin-bottom: 20px; object-fit: contain; position: relative; z-index: 2;
+  animation: logoEntrance 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards, pulse 2s infinite 1.5s;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+@keyframes logoEntrance {
+  0% { transform: translate(150%, -150%) scale(0.5); opacity: 0; }
+  100% { transform: translate(0, 0) scale(1); opacity: 1; }
+}
+
+.splash-boxes { display: flex; flex-direction: column; gap: 15px; position: relative; z-index: 2; width: 90%; max-width: 500px; }
+.splash-box {
+  padding: 15px 25px; border-radius: 15px; font-size: 1.1rem; font-weight: bold;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2); opacity: 0;
+  position: relative; overflow: hidden;
+}
+.splash-box::after {
+  content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+  background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+  transform: skewX(-25deg); animation: shineBox 3s infinite 2s;
+}
+@keyframes shineBox { 0% { left: -100%; } 100% { left: 200%; } }
+.splash-box.green { background: linear-gradient(135deg, #1f9e73, #0d8a63); animation: slideInRight 1s ease 1s forwards; }
+.splash-box.gold { background: linear-gradient(135deg, #f1c65e, #d4a843); color: #1a3b32; animation: slideInLeft 1s ease 1.2s forwards; }
+
+/* ====== Header ====== */
+header { 
+  background: var(--header-bg); 
+  backdrop-filter: blur(15px); 
+  border-bottom: 1px solid var(--border-light);
+  padding: 8px 20px; 
+  display: flex; align-items: center; justify-content: center; 
+  position: relative; z-index: 100;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+.header-content { display: flex; align-items: center; gap: 15px; text-align: center; }
+.header-logo { 
+  width: 55px; height: 55px; object-fit: contain; border-radius: 50%;
+  background: #fff; padding: 3px;
+  animation: floatLogo 4s ease-in-out infinite;
+  box-shadow: 0 4px 15px rgba(13, 138, 99, 0.3);
+  border: 2px solid var(--gold);
+}
+.header-titles h1 { font-size: 1rem; color: var(--primary); font-weight: 800; }
+.header-titles p { font-size: 0.75rem; color: var(--text-light); }
+
+/* ====== Floating Controls ====== */
+.floating-controls { position: fixed; top: 10px; left: 10px; display: flex; flex-direction: column; gap: 8px; z-index: 150; }
+.float-btn { 
+  width: 40px; height: 40px; border-radius: 50%; border: none; 
+  background: linear-gradient(135deg, #fff, #e0f2f1); 
+  color: var(--primary); font-size: 1rem; cursor: pointer; 
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15); transition: 0.3s;
+  border: 1px solid var(--border-light);
+}
+.float-btn:hover { transform: scale(1.1) rotate(10deg); background: var(--gold); color: #fff; }
+
+/* ====== Ticker ====== */
+.ticker-wrap { background: linear-gradient(90deg, var(--gold), #f1c65e, var(--gold)); color: #fff; padding: 5px 0; overflow: hidden; font-weight: 600; font-size: 0.8rem; white-space: nowrap; }
+.ticker { display: inline-block; animation: tickerScroll 25s linear infinite; }
+.ticker span { padding: 0 25px; }
+@keyframes tickerScroll { 0% { transform: translateX(0); } 100% { transform: translateX(100%); } }
+
+/* ====== Main Container ====== */
+.main-container { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px; gap: 12px; max-width: 1200px; margin: 0 auto; width: 100%; overflow-y: auto; }
+
+/* ====== Chat Section ====== */
+.chat-section { 
+  background: var(--card-bg); 
+  border-radius: 18px; padding: 6px 12px; 
+  border: 3px solid transparent;
+  background: linear-gradient(var(--card-bg), var(--card-bg)) padding-box,
+              linear-gradient(135deg, #1a2a4a 0%, #d4a843 100%) border-box;
+  box-shadow: 0 10px 40px rgba(26, 42, 74, 0.2);
+  width: 100%; max-width: 800px; backdrop-filter: blur(10px);
+  position: relative; overflow: hidden;
+  animation: fadeInUp 0.6s ease forwards;
+}
+.chat-section::before { 
+  content: ''; position: absolute; inset: 0; 
+  background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 50%); 
+  pointer-events: none; 
+}
+.chat-header { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px; }
+.chat-header h2 { font-size: 1rem; color: #1a2a4a; font-weight: 900; }
+body.dark .chat-header h2 { color: #f1c65e; }
+.chat-box { 
+  background: rgba(255,255,255,0.7); border-radius: 12px; padding: 10px; 
+  height: 55px; overflow-y: auto; margin-bottom: 8px; display: flex; flex-direction: column; gap: 6px; font-size: 0.8rem;
+  border: 1px solid rgba(13, 138, 99, 0.1);
+}
+body.dark .chat-box { background: rgba(0,0,0,0.3); }
+.msg { padding: 6px 10px; border-radius: 10px; max-width: 85%; line-height: 1.4; animation: fadeInUp 0.3s ease; }
+.msg.bot { background: #fff; border: 1px solid #d4a843; color: #1a2a4a; align-self: flex-start; }
+.msg.user { background: var(--primary); color: #fff; align-self: flex-end; }
+.chat-input-group { display: flex; gap: 8px; }
+.chat-input-group input { flex: 1; padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.1); background: rgba(255,255,255,0.9); outline: none; font-size: 0.8rem; }
+.chat-input-group button { padding: 8px 20px; border-radius: 10px; border: none; background: var(--primary); color: #fff; font-weight: bold; cursor: pointer; font-size: 0.8rem; transition: 0.2s; }
+.chat-input-group button:hover { background: var(--gold); }
+
+/* ====== Finger Modules ====== */
+.finger-modules { 
+  display: grid; 
+  grid-template-columns: repeat(10, 1fr);
+  gap: 6px; 
+  width: 100%; max-width: 1200px;
+}
+.finger-btn { 
+  border-radius: 14px; padding: 10px 4px; text-align: center; cursor: pointer; 
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); 
+  position: relative; overflow: hidden; backdrop-filter: blur(5px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  border: 1px solid rgba(255,255,255,0.6);
+  animation: fadeInUp 0.6s ease forwards; opacity: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: #fff;
+}
+.finger-btn::after {
+  content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+  background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+  transform: skewX(-25deg); transition: 0.5s;
+}
+.finger-btn:hover::after { left: 120%; }
+.finger-btn:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 10; }
+
+.finger-btn:nth-child(1) { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border: 2px solid #4facfe; }
+.finger-btn:nth-child(2) { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); border: 2px solid #43e97b; }
+.finger-btn:nth-child(3) { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); border: 2px solid #fa709a; }
+.finger-btn:nth-child(4) { background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); border: 2px solid #a18cd1; }
+.finger-btn:nth-child(5) { background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); border: 2px solid #f6d365; }
+.finger-btn:nth-child(6) { background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%); border: 2px solid #84fab0; }
+.finger-btn:nth-child(7) { background: linear-gradient(135deg, #fa709a 0%, #fbc2eb 100%); border: 2px solid #fa709a; }
+.finger-btn:nth-child(8) { background: linear-gradient(135deg, #a18cd1 0%, #8fd3f4 100%); border: 2px solid #a18cd1; }
+.finger-btn.admin-btn { background: linear-gradient(135deg, #1a2a4a 0%, #2a3f6b 100%); color: #fff; border: 2px solid var(--gold); }
+.finger-btn.admin-btn h3 { color: var(--gold-light); }
+
+.finger-icon { font-size: 1.5rem; margin-bottom: 3px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
+.finger-btn h3 { font-size: 0.78rem; font-weight: 800; margin-bottom: 1px; text-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+.finger-btn p { font-size: 0.62rem; opacity: 0.9; }
+
+.finger-btn:nth-child(1) { animation-delay: 0.1s; }
+.finger-btn:nth-child(2) { animation-delay: 0.15s; }
+.finger-btn:nth-child(3) { animation-delay: 0.2s; }
+.finger-btn:nth-child(4) { animation-delay: 0.25s; }
+.finger-btn:nth-child(5) { animation-delay: 0.3s; }
+.finger-btn:nth-child(6) { animation-delay: 0.35s; }
+.finger-btn:nth-child(7) { animation-delay: 0.4s; }
+.finger-btn:nth-child(8) { animation-delay: 0.45s; }
+
+/* ====== Gallery ====== */
+.gallery-section {
+  width: 100%; max-width: 1000px;
+  background: var(--card-bg);
+  border-radius: 18px;
+  padding: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  border: 1px solid var(--border-light);
+  animation: fadeInUp 0.8s ease forwards;
+}
+.gallery-title { text-align: center; font-size: 1rem; color: var(--primary); margin-bottom: 10px; font-weight: 800; }
+.gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+.gallery-item {
+  border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  transition: 0.3s; cursor: zoom-in; border: 2px solid transparent; height: 140px;
+}
+.gallery-item:hover { transform: scale(1.05); border-color: var(--gold); box-shadow: 0 8px 25px rgba(212, 168, 67, 0.4); }
+.gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ====== Lightbox ====== */
+#lightbox {
+  position: fixed; inset: 0; z-index: 10000;
+  background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
+  display: none; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.3s ease;
+}
+#lightbox.active { display: flex; opacity: 1; }
+#lightbox img {
+  max-width: 90%; max-height: 90%;
+  border-radius: 10px; box-shadow: 0 0 50px rgba(255,255,255,0.2);
+  animation: zoomIn 0.3s ease;
+}
+@keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.close-lightbox {
+  position: absolute; top: 20px; right: 30px;
+  font-size: 2.5rem; color: #fff; cursor: pointer; font-weight: bold;
+  transition: 0.2s;
+}
+.close-lightbox:hover { color: var(--gold); transform: scale(1.2); }
+
+/* ====== Footer ====== */
+footer { text-align: center; padding: 8px; font-size: 0.7rem; color: var(--text-light); background: var(--header-bg); backdrop-filter: blur(10px); }
+
+/* ====== Password Modal ====== */
+#passwordModal {
+  position: fixed; inset: 0; z-index: 2000;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+  display: none; align-items: center; justify-content: center;
+}
+#passwordModal.active { display: flex; }
+.password-box {
+  background: #fff; padding: 25px; border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3); width: 300px; text-align: center;
+}
+.password-box h3 { margin-bottom: 15px; color: #1a2a4a; }
+.password-box input {
+  width: 100%; padding: 10px; margin-bottom: 15px;
+  border: 1px solid #ccc; border-radius: 8px; text-align: center;
+  font-family: inherit;
+}
+.password-box button {
+  background: #1a2a4a; color: #fff; border: none;
+  padding: 10px 20px; border-radius: 8px; cursor: pointer;
+  font-weight: bold; width: 100%;
+}
+.password-box button:hover { background: var(--gold); color: #1a2a4a; }
+
+/* ====== Responsive ====== */
+@media (max-width: 1100px) {
+  .finger-modules { grid-template-columns: repeat(6, 1fr); }
+}
+
+@media (max-width: 900px) {
+  .finger-modules { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 600px) {
+  .finger-modules { grid-template-columns: repeat(2, 1fr); }
+  .header-titles h1 { font-size: 0.9rem; }
+  .header-logo { width: 45px; height: 45px; }
+}
+.decree-link-btn { background: linear-gradient(135deg, #d4a843 0%, #f1c65e 100%); color: #1a2a4a !important; border: 2px solid #fff !important; font-weight: 900; }
+.decree-link-btn h3 { color: #1a2a4a !important; }
+</style>
+<script src="assets/js/i18n.js"></script>
+</head>
+<body>
+
+<!-- Splash Screen -->
+<div id="splash">
+  <img src="logo.png" alt="لوگو" class="splash-logo" onerror="this.style.display='none'">
+  <div class="splash-boxes">
+    <div class="splash-box green" data-fa="به سامانه یکپارچه اداره کل سرمایه انسانی خوش آمدید" data-en="Welcome to the Integrated HR System">به سامانه یکپارچه اداره کل سرمایه انسانی خوش آمدید</div>
+    <div class="splash-box gold" data-fa="بنیاد شهید و امور ایثارگران - درگاه خدمات هوشمند" data-en="Martyrs and Veterans Foundation - Smart Services Portal">بنیاد شهید و امور ایثارگران - درگاه خدمات هوشمند</div>
+  </div>
+</div>
+
+<!-- Header -->
+<header>
+  <div class="header-content">
+    <img src="logo.png" alt="لوگوی بنیاد" class="header-logo" onerror="this.src='https://via.placeholder.com/55?text=Logo'">
+    <div class="header-titles">
+      <h1 data-fa="سامانه یکپارچه اداره کل سرمایه انسانی" data-en="Integrated HR Department System">سامانه یکپارچه اداره کل سرمایه انسانی</h1>
+      <p data-fa="بنیاد شهید و امور ایثارگران" data-en="Martyrs and Veterans Foundation">بنیاد شهید و امور ایثارگران</p>
+    </div>
+  </div>
+</header>
+
+<!-- Floating Controls -->
+<div class="floating-controls">
+  <button class="float-btn" onclick="toggleTheme()" title="تغییر تم">🌓</button>
+  <button class="float-btn" onclick="toggleLang()" title="تغییر زبان">🌐</button>
+</div>
+
+<!-- Ticker -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span data-fa="✦ به سامانه هوشمند منابع انسانی بنیاد شهید خوش آمدید ✦" data-en="✦ Welcome to the Smart HR System of Bonyad Shahid ✦">✦ به سامانه هوشمند منابع انسانی بنیاد شهید خوش آمدید ✦</span>
+    <span data-fa="✦ دستیار هوشمند آماده پاسخگویی به سوالات کارگزینی شماست ✦" data-en="✦ Smart Assistant is ready to answer your HR questions ✦">✦ دستیار هوشمند آماده پاسخگویی به سوالات کارگزینی شماست ✦</span>
+  </div>
+</div>
+
+<main class="main-container">
+  
+  <!-- Chat Section -->
+  <div class="chat-section">
+    <div class="chat-header"><h2 data-fa="🌟 دستیار هوشمند " data-en="🌟 Smart HR Assistant">🌟 دستیار هوشمند </h2></div>
+    <div class="chat-box" id="chatBox">
+      <div class="msg bot" data-fa="سلام! من دستیار هوشمند هستم. روی یکی از ماژول‌های زیر کلیک کنید یا سوال خود را بپرسید تا شما را راهنمایی کنم." data-en="Hello! I am the smart assistant. Click on one of the modules below or ask your question to guide you.">سلام! من دستیار هوشمند هستم. روی یکی از ماژول‌های زیر کلیک کنید یا سوال خود را بپرسید تا شما را راهنمایی کنم.</div>
+    </div>
+    <div class="chat-input-group">
+      <input type="text" id="chatInput" placeholder="سوال خود را بنویسید..." onkeypress="handleKeyPress(event)">
+      <button onclick="sendMessage()" data-fa="ارسال" data-en="Send">ارسال</button>
+    </div>
+  </div>
+
+  <!-- Finger Modules -->
+  <div class="finger-modules">
+    <div class="finger-btn" onclick="window.location.href='smart_wayfinder.html'">
+      <div class="finger-icon">🤖</div>
+      <h3 data-fa="مسیریاب هوشمند" data-en="Orders AI">مسیریاب هوشمند</h3>
+      <p data-fa="قطب نما" data-en="Generate Draft">قطب نما</p>
+    </div>
+    <div class="finger-btn" onclick="window.location.href='personnel_hub.html'">
+      <div class="finger-icon">📋</div>
+      <h3 data-fa="کارگزینی" data-en="HR Admin">کارگزینی</h3>
+      <p data-fa="کارگزینی هوشمند، کارگزینی شخصی" data-en="Files & Leaves">کارگزینی هوشمند، کارگزینی شخصی</p>
+    </div>
+    <div class="finger-btn" onclick="window.location.href='learning_ecosystem.html'">
+      <div class="finger-icon">🌿</div>
+      <h3 data-fa="اکوسیستم یادگیری" data-en="Learning Ecosystem">اکوسیستم یادگیری</h3>
+      <p data-fa="باغ دانش و یادگیری ارگانیک" data-en="Knowledge Garden">باغ دانش و یادگیری ارگانیک</p>
+    </div>
+    <div class="finger-btn" onclick="window.location.href='welfare_chief.html'">
+      <div class="finger-icon">🤝</div>
+      <h3 data-fa="رفاه" data-en="Welfare">رفاه</h3>
+      <p data-fa="تسهیلات و خدمات" data-en="Facilities">تسهیلات و خدمات</p>
+    </div>
+    <div class="finger-btn" onclick="askAssistant('جبران خدمت و پرداخت')">
+      <div class="finger-icon">💰</div>
+      <h3 data-fa="جبران خدمت" data-en="Compensation">جبران خدمت</h3>
+      <p data-fa="پرداخت‌ها" data-en="Payments">پرداخت‌ها</p>
+    </div>
+    <div class="finger-btn" onclick="askAssistant('برنامه‌ریزی نیروی انسانی')">
+      <div class="finger-icon">📊</div>
+      <h3 data-fa="برنامه‌ریزی" data-en="Planning">برنامه‌ریزی</h3>
+      <p data-fa="فردای بهتر" data-en="KPI Analysis">فردای بهتر</p>
+    </div>
+    <div class="finger-btn" onclick="window.location.href='consultants.html'">
+      <div class="finger-icon">🧑‍🏫</div>
+      <h3 data-fa="مشاورین" data-en="Consultants">مشاورین</h3>
+      <p data-fa="ارتباط با مشاوران" data-en="Connect with Consultants">ارتباط با مشاوران</p>
+    </div>
+    <div class="finger-btn" onclick="window.location.href='brainstorming.html'">
+      <div class="finger-icon">💡</div>
+      <h3 data-fa="هم‌اندیشی" data-en="Brainstorming">هم‌اندیشی</h3>
+      <p data-fa="ایده‌پردازی جمعی" data-en="Collective Ideation">ایده‌پردازی جمعی</p>
+    </div>
+    <div class="finger-btn decree-link-btn" onclick="window.location.href='decrees.html'">
+      <div class="finger-icon">📜</div>
+      <h3 data-fa="دستیار احکام" data-en="Decree Edit">دستیار احکام</h3>
+      <p data-fa="هوشمند سازی حکم پرسنلی" data-en="Rewrite Personnel Decree">هوشمند سازی حکم پرسنلی</p>
+    </div>
+    <div class="finger-btn admin-btn" onclick="openPasswordModal()">
+      <div class="finger-icon">👨‍💼</div>
+      <h3 data-fa="داشبورد هوشمند مدیریت" data-en="Admin Panel">داشبورد هوشمند مدیریت</h3>
+      <p data-fa="ویژه مدیرکل" data-en="For Director">ویژه مدیرکل</p>
+    </div>
+  </div>
+
+  <!-- Gallery -->
+  <!-- دستاوردها — اسلایدر چرخشی ۶۰ ثانیه‌ای -->
+<div class="gallery-section">
+  <h2 class="gallery-title" data-fa="🏆 دستاوردهای اداره کل سرمایه انسانی" data-en="🏆 Achievements of the Human Capital Department">🏆 دستاوردهای اداره کل سرمایه انسانی</h2>
+  <div id="achievementSlider" style="position:relative;width:100%;min-height:220px;border-radius:16px;overflow:hidden;background:linear-gradient(135deg,#1a2a4a,#2a3f6b);">
+    <div id="achEmpty" style="display:none;padding:40px 20px;text-align:center;color:#fff;">
+      <div style="font-size:3rem;margin-bottom:10px;">🏆</div>
+      <p style="font-size:0.95rem;">هنوز دستاوردی توسط مدیرکل ثبت نشده است.</p>
+    </div>
+    <div id="achSlideWrap" style="display:none;position:relative;min-height:220px;">
+      <div id="achSlideContent" style="padding:30px 20px;color:#fff;"></div>
+      <div id="achCounter" style="position:absolute;bottom:10px;right:15px;font-size:0.85rem;color:rgba(255,255,255,0.8);background:rgba(0,0,0,0.4);padding:4px 12px;border-radius:10px;"></div>
+      <div style="position:absolute;bottom:10px;left:15px;display:flex;gap:6px;">
+        <button onclick="achPrev()" style="padding:4px 12px;border:none;border-radius:8px;background:rgba(255,255,255,0.25);color:#fff;cursor:pointer;font-family:inherit;">‹ قبلی</button>
+        <button onclick="achNext()" style="padding:4px 12px;border:none;border-radius:8px;background:rgba(255,255,255,0.25);color:#fff;cursor:pointer;font-family:inherit;">بعدی ›</button>
+      </div>
+      <div style="position:absolute;top:10px;left:15px;font-size:0.75rem;color:rgba(255,255,255,0.7);">⏱️ ۶۰ ثانیه</div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <span data-fa="© ۱۴۰۵ بنیاد شهید و امور ایثارگران - اداره کل توسعه سرمایه انسانی" data-en="© 2025 Martyrs and Veterans Foundation - HR Development Department">© ۱۴۰۵ بنیاد شهید و امور ایثارگران - اداره کل توسعه سرمایه انسانی</span>
+</footer>
+<!-- Lightbox -->
+<div id="lightbox" onclick="closeLightbox()">
+  <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
+  <img id="lightboxImg" src="" alt="پیش‌نمایش">
+</div>
+
+<!-- Password Modal -->
+<div id="passwordModal">
+  <div class="password-box">
+    <h3 data-fa="ورود به پنل مدیریت" data-en="Admin Panel Login">ورود به پنل مدیریت</h3>
+    <input type="password" id="passwordInput" placeholder="رمز عبور" onkeypress="if(event.key==='Enter') checkPassword()">
+    <button onclick="checkPassword()" data-fa="ورود" data-en="Login">ورود</button>
+  </div>
+</div>
+
+<!-- Satisfaction Survey -->
+<div id="satisfactionToggle" onclick="toggleSatisfaction()" data-fa="⭐ ثبت رضایتمندی" data-en="⭐ Rate us">⭐ ثبت رضایتمندی</div>
+<div id="satisfactionBox">
+  <p style="margin-bottom: 10px; font-weight: bold; color: var(--text-dark);" data-fa="میزان رضایت شما از این صفحه چقدر است؟" data-en="How satisfied are you with this page?">میزان رضایت شما از این صفحه چقدر است؟</p>
+  <div style="display: flex; gap: 8px; justify-content: center;">
+    <button onclick="submitSurvey(1)" style="width: 40px; height: 40px; border-radius: 50%; border: none; background: #ff4757; color: #fff; cursor: pointer; font-weight: bold;">۱</button>
+    <button onclick="submitSurvey(2)" style="width: 40px; height: 40px; border-radius: 50%; border: none; background: #ff6b81; color: #fff; cursor: pointer; font-weight: bold;">۲</button>
+    <button onclick="submitSurvey(3)" style="width: 40px; height: 40px; border-radius: 50%; border: none; background: #ffa502; color: #fff; cursor: pointer; font-weight: bold;">۳</button>
+    <button onclick="submitSurvey(4)" style="width: 40px; height: 40px; border-radius: 50%; border: none; background: #7bed9f; color: #1a2a4a; cursor: pointer; font-weight: bold;">۴</button>
+    <button onclick="submitSurvey(5)" style="width: 40px; height: 40px; border-radius: 50%; border: none; background: #2ed573; color: #fff; cursor: pointer; font-weight: bold;">۵</button>
+  </div>
+</div>
+        <script src="assets/js/smart_assistant.js"></script>
+<script>
+const LS = {
+  CONSULTANTS: 'hr_consultants',
+  TASKS: 'hr_tasks',
+  REPORTS: 'hr_reports',
+  BRAIN_TOPICS: 'hr_brainstorm_topics',
+  BRAIN_IDEAS: 'hr_brainstorm_ideas',
+  BRAIN_REPORTS: 'hr_brainstorm_reports',
+  PERSONNEL: 'hr_personnel',
+  SURVEYS: 'hr_surveys',
+  SETTINGS: 'hr_settings'
+};
+/* ====== Theme Toggle ====== */
+function toggleTheme() {
+  document.body.classList.toggle('dark');
+  localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+}
+
+/* ====== Language Toggle ====== */
+let currentLang = 'fa';
+function toggleLang() {
+  currentLang = currentLang === 'fa' ? 'en' : 'fa';
+  document.documentElement.lang = currentLang;
+  document.documentElement.dir = currentLang === 'fa' ? 'rtl' : 'ltr';
+  document.querySelectorAll('[data-fa][data-en]').forEach(el => {
+    el.textContent = currentLang === 'fa' ? el.dataset.fa : el.dataset.en;
+  });
+  // Update placeholders
+  const chatInput = document.getElementById('chatInput');
+  if (chatInput) chatInput.placeholder = currentLang === 'fa' ? 'سوال خود را بنویسید...' : 'Type your question...';
+}
+
+/* ====== Splash Screen ====== */
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('splash').classList.add('hidden');
+  }, 3500);
+});
+
+/* ====== Chat Functions ====== */
+function handleKeyPress(event) {
+  if (event.key === 'Enter') sendMessage();
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  addMessage(text, 'user');
+  input.value = '';
+  addMessage('⏳ در حال جستجو...', 'bot');
+  const response = await getBotResponse(text);
+  const chatBox = document.getElementById('chatBox');
+  const last = chatBox.lastElementChild;
+  if (last && last.textContent.includes('در حال جستجو')) chatBox.removeChild(last);
+  addMessage(response, 'bot');
+}
+
+function addMessage(text, sender) {
+  const chatBox = document.getElementById('chatBox');
+  const msg = document.createElement('div');
+  msg.className = `msg ${sender}`;
+  msg.textContent = text;
+  chatBox.appendChild(msg);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+async function askAssistant(module) {
+  addMessage(module, 'user');
+  addMessage('⏳ در حال جستجو...', 'bot');
+  const response = await getBotResponse(module);
+  const chatBox = document.getElementById('chatBox');
+  const last = chatBox.lastElementChild;
+  if (last && last.textContent.includes('در حال جستجو')) chatBox.removeChild(last);
+  addMessage(response, 'bot');
+}
+
+/* ====== Bot Responses — متصل به داده‌های برگه‌ها ====== */
+function getLS(key, fallback = []) {
+  try { return JSON.parse(localStorage.getItem(key)) || fallback; }
+  catch { return fallback; }
+}
+
+/* ====== دستیار هوشمند — جستجوی آزاد در سایت + آماده اتصال به API ====== */
+
+// ===== تابع اتصال به هوش مصنوعی واقعی (برای آینده) =====
+// وقتی سایت به GitHub رفت و مهندسی فناوری API را وصل کرد، این تابع را پر می‌کنند.
+async function callAI(query, context) {
+  // placeholder — در نسخه واقعی:
+  // return await fetch('https://api.example.com/chat', {
+  //   method: 'POST',
+  //   headers: { 'Content-Type': 'application/json' },
+  //   body: JSON.stringify({ query, context })
+  // }).then(r => r.json()).then(d => d.answer);
+  return null; // الان API نداریم
+}
+
+// ===== موتور جستجوی آزاد در دانش سایت =====
+function searchSiteKnowledge(query) {
+  if (typeof SITE_KNOWLEDGE === 'undefined' || !SITE_KNOWLEDGE.pages) {
+    return '⚠️ دانش سایت در دسترس نیست. لطفاً مطمئن شوید assets/js/site_knowledge.js در همان پوشه index.html قرار دارد.';
+  }
+
+  const q = query.trim().toLowerCase();
+  const words = q.replace(/[؟?!.,،؛:]/g, ' ').split(/\s+/).filter(w => w.length > 1);
+  if (words.length === 0) return 'لطفاً سوال خود را بنویسید.';
+
+  // ۱) جستجو در دانش صفحات
+  const pageResults = [];
+  for (const [pageFile, pageData] of Object.entries(SITE_KNOWLEDGE.pages)) {
+    if (pageData.excluded) continue;
+    let score = 0;
+    const searchText = (pageData.title + ' ' + pageData.description + ' ' + pageData.keywords.join(' ') + ' ' + (pageData.sections || []).join(' ')).toLowerCase();
+    words.forEach(w => { if (searchText.includes(w)) score += 2; });
+    if (score > 0) pageResults.push({ pageFile, pageData, score });
+  }
+  pageResults.sort((a, b) => b.score - a.score);
+
+  // ۲) جستجو در داده‌های زنده
+  const dataResults = [];
+  const dataMap = {
+    'hr_consultants': { label: 'مشاورین', keywords: ['مشاور', 'مشاوره', 'consultant'] },
+    'hr_reports': { label: 'گزارش‌ها', keywords: ['گزارش', 'report'] },
+    'hr_tasks': { label: 'دستورات', keywords: ['دستور', 'task'] },
+    'hr_brainstorm_topics': { label: 'موضوعات هم‌اندیشی', keywords: ['هم‌اندیشی', 'هم اندیشی', 'موضوع', 'ایده'] },
+    'hr_brainstorm_ideas': { label: 'نظرات هم‌اندیشی', keywords: ['نظر', 'ایده', 'پیشنهاد'] },
+    'hr_personnel': { label: 'پرونده‌های پرسنلی', keywords: ['پرسنل', 'کارمند', 'پرونده', 'مرخصی', 'اداری'] },
+    'hr_pending_decrees': { label: 'احکام', keywords: ['حکم', 'احکام', 'decree'] },
+    'hr_decree_editors': { label: 'کدهای اصلاح حکم', keywords: ['کد اصلاح', 'اصلاح حکم'] },
+    'hr_leaves': { label: 'مرخصی‌ها', keywords: ['مرخصی', 'leave'] },
+    'hr_admin_requests': { label: 'درخواست‌های اداری', keywords: ['درخواست اداری', 'گواهی', 'وام', 'انتقال'] },
+    'hr_personal_queries': { label: 'سوالات پرسنل', keywords: ['سوال', 'پرسش'] },
+    'hr_learning_messages': { label: 'پیام‌های آموزشی', keywords: ['آموزش', 'یادگیری', 'دوره', 'پیام آموزشی'] },
+    'hr_learning_requests': { label: 'درخواست‌های آموزشی', keywords: ['نیاز آموزشی', 'درخواست آموزش'] },
+    'hr_learning_results': { label: 'نتایج آموزشی', keywords: ['نتیجه', 'نمره', 'گواهی'] },
+    'hr_ican_cases': { label: 'موارد توانمندی', keywords: ['توانمندی', 'توانایی', 'من می‌توانم', 'جابجایی', 'ارتقا'] },
+    'hr_knowledge_entries': { label: 'دانش‌های ثبت‌شده', keywords: ['دانش', 'تجربه', 'knowledge'] },
+    'hr_knowledge_outputs': { label: 'محتوهای تولیدشده', keywords: ['محتوا', 'انتشار', 'روابط عمومی'] }
+  };
+  for (const [key, meta] of Object.entries(dataMap)) {
+    const kwMatch = meta.keywords.some(k => q.includes(k));
+    if (kwMatch) {
+      const data = SITE_KNOWLEDGE.getData(key);
+      if (data.length > 0) dataResults.push({ key, label: meta.label, count: data.length, data });
+    }
+  }
+
+  // ۳) ساخت پاسخ از نتایج
+  let response = '';
+
+  if (pageResults.length > 0 && pageResults[0].score >= 2) {
+    const best = pageResults[0].pageData;
+    response += `📄 **${best.title}**\n\n${best.description}\n\n`;
+    if (!best.ready) response += `⏳ این بخش در حال ساخت است.\n\n`;
+    response += `🔗 دسترسی: از دکمه «${best.title}» در صفحه اصلی.`;
+    return response;
+  }
+
+  if (dataResults.length > 0) {
+    response += `📊 **اطلاعات موجود در سیستم:**\n\n`;
+    dataResults.forEach(r => {
+      response += `• ${r.label}: ${r.count} مورد ثبت شده\n`;
+    });
+    response += `\nبرای جزئیات بیشتر، به بخش مربوطه در صفحه اصلی مراجعه کنید.`;
+    return response;
+  }
+
+  return 'متأسفم، پاسخ دقیقی در دانش سایت پیدا نکردم. می‌توانید سوال خود را با کلمات دیگری مطرح کنید. من به تمام صفحات و داده‌های سایت (به‌جز داشبورد مدیریت) دسترسی دارم.';
+}
+
+// ===== تابع اصلی چت — اول API، بعد جستجو =====
+async function getBotResponse(query) {
+  const q = query.trim();
+  if (!q) return 'لطفاً سوال خود را بنویسید.';
+
+  if (/^(سلام|درود|خوش آمدید|hi|hello)/i.test(q)) {
+    return 'سلام! به سامانه یکپارچه سرمایه انسانی خوش آمدید. من دستیار هوشمند شما هستم و به تمام صفحات و داده‌های سایت (به‌جز داشبورد مدیریت) دسترسی دارم. سوال خود را بپرسید. 🌟';
+  }
+  if (/^(ممنون|تشکر|سپاس|thanks)/i.test(q)) {
+    return 'خواهش می‌کنم! در خدمت شما هستم. اگر سوال دیگری دارید، بپرسید. 🌟';
+  }
+
+  // ۱) اول از هوش مصنوعی واقعی بپرس (اگر API وصل شده باشد)
+  try {
+    const aiAnswer = await callAI(query, SITE_KNOWLEDGE);
+    if (aiAnswer) return aiAnswer;
+  } catch (e) {
+    // API خطا داد — برو سراغ جستجو
+  }
+
+  // ۲) اگر API نبود، در دانش سایت جستجو کن
+  return searchSiteKnowledge(query);
+}
+
+/* ====== Lightbox ====== */
+function openLightbox(src) {
+  const lb = document.getElementById('lightbox');
+  document.getElementById('lightboxImg').src = src;
+  lb.classList.add('active');
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('active');
+}
+
+/* ====== Password Modal ====== */
+function openPasswordModal() {
+  document.getElementById('passwordModal').classList.add('active');
+  document.getElementById('passwordInput').value = '';
+  document.getElementById('passwordInput').focus();
+}
+
+function checkPassword() {
+  const pass = document.getElementById('passwordInput').value;
+  if (pass === 'admin') {          // یا '1234' — هر کدام را می‌خواهی
+    document.getElementById('passwordModal').classList.remove('active');
+    sessionStorage.setItem('adminLoggedIn', 'true');   // برای محافظت admin.html
+    window.location.href = 'admin.html';               // ← نام درست فایل
+  } else {
+    alert('❌ رمز عبور اشتباه است. لطفاً دوباره تلاش کنید.');
+    document.getElementById('passwordInput').value = '';
+    document.getElementById('passwordInput').focus();
+  }
+}
+
+// Close password modal on outside click
+document.getElementById('passwordModal').addEventListener('click', function(e) {
+  if (e.target === this) this.classList.remove('active');
+});
+
+/* ====== Satisfaction Survey ====== */
+function toggleSatisfaction() {
+  const box = document.getElementById('satisfactionBox');
+  box.style.bottom = (box.style.bottom === '0px') ? '-200px' : '0px';
+}
+
+function submitSurvey(score) {
+  localStorage.setItem('surveyRating', score);
+  alert('امتیاز ' + score + ' شما ثبت شد. با تشکر!');
+  document.getElementById('satisfactionBox').style.bottom = '-200px';
+}
+
+// Restore saved theme
+if (localStorage.getItem('theme') === 'dark') {
+  document.body.classList.add('dark');
+}
+/* ==================== اسلایدر دستاوردها ==================== */
+// دیباگ اسلایدر دستاورد
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    try {
+      const list = JSON.parse(localStorage.getItem('hr_achievements')) || [];
+      console.log('✅ تعداد دستاوردها:', list.length, list);
+      if (typeof loadAchievements === 'function') {
+        loadAchievements();
+        console.log('✅ loadAchievements اجرا شد');
+      } else {
+        console.warn('❌ تابع loadAchievements تعریف نشده');
+      }
+    } catch(e) {
+      console.error('❌ خطا:', e);
+    }
+  }, 500);
+});
+/* ==================== اسلایدر دستاوردها ==================== */
+var achIndex = 0;
+var achTimer = null;
+var achList = [];
+
+function loadAchievements() {
+  try {
+    achList = JSON.parse(localStorage.getItem('hr_achievements')) || [];
+  } catch(e) { achList = []; }
+  var emptyBox = document.getElementById('achEmpty');
+  var wrapBox = document.getElementById('achSlideWrap');
+  if (!emptyBox || !wrapBox) return;
+  if (achList.length === 0) {
+    emptyBox.style.display = 'block';
+    wrapBox.style.display = 'none';
+    return;
+  }
+  emptyBox.style.display = 'none';
+  wrapBox.style.display = 'block';
+  if (achIndex >= achList.length) achIndex = 0;
+  renderAchSlide();
+  startAchTimer();
+}
+
+function renderAchSlide() {
+  if (achList.length === 0) return;
+  var a = achList[achIndex];
+  var content = document.getElementById('achSlideContent');
+  var counter = document.getElementById('achCounter');
+  if (!content) return;
+  var typeLabels = { text:'📝 متن', image:'🖼️ عکس', video:'🎥 ویدیو', pdf:'📄 PDF', ppt:'📊 پاورپوینت', motion:'🎞️ موشن‌گرافی', podcast:'🎙️ پادکست' };
+  var mediaHtml = '';
+  if (a.fileData && a.fileType) {
+    if (a.fileType.indexOf('image/') === 0) {
+      mediaHtml = '<img src="' + a.fileData + '" style="max-width:100%;max-height:160px;border-radius:12px;margin-bottom:12px;display:block;margin-left:auto;margin-right:auto;">';
+    } else if (a.fileType.indexOf('video/') === 0) {
+      mediaHtml = '<video src="' + a.fileData + '" controls style="max-width:100%;max-height:160px;border-radius:12px;margin-bottom:12px;display:block;margin-left:auto;margin-right:auto;"></video>';
+    } else if (a.fileType.indexOf('audio/') === 0) {
+      mediaHtml = '<audio src="' + a.fileData + '" controls style="width:100%;margin-bottom:12px;"></audio>';
+    } else {
+      mediaHtml = '<div style="padding:12px;background:rgba(255,255,255,0.15);border-radius:10px;margin-bottom:12px;text-align:center;font-size:0.85rem;">📎 ' + (a.fileName || 'فایل ضمیمه') + '</div>';
+    }
+  }
+  content.innerHTML = '<div style="text-align:center;">' + mediaHtml +
+    '<h3 style="font-size:1.15rem;margin-bottom:8px;color:#f1c65e;">' + a.title + '</h3>' +
+    (a.description ? '<p style="font-size:0.85rem;line-height:1.7;opacity:0.9;margin-bottom:8px;">' + a.description + '</p>' : '') +
+    '<div style="font-size:0.78rem;opacity:0.75;">' + (typeLabels[a.type] || a.type) + ' — ' + (a.author || '—') + '</div>' +
+    '</div>';
+  if (counter) counter.textContent = (achIndex + 1) + ' از ' + achList.length;
+}
+
+function achNext() {
+  if (achList.length === 0) return;
+  achIndex = (achIndex + 1) % achList.length;
+  renderAchSlide();
+  resetAchTimer();
+}
+function achPrev() {
+  if (achList.length === 0) return;
+  achIndex = (achIndex - 1 + achList.length) % achList.length;
+  renderAchSlide();
+  resetAchTimer();
+}
+function startAchTimer() {
+  if (achTimer) clearInterval(achTimer);
+  if (achList.length <= 1) return;
+  achTimer = setInterval(function() {
+    achIndex = (achIndex + 1) % achList.length;
+    renderAchSlide();
+  }, 60000);
+}
+function resetAchTimer() {
+  if (achTimer) clearInterval(achTimer);
+  startAchTimer();
+}
+window.addEventListener('load', function(){ setTimeout(loadAchievements, 300); });
+var achIndex = 0, achTimer = null, achList = [];
+function loadAchievements() {
+  try { achList = JSON.parse(localStorage.getItem('hr_achievements')) || []; } catch(e) { achList = []; }
+  var e = document.getElementById('achEmpty'), w = document.getElementById('achSlideWrap');
+  if (!e || !w) return;
+  if (achList.length === 0) { e.style.display='block'; w.style.display='none'; return; }
+  e.style.display='none'; w.style.display='block';
+  if (achIndex >= achList.length) achIndex = 0;
+  renderAchSlide(); startAchTimer();
+}
+function renderAchSlide() {
+  if (achList.length === 0) return;
+  var a = achList[achIndex], c = document.getElementById('achSlideContent'), n = document.getElementById('achCounter');
+  if (!c) return;
+  var m = '';
+  if (a.fileData && a.fileType) {
+   if (a.fileType.indexOf('image/') === 0) m = '<img src="'+a.fileData+'" onclick="openLightbox(\''+a.fileData+'\')" style="max-width:100%;max-height:160px;border-radius:12px;margin-bottom:12px;cursor:zoom-in;">';
+    else if (a.fileType.indexOf('video/') === 0) m = '<video src="'+a.fileData+'" controls style="max-width:100%;max-height:160px;border-radius:12px;margin-bottom:12px;"></video>';
+    else if (a.fileType.indexOf('audio/') === 0) m = '<audio src="'+a.fileData+'" controls style="width:100%;margin-bottom:12px;"></audio>';
+    else m = '<div style="padding:12px;background:rgba(255,255,255,0.15);border-radius:10px;margin-bottom:12px;text-align:center;font-size:0.85rem;cursor:pointer;" onclick="downloadAchFile(\''+a.id+'\')">📎 '+(a.fileName||'فایل')+' (دانلود)</div>';
+  }
+  c.innerHTML = '<div style="text-align:center;">'+m+'<h3 style="font-size:1.15rem;margin-bottom:8px;color:#f1c65e;">'+a.title+'</h3>'+(a.description?'<p style="font-size:0.85rem;line-height:1.7;opacity:0.9;margin-bottom:8px;">'+a.description+'</p>':'')+'<div style="font-size:0.78rem;opacity:0.75;">'+(a.author||'—')+'</div></div>';
+  if (n) n.textContent = (achIndex+1)+' از '+achList.length;
+}
+function achNext(){ if(!achList.length) return; achIndex=(achIndex+1)%achList.length; renderAchSlide(); resetAchTimer(); }
+function achPrev(){ if(!achList.length) return; achIndex=(achIndex-1+achList.length)%achList.length; renderAchSlide(); resetAchTimer(); }
+function startAchTimer(){ if(achTimer) clearInterval(achTimer); if(achList.length<=1) return; achTimer=setInterval(function(){ achIndex=(achIndex+1)%achList.length; renderAchSlide(); }, 60000); }
+function resetAchTimer(){ if(achTimer) clearInterval(achTimer); startAchTimer(); }
+window.addEventListener('load', function(){ setTimeout(loadAchievements, 300); });
+function downloadAchFile(id) {
+  var list = JSON.parse(localStorage.getItem('hr_achievements')) || [];
+  var a = list.find(function(x){ return x.id === id; });
+  if (!a || !a.fileData) return;
+  var link = document.createElement('a');
+  link.href = a.fileData;
+  link.download = a.fileName || 'achievement-file';
+  document.body.appendChild(link); link.click(); document.body.removeChild(link);
+}
+</script>
+
+</body>
+</html>

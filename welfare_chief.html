@@ -1,0 +1,362 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>رئیس رفاه | اداره کل سرمایه انسانی</title>
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+<style>
+:root { --bg-gradient: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 50%, #ffcc80 100%); --gold: #d4a843; --primary: #e67e22; --card-bg: #fff; --text: #1a2a4a; --muted: #666; }
+body.dark { --bg-gradient: linear-gradient(135deg, #3a2e1a 0%, #4a3a20 50%, #5a4a2a 100%); --card-bg: #2a2010; --text: #f5e6d3; --muted: #c9b8a5; }
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', Tahoma, sans-serif; }
+body { background: var(--bg-gradient); min-height: 100vh; padding: 20px; display: flex; flex-direction: column; align-items: center; transition: background 0.5s; color: var(--text); position: relative; overflow-x: hidden; }
+body::before { content: ''; position: fixed; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%); transform: skewX(-25deg); animation: shinePage 10s infinite linear; pointer-events: none; z-index: 1; }
+@keyframes shinePage { 0% { left: -100%; } 100% { left: 200%; } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes shineCard { 0% { left: -100%; } 100% { left: 200%; } }
+header { width: 100%; max-width: 1100px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #e67e22 0%, #f39c12 100%); color: #fff; padding: 15px 25px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.25); position: relative; overflow: hidden; z-index: 2; animation: fadeInUp 0.6s ease forwards; }
+header::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0) 100%); transform: skewX(-25deg); animation: shineCard 5s infinite; }
+header h1 { font-size: 1.2rem; color: var(--gold); position: relative; z-index: 2; }
+.back-btn { background: rgba(255,255,255,0.2); color: #fff; padding: 8px 20px; border-radius: 12px; text-decoration: none; font-weight: bold; transition: 0.3s; position: relative; z-index: 2; border: 1px solid rgba(255,255,255,0.4); cursor: pointer; font-size: 0.85rem; }
+.back-btn:hover { background: var(--gold); color: #1a2a4a; transform: scale(1.05); }
+.floating-controls { position: fixed; top: 15px; left: 15px; display: flex; flex-direction: column; gap: 8px; z-index: 150; }
+.float-btn { width: 40px; height: 40px; border-radius: 50%; border: none; background: #fff; color: #1a2a4a; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.15); transition: 0.3s; }
+.float-btn:hover { background: var(--gold); color: #fff; transform: scale(1.1) rotate(10deg); }
+.main-card { width: 100%; max-width: 1100px; background: var(--card-bg); border-radius: 25px; padding: 30px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); border: 2px solid var(--gold); position: relative; overflow: hidden; z-index: 2; animation: fadeInUp 0.7s ease forwards; }
+#step1 { text-align: center; padding: 30px 20px; }
+#step1 h2 { color: var(--text); margin-bottom: 15px; }
+#step1 p { color: var(--muted); margin-bottom: 20px; line-height: 1.7; }
+#step1 input { padding: 12px; border-radius: 10px; border: 2px solid #ddd; font-family: inherit; font-size: 1rem; width: 250px; text-align: center; margin-bottom: 15px; outline: none; }
+#step1 button { padding: 12px 30px; border: none; border-radius: 10px; background: var(--primary); color: #fff; font-weight: bold; cursor: pointer; font-size: 1rem; transition: 0.3s; }
+#step1 button:hover { background: var(--gold); }
+#step2 { display: none; }
+.welcome-bar { background: linear-gradient(135deg, #1a2a4a, #2a3f6b); color: #fff; padding: 15px 20px; border-radius: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+.welcome-bar h3 { font-size: 1.1rem; color: var(--gold); }
+.welcome-bar span { font-size: 0.85rem; opacity: 0.9; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.stat-card { padding: 15px; border-radius: 15px; color: #fff; text-align: center; position: relative; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+.stat-card:nth-child(1) { background: linear-gradient(135deg, #f6d365, #fda085); }
+.stat-card:nth-child(2) { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+.stat-card:nth-child(3) { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+.stat-card:nth-child(4) { background: linear-gradient(135deg, #fa709a, #fee140); }
+.stat-card .num { font-size: 2rem; font-weight: 900; margin-bottom: 5px; }
+.stat-card .label { font-size: 0.85rem; opacity: 0.95; }
+.tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.tab-btn { padding: 10px 20px; border: 2px solid var(--gold); border-radius: 12px; background: transparent; color: var(--text); font-family: inherit; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 0.9rem; }
+.tab-btn.active { background: var(--gold); color: #1a2a4a; }
+.tab-btn:hover { background: var(--gold); color: #1a2a4a; }
+.tab-content { display: none; animation: fadeInUp 0.4s ease forwards; }
+.tab-content.active { display: block; }
+.list-box { background: rgba(0,0,0,0.03); border-radius: 15px; padding: 15px; margin-top: 15px; max-height: 500px; overflow-y: auto; }
+body.dark .list-box { background: rgba(255,255,255,0.05); }
+.list-item { background: #fff; border-radius: 12px; padding: 12px 15px; margin-bottom: 10px; border-right: 4px solid var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+body.dark .list-item { background: #1a3a2a; }
+.list-item h4 { font-size: 0.95rem; color: var(--text); margin-bottom: 5px; }
+.list-item p { font-size: 0.82rem; color: var(--muted); line-height: 1.6; margin-bottom: 5px; }
+.list-item .meta { font-size: 0.75rem; color: var(--muted); }
+.list-item .actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.list-item .actions button { padding: 5px 12px; border: none; border-radius: 8px; font-family: inherit; font-weight: bold; cursor: pointer; font-size: 0.75rem; transition: 0.3s; }
+.btn-approve { background: #2ed573; color: #fff; }
+.btn-reject { background: #ff4757; color: #fff; }
+.btn-refer { background: #4facfe; color: #fff; }
+.list-item .actions button:hover { transform: scale(1.05); }
+.empty-msg { text-align: center; padding: 30px; color: var(--muted); font-style: italic; }
+.assistant-box { background: linear-gradient(135deg, #e67e22, #f39c12); border-radius: 15px; padding: 15px; margin-top: 20px; color: #fff; }
+.assistant-box h4 { color: #fff; margin-bottom: 10px; }
+.assistant-chat { background: rgba(0,0,0,0.3); border-radius: 10px; padding: 10px; height: 120px; overflow-y: auto; margin-bottom: 10px; font-size: 0.82rem; display: flex; flex-direction: column; gap: 6px; }
+.assistant-chat .msg { padding: 6px 10px; border-radius: 8px; max-width: 85%; line-height: 1.5; white-space: pre-wrap; }
+.assistant-chat .msg.bot { background: rgba(255,255,255,0.15); align-self: flex-start; }
+.assistant-chat .msg.user { background: var(--gold); color: #1a2a4a; align-self: flex-end; }
+.assistant-input { display: flex; gap: 8px; }
+.assistant-input input { flex: 1; padding: 8px 12px; border-radius: 8px; border: none; font-family: inherit; font-size: 0.85rem; outline: none; }
+.assistant-input button { padding: 8px 18px; border-radius: 8px; border: none; background: var(--gold); color: #1a2a4a; font-weight: bold; cursor: pointer; font-family: inherit; font-size: 0.85rem; }
+#satisfactionToggle { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #1a2a4a 0%, #2a3f6b 100%); color: #fff; padding: 8px 25px; border-radius: 15px 15px 0 0; cursor: pointer; z-index: 9999; font-weight: bold; font-size: 0.85rem; border: 1px solid var(--gold); border-bottom: none; }
+#satisfactionBox { position: fixed; bottom: -220px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 500px; background: var(--card-bg); padding: 15px; border-radius: 15px 15px 0 0; box-shadow: 0 -10px 30px rgba(0,0,0,0.3); z-index: 9998; text-align: center; border: 2px solid var(--gold); border-bottom: none; transition: bottom 0.4s ease; }
+@media (max-width: 600px) { .main-card { padding: 18px; } .stat-card .num { font-size: 1.5rem; } }
+</style>
+<script src="assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header>
+  <h1 data-fa="🤝 میز رئیس رفاه" data-en="🤝 Welfare Chief Desk">🤝 میز رئیس رفاه</h1>
+  <a href="index.html" class="back-btn" data-fa="بازگشت" data-en="Back">بازگشت</a>
+</header>
+
+<div class="floating-controls">
+  <button class="float-btn" onclick="toggleTheme()" title="تم روز/شب">🌓</button>
+  <button class="float-btn" onclick="toggleLang()" title="تغییر زبان">🌐</button>
+</div>
+
+<div class="main-card">
+
+  <div id="step1">
+    <h2 data-fa="🌟 خوش آمدید، رئیس رفاه" data-en="🌟 Welcome, Welfare Chief">🌟 خوش آمدید، رئیس رفاه</h2>
+    <p data-fa="لطفاً کد پرسنلی خود را وارد کنید." data-en="Please enter your personnel code.">لطفاً کد پرسنلی خود را وارد کنید.</p>
+    <input type="text" id="chiefCode" placeholder="کد پرسنلی (مثلاً 1003)" data-fa-placeholder="کد پرسنلی" data-en-placeholder="Personnel code">
+    <br>
+    <button onclick="checkChiefCode()" data-fa="ورود" data-en="Enter">ورود</button>
+  </div>
+
+  <div id="step2">
+    <div class="welcome-bar">
+      <h3 id="welcomeText">رئیس رفاه، خوش آمدید</h3>
+      <span id="dateText"></span>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card"><div class="num" id="statWelfarePending">0</div><div class="label" data-fa="درخواست‌های وام/تسهیلات" data-en="Loan Requests">درخواست‌های وام/تسهیلات</div></div>
+      <div class="stat-card"><div class="num" id="statAdminReferrals">0</div><div class="label" data-fa="ارجاعات ادمین" data-en="Admin Referrals">ارجاعات ادمین</div></div>
+      <div class="stat-card"><div class="num" id="statApproved">0</div><div class="label" data-fa="تایید شده" data-en="Approved">تایید شده</div></div>
+      <div class="stat-card"><div class="num" id="statRejected">0</div><div class="label" data-fa="رد شده" data-en="Rejected">رد شده</div></div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('welfare', this)" data-fa="💰 درخواست‌های وام/تسهیلات" data-en="💰 Loan Requests">💰 درخواست‌های وام/تسهیلات</button>
+      <button class="tab-btn" onclick="showTab('referrals', this)" data-fa="📋 ارجاعات ادمین" data-en="📋 Admin Referrals">📋 ارجاعات ادمین</button>
+    </div>
+
+    <div id="tab-welfare" class="tab-content active">
+      <div class="list-box" id="welfareList"></div>
+    </div>
+
+    <div id="tab-referrals" class="tab-content">
+      <div class="list-box" id="referralsList"></div>
+    </div>
+
+    <div class="assistant-box">
+      <h4 data-fa="🌟 دستیار هوشمند رئیس رفاه" data-en="🌟 Smart Welfare Assistant">🌟 دستیار هوشمند رئیس رفاه</h4>
+      <div class="assistant-chat" id="chiefChat">
+        <div class="msg bot" data-fa="سلام! من دستیار هوشمند رئیس رفاه هستم. می‌توانم در بررسی درخواست‌ها، جستجو در سوابق و راهنمایی ارجاعات کمک کنم." data-en="Hello! I am the smart welfare assistant.">سلام! من دستیار هوشمند رئیس رفاه هستم. می‌توانم در بررسی درخواست‌ها، جستجو در سوابق و راهنمایی ارجاعات کمک کنم.</div>
+      </div>
+      <div class="assistant-input">
+        <input type="text" id="chiefChatInput" placeholder="سوال خود را بنویسید..." onkeypress="if(event.key==='Enter') sendChiefChat()">
+        <button onclick="sendChiefChat()" data-fa="ارسال" data-en="Send">ارسال</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="satisfactionToggle" onclick="toggleSatisfaction()" data-fa="⭐ ثبت رضایتمندی" data-en="⭐ Rate us">⭐ ثبت رضایتمندی</div>
+<div id="satisfactionBox">
+  <p style="margin-bottom: 10px; font-weight: bold; color: var(--text);" data-fa="میزان رضایت شما چقدر است؟" data-en="How satisfied are you?">میزان رضایت شما چقدر است؟</p>
+  <div style="display: flex; gap: 8px; justify-content: center;">
+    <button onclick="submitSatisfaction(1)" style="width: 40px; height: 40px; border-radius: 50%; border: none; background: #ff4757; color: #fff; cursor: pointer; font-weight: bold;">۱</button>
+    <button onclick="submitSatisfaction(2)" style="width: 40px; height: 40px; border-radius: 50%; border: none; background: #ff6b81; color: #fff; cursor: pointer; font-weight: bold;">۲</button>
+    <button onclick="submitSatisfaction(3)" style="width: 40px; height: 40px; border-radius: 50%; border: none; background: #ffa502; color: #fff; cursor: pointer; font-weight: bold;">۳</button>
+    <button onclick="submitSatisfaction(4)" style="width: 40px; height: 40px; border-radius: 50%; border: none; background: #7bed9f; color: #1a2a4a; cursor: pointer; font-weight: bold;">۴</button>
+    <button onclick="submitSatisfaction(5)" style="width: 40px; height: 40px; border-radius: 50%; border: none; background: #2ed573; color: #fff; cursor: pointer; font-weight: bold;">۵</button>
+  </div>
+</div>
+
+<script src="assets/js/site_knowledge.js"></script>
+<script src="assets/js/smart_assistant.js"></script>
+<script>
+const LS = {
+  PERSONNEL: 'hr_personnel',
+  QUERIES: 'hr_personal_queries',
+  ADMIN_REQUESTS: 'hr_admin_requests',
+  ADMIN_REFERRALS: 'hr_admin_referrals',
+  ACTION_LOGS: 'hr_action_logs'
+};
+function getLS(key, fallback = []) { try { return JSON.parse(localStorage.getItem(key)) || fallback; } catch { return fallback; } }
+function setLS(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+function faDate(ts) { try { return new Date(ts).toLocaleString('fa-IR'); } catch { return new Date(ts).toLocaleString(); } }
+
+if (!localStorage.getItem('hr_personnel')) {
+  localStorage.setItem('hr_personnel', JSON.stringify([
+    { code: '1001', name: 'علی رضایی', unit: 'کارگزینی' },
+    { code: '1002', name: 'مریم حسینی', unit: 'آموزش' },
+    { code: '1003', name: 'رضا کریمی', unit: 'رفاه' },
+    { code: '1004', name: 'زهرا محمدی', unit: 'جبران خدمت' },
+    { code: '1005', name: 'حسین نوری', unit: 'فناوری اطلاعات' }
+  ]));
+}
+
+const LS_THEME = 'theme';
+const LS_LANG = 'lang';
+function loadTheme() { if (localStorage.getItem(LS_THEME) === 'dark') document.body.classList.add('dark'); }
+function toggleTheme() { document.body.classList.toggle('dark'); localStorage.setItem(LS_THEME, document.body.classList.contains('dark') ? 'dark' : 'light'); }
+let currentLang = localStorage.getItem(LS_LANG) || 'fa';
+function applyLang() {
+  document.documentElement.lang = currentLang;
+  document.documentElement.dir = currentLang === 'fa' ? 'rtl' : 'ltr';
+  document.querySelectorAll('[data-fa]').forEach(el => { el.textContent = currentLang === 'fa' ? el.dataset.fa : el.dataset.en; });
+  document.querySelectorAll('[data-fa-placeholder]').forEach(el => { el.placeholder = currentLang === 'fa' ? el.dataset.faPlaceholder : el.dataset.enPlaceholder; });
+}
+function toggleLang() { currentLang = currentLang === 'fa' ? 'en' : 'fa'; localStorage.setItem(LS_LANG, currentLang); applyLang(); }
+
+let currentChief = null;
+
+function checkChiefCode() {
+  const code = document.getElementById('chiefCode').value.trim();
+  const personnel = getLS(LS.PERSONNEL);
+  const found = personnel.find(p => p.code === code && p.unit === 'رفاه');
+  if (found) {
+    currentChief = found;
+    document.getElementById('step1').style.display = 'none';
+    document.getElementById('step2').style.display = 'block';
+    document.getElementById('welcomeText').textContent = (currentLang === 'fa' ? 'رئیس رفاه، ' : 'Welfare Chief, ') + found.name;
+    document.getElementById('dateText').textContent = faDate(Date.now());
+    renderAll();
+  } else {
+    alert('کد پرسنلی یافت نشد یا به واحد رفاه تعلق ندارد. کد مجاز: 1003');
+  }
+}
+
+function showTab(name, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+function logAction(action, details) {
+  const logs = getLS(LS.ACTION_LOGS);
+  logs.push({ id: uid(), action, details, by: currentChief ? currentChief.name : '—', at: Date.now() });
+  setLS(LS.ACTION_LOGS, logs);
+}
+
+function renderAll() {
+  renderWelfareRequests();
+  renderAdminReferrals();
+  updateStats();
+}
+
+function updateStats() {
+  const reqs = getLS(LS.ADMIN_REQUESTS).filter(r => (r.type || '').includes('وام'));
+  const refs = getLS(LS.ADMIN_REFERRALS).filter(r => r.unit === 'رفاه');
+  document.getElementById('statWelfarePending').textContent = reqs.filter(r => r.status === 'pending').length;
+  document.getElementById('statAdminReferrals').textContent = refs.filter(r => r.status === 'pending').length;
+  document.getElementById('statApproved').textContent = reqs.filter(r => r.status === 'approved').length;
+  document.getElementById('statRejected').textContent = reqs.filter(r => r.status === 'rejected').length;
+}
+
+function renderWelfareRequests() {
+  const box = document.getElementById('welfareList');
+  const reqs = getLS(LS.ADMIN_REQUESTS).filter(r => (r.type || '').includes('وام'));
+  if (reqs.length === 0) { box.innerHTML = '<p class="empty-msg">درخواست وامی ثبت نشده است.</p>'; return; }
+  const statusMap = { pending: 'در انتظار', approved: 'تایید شده', rejected: 'رد شده' };
+  box.innerHTML = reqs.slice().reverse().map(r => `
+    <div class="list-item">
+      <h4>💰 ${r.personnelName || r.personnelCode} — وام</h4>
+      <p>${r.description || ''}</p>
+      <div class="meta">کد رهگیری: <strong>${r.trackingCode}</strong> — ${faDate(r.createdAt)} — وضعیت: ${statusMap[r.status] || r.status}</div>
+      ${r.status === 'pending' ? `
+        <div class="actions">
+          <button class="btn-approve" onclick="approveWelfare('${r.id}')">✅ تایید</button>
+          <button class="btn-reject" onclick="rejectWelfare('${r.id}')">❌ رد</button>
+          <button class="btn-refer" onclick="referToAdmin('${r.id}')">📤 ارجاع به مدیرکل</button>
+        </div>` : ''}
+    </div>
+  `).join('');
+}
+
+function approveWelfare(id) {
+  const note = prompt('پیام به پرسنل (اختیاری):', 'درخواست وام شما تایید شد. برای دریافت به واحد رفاه مراجعه کنید.');
+  if (note === null) return;
+  const reqs = getLS(LS.ADMIN_REQUESTS);
+  const req = reqs.find(r => r.id === id);
+  if (!req) return;
+  req.status = 'approved';
+  req.answer = note || '';
+  req.reviewedAt = Date.now();
+  req.reviewedBy = currentChief ? currentChief.name : '—';
+  setLS(LS.ADMIN_REQUESTS, reqs);
+  logAction('تایید وام', 'درخواست ' + req.trackingCode);
+  renderWelfareRequests();
+  updateStats();
+  alert('✅ تایید شد.');
+}
+
+function rejectWelfare(id) {
+  const reason = prompt('دلیل رد:');
+  if (reason === null) return;
+  const reqs = getLS(LS.ADMIN_REQUESTS);
+  const req = reqs.find(r => r.id === id);
+  if (!req) return;
+  req.status = 'rejected';
+  req.answer = reason || 'بدون دلیل';
+  req.reviewedAt = Date.now();
+  req.reviewedBy = currentChief ? currentChief.name : '—';
+  setLS(LS.ADMIN_REQUESTS, reqs);
+  logAction('رد وام', 'درخواست ' + req.trackingCode);
+  renderWelfareRequests();
+  updateStats();
+  alert('❌ رد شد.');
+}
+
+function referToAdmin(id) {
+  const reqs = getLS(LS.ADMIN_REQUESTS);
+  const req = reqs.find(r => r.id === id);
+  if (!req) return;
+  const referrals = getLS(LS.ADMIN_REFERRALS);
+  referrals.push({
+    id: uid(),
+    sourceId: id,
+    sourceType: 'welfare',
+    unit: 'ادمین',
+    title: 'ارجاع وام از رفاه: ' + req.trackingCode,
+    description: req.description,
+    personnelName: req.personnelName,
+    personnelCode: req.personnelCode,
+    status: 'pending',
+    createdAt: Date.now(),
+    referredBy: currentChief ? currentChief.name : '—'
+  });
+  setLS(LS.ADMIN_REFERRALS, referrals);
+  req.status = 'referred';
+  setLS(LS.ADMIN_REQUESTS, reqs);
+  logAction('ارجاع به ادمین', 'درخواست ' + req.trackingCode);
+  renderWelfareRequests();
+  updateStats();
+  alert('📤 به مدیرکل ارجاع شد.');
+}
+
+function renderAdminReferrals() {
+  const box = document.getElementById('referralsList');
+  const refs = getLS(LS.ADMIN_REFERRALS).filter(r => r.unit === 'رفاه');
+  if (refs.length === 0) { box.innerHTML = '<p class="empty-msg">ارجاعی از ادمین نیامده است.</p>'; return; }
+  box.innerHTML = refs.slice().reverse().map(r => `
+    <div class="list-item">
+      <h4>📋 ${r.title}</h4>
+      <p>${r.description || ''}</p>
+      <div class="meta">${faDate(r.createdAt)} — از: ${r.referredBy || '—'} — وضعیت: ${r.status}</div>
+    </div>
+  `).join('');
+}
+
+async function sendChiefChat() {
+  const input = document.getElementById('chiefChatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  addChiefMsg(text, 'user');
+  input.value = '';
+  addChiefMsg('⏳ در حال جستجو...', 'bot');
+  let response;
+  try { response = await getBotResponse(text); } catch (e) { response = 'خطا در پردازش.'; }
+  const chat = document.getElementById('chiefChat');
+  const last = chat.lastElementChild;
+  if (last && last.textContent.includes('در حال جستجو')) chat.removeChild(last);
+  addChiefMsg(response, 'bot');
+}
+
+function addChiefMsg(text, sender) {
+  const chat = document.getElementById('chiefChat');
+  const msg = document.createElement('div');
+  msg.className = 'msg ' + sender;
+  msg.textContent = text;
+  chat.appendChild(msg);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function toggleSatisfaction() { const box = document.getElementById('satisfactionBox'); box.style.bottom = (box.style.bottom === '0px') ? '-220px' : '0px'; }
+function submitSatisfaction(score) { localStorage.setItem('welfare_chief_satisfaction', score); alert('امتیاز ' + score + ' ثبت شد. با تشکر!'); document.getElementById('satisfactionBox').style.bottom = '-220px'; }
+
+loadTheme();
+applyLang();
+</script>
+</body>
+</html>

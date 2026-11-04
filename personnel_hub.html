@@ -1,0 +1,231 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>کارگزینی | اداره کل سرمایه انسانی</title>
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+<style>
+:root {
+  --bg-gradient: linear-gradient(135deg, #e0f2f1 0%, #f1f8e9 50%, #fff8e1 100%);
+  --gold: #d4a843;
+  --primary: #0d8a63;
+  --card-bg: #fff;
+  --text: #1a2a4a;
+  --muted: #666;
+}
+body.dark {
+  --bg-gradient: linear-gradient(135deg, #0a3b2a 0%, #1a4d3a 50%, #3a2e1a 100%);
+  --card-bg: #102b20;
+  --text: #e8f5e9;
+  --muted: #a5c9b8;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', Tahoma, sans-serif; }
+body {
+  background: var(--bg-gradient); min-height: 100vh; padding: 20px;
+  display: flex; flex-direction: column; align-items: center;
+  transition: background 0.5s; color: var(--text); position: relative; overflow-x: hidden;
+}
+body::before {
+  content: ''; position: fixed; top: 0; left: -100%; width: 50%; height: 100%;
+  background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+  transform: skewX(-25deg); animation: shinePage 10s infinite linear; pointer-events: none; z-index: 1;
+}
+@keyframes shinePage { 0% { left: -100%; } 100% { left: 200%; } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes shineCard { 0% { left: -100%; } 100% { left: 200%; } }
+@keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+header {
+  width: 100%; max-width: 900px; display: flex; justify-content: space-between; align-items: center;
+  background: linear-gradient(135deg, #1a2a4a 0%, #2a3f6b 100%); color: #fff;
+  padding: 15px 25px; border-radius: 20px; margin-bottom: 25px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25); position: relative; overflow: hidden;
+  z-index: 2; animation: fadeInUp 0.6s ease forwards;
+}
+header::before {
+  content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+  background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0) 100%);
+  transform: skewX(-25deg); animation: shineCard 5s infinite;
+}
+header h1 { font-size: 1.2rem; color: var(--gold); position: relative; z-index: 2; }
+.back-btn {
+  background: rgba(255,255,255,0.2); color: #fff; padding: 8px 20px; border-radius: 12px;
+  text-decoration: none; font-weight: bold; transition: 0.3s; position: relative; z-index: 2;
+  border: 1px solid rgba(255,255,255,0.4);
+}
+.back-btn:hover { background: var(--gold); color: #1a2a4a; transform: scale(1.05); }
+
+.floating-controls { position: fixed; top: 15px; left: 15px; display: flex; flex-direction: column; gap: 8px; z-index: 150; }
+.float-btn {
+  width: 40px; height: 40px; border-radius: 50%; border: none; background: #fff; color: #1a2a4a;
+  font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15); transition: 0.3s;
+}
+.float-btn:hover { background: var(--gold); color: #fff; transform: scale(1.1) rotate(10deg); }
+
+.intro-box {
+  width: 100%; max-width: 900px; text-align: center; margin-bottom: 25px;
+  position: relative; z-index: 2; animation: fadeInUp 0.7s ease forwards;
+}
+.intro-box h2 { font-size: 1.4rem; color: var(--text); margin-bottom: 8px; }
+.intro-box p { font-size: 0.95rem; color: var(--muted); line-height: 1.7; }
+
+.modules-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 25px; width: 100%; max-width: 900px; position: relative; z-index: 2;
+}
+
+.module-card {
+  border-radius: 25px; padding: 35px 25px; text-align: center; cursor: pointer;
+  position: relative; overflow: hidden; color: #fff;
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+  animation: fadeInUp 0.8s ease forwards; border: 2px solid rgba(255,255,255,0.3);
+  text-decoration: none;
+}
+.module-card::after {
+  content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+  background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.35) 50%, rgba(255,255,255,0) 100%);
+  transform: skewX(-25deg); transition: 0.6s;
+}
+.module-card:hover::after { left: 120%; }
+.module-card:hover { transform: translateY(-10px) scale(1.03); box-shadow: 0 25px 55px rgba(0,0,0,0.35); }
+
+.module-card.smart {
+  background: linear-gradient(135deg, #1a2a4a 0%, #2a3f6b 50%, #4facfe 100%);
+}
+.module-card.personal {
+  background: linear-gradient(135deg, #0d8a63 0%, #1f9e73 50%, #43e97b 100%);
+}
+
+.module-icon {
+  font-size: 3.5rem; margin-bottom: 15px; display: inline-block;
+  animation: floatIcon 3s ease-in-out infinite;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+}
+.module-card h3 { font-size: 1.3rem; font-weight: 900; margin-bottom: 10px; text-shadow: 0 2px 6px rgba(0,0,0,0.3); }
+.module-card p { font-size: 0.9rem; line-height: 1.7; opacity: 0.92; margin-bottom: 18px; }
+.module-badge {
+  display: inline-block; padding: 6px 16px; border-radius: 20px;
+  background: rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.5);
+  font-size: 0.78rem; font-weight: bold; backdrop-filter: blur(5px);
+}
+
+.module-card.smart { animation-delay: 0.1s; }
+.module-card.personal { animation-delay: 0.2s; }
+
+/* نظرسنجی */
+#satisfactionToggle {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  background: linear-gradient(135deg, #1a2a4a 0%, #2a3f6b 100%); color: #fff;
+  padding: 8px 25px; border-radius: 15px 15px 0 0; cursor: pointer; z-index: 9999;
+  font-weight: bold; font-size: 0.85rem; border: 1px solid var(--gold); border-bottom: none;
+}
+#satisfactionBox {
+  position: fixed; bottom: -220px; left: 50%; transform: translateX(-50%);
+  width: 90%; max-width: 500px; background: var(--card-bg); padding: 15px;
+  border-radius: 15px 15px 0 0; box-shadow: 0 -10px 30px rgba(0,0,0,0.3);
+  z-index: 9998; text-align: center; border: 2px solid var(--gold); border-bottom: none;
+  transition: bottom 0.4s ease;
+}
+
+@media (max-width: 600px) {
+  .intro-box h2 { font-size: 1.1rem; }
+  .module-card { padding: 25px 18px; }
+  .module-icon { font-size: 2.8rem; }
+  .module-card h3 { font-size: 1.1rem; }
+}
+</style>
+<script src="assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header>
+  <h1 data-fa="📋 کارگزینی" data-en="📋 Personnel">📋 کارگزینی</h1>
+  <a href="index.html" class="back-btn" data-fa="بازگشت به سایت" data-en="Back to site">بازگشت به سایت</a>
+</header>
+
+<div class="floating-controls">
+  <button class="float-btn" onclick="toggleTheme()" title="تم روز/شب">🌓</button>
+  <button class="float-btn" onclick="toggleLang()" title="تغییر زبان">🌐</button>
+</div>
+
+<div class="intro-box">
+  <h2 data-fa="🌟 به کارگزینی هوشمند خوش آمدید" data-en="🌟 Welcome to Smart Personnel">🌟 به کارگزینی هوشمند خوش آمدید</h2>
+  <p data-fa="لطفاً ماژول موردنظر خود را انتخاب کنید:" data-en="Please select your desired module:">لطفاً ماژول موردنظر خود را انتخاب کنید:</p>
+</div>
+
+<div class="modules-grid">
+
+  <a href="smart_hr.html" class="module-card smart">
+    <div class="module-icon">⚙️</div>
+    <h3 data-fa="کارگزینی هوشمند" data-en="Smart Personnel">کارگزینی هوشمند</h3>
+    <p data-fa="داشبورد نظارتی کارشناسان کارگزینی با دستیاران هوشمند برای بررسی، تایید و ارجاع درخواست‌ها" data-en="Supervisory dashboard for HR experts with smart assistants for reviewing, approving and referring requests">داشبورد نظارتی کارشناسان کارگزینی با دستیاران هوشمند برای بررسی، تایید و ارجاع درخواست‌ها</p>
+    <span class="module-badge" data-fa="ویژه کارشناسان" data-en="For Experts">ویژه کارشناسان</span>
+  </a>
+
+  <a href="my_hr.html" class="module-card personal">
+    <div class="module-icon">👤</div>
+    <h3 data-fa="کارگزینی شخصی" data-en="My Personnel">کارگزینی شخصی</h3>
+    <p data-fa="داشبورد شخصی هر پرسنل با همراه هوشمند، وضعیت پرونده، مسیر ارتقا و پیگیری درخواست‌ها" data-en="Personal dashboard for each employee with smart companion, case status, career path and request tracking">داشبورد شخصی هر پرسنل با همراه هوشمند، وضعیت پرونده، مسیر ارتقا و پیگیری درخواست‌ها</p>
+    <span class="module-badge" data-fa="ویژه پرسنل" data-en="For Employees">ویژه پرسنل</span>
+  </a>
+
+</div>
+
+<div id="satisfactionToggle" onclick="toggleSatisfaction()" data-fa="⭐ ثبت رضایتمندی" data-en="⭐ Rate us">⭐ ثبت رضایتمندی</div>
+<div id="satisfactionBox">
+  <p style="margin-bottom: 10px; font-weight: bold; color: var(--text);" data-fa="میزان رضایت شما از این صفحه چقدر است؟" data-en="How satisfied are you with this page?">میزان رضایت شما از این صفحه چقدر است؟</p>
+  <div style="display: flex; gap: 10px; justify-content: center;">
+    <button onclick="submitSatisfaction(0)" style="width: 45px; height: 45px; border-radius: 50%; border: none; background: #ff4757; color: #fff; cursor: pointer; font-weight: bold; font-size: 1.1rem;">۰</button>
+    <button onclick="submitSatisfaction(1)" style="width: 45px; height: 45px; border-radius: 50%; border: none; background: #ff6b81; color: #fff; cursor: pointer; font-weight: bold; font-size: 1.1rem;">۱</button>
+    <button onclick="submitSatisfaction(2)" style="width: 45px; height: 45px; border-radius: 50%; border: none; background: #ffa502; color: #fff; cursor: pointer; font-weight: bold; font-size: 1.1rem;">۲</button>
+    <button onclick="submitSatisfaction(3)" style="width: 45px; height: 45px; border-radius: 50%; border: none; background: #eccc68; color: #1a2a4a; cursor: pointer; font-weight: bold; font-size: 1.1rem;">۳</button>
+    <button onclick="submitSatisfaction(4)" style="width: 45px; height: 45px; border-radius: 50%; border: none; background: #7bed9f; color: #1a2a4a; cursor: pointer; font-weight: bold; font-size: 1.1rem;">۴</button>
+    <button onclick="submitSatisfaction(5)" style="width: 45px; height: 45px; border-radius: 50%; border: none; background: #2ed573; color: #fff; cursor: pointer; font-weight: bold; font-size: 1.1rem;">۵</button>
+  </div>
+</div>
+
+<script>
+const LS_THEME = 'theme';
+const LS_LANG = 'lang';
+
+function loadTheme() {
+  if (localStorage.getItem(LS_THEME) === 'dark') document.body.classList.add('dark');
+}
+function toggleTheme() {
+  document.body.classList.toggle('dark');
+  localStorage.setItem(LS_THEME, document.body.classList.contains('dark') ? 'dark' : 'light');
+}
+
+let currentLang = localStorage.getItem(LS_LANG) || 'fa';
+function applyLang() {
+  document.documentElement.lang = currentLang;
+  document.documentElement.dir = currentLang === 'fa' ? 'rtl' : 'ltr';
+  document.querySelectorAll('[data-fa]').forEach(el => {
+    el.textContent = currentLang === 'fa' ? el.dataset.fa : el.dataset.en;
+  });
+}
+function toggleLang() {
+  currentLang = currentLang === 'fa' ? 'en' : 'fa';
+  localStorage.setItem(LS_LANG, currentLang);
+  applyLang();
+}
+
+function toggleSatisfaction() {
+  const box = document.getElementById('satisfactionBox');
+  box.style.bottom = (box.style.bottom === '0px') ? '-220px' : '0px';
+}
+function submitSatisfaction(score) {
+  localStorage.setItem('personnel_hub_satisfaction', score);
+  alert(currentLang === 'fa' ? 'امتیاز ' + score + ' شما ثبت شد. با تشکر!' : 'Your score ' + score + ' was recorded. Thanks!');
+  document.getElementById('satisfactionBox').style.bottom = '-220px';
+}
+
+loadTheme();
+applyLang();
+</script>
+
+</body>
+</html>

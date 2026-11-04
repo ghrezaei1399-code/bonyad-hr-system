@@ -1,0 +1,348 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>هم‌اندیشی | اداره کل سرمایه انسانی</title>
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+<style>
+:root { --bg-gradient: linear-gradient(135deg, #e0f2f1 0%, #f1f8e9 100%); --gold: #d4a843; --primary: #0d8a63; --card-bg:#fff; --text:#1a2a4a; --muted:#666; }
+body.dark { --bg-gradient: linear-gradient(135deg, #0a3b2a 0%, #1a4d3a 100%); --card-bg:#102b20; --text:#e8f5e9; --muted:#a5c9b8; }
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', Tahoma, sans-serif; }
+body { background: var(--bg-gradient); min-height: 100vh; padding: 20px; display: flex; flex-direction: column; align-items: center; transition: background 0.5s; color: var(--text); }
+header { width: 100%; max-width: 900px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, #1a2a4a 0%, #2a3f6b 100%); color: #fff; padding: 15px 25px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+header h1 { font-size: 1.2rem; color: var(--gold); }
+.back-btn { background: rgba(255,255,255,0.2); color: #fff; padding: 8px 20px; border-radius: 12px; text-decoration: none; font-weight: bold; transition: 0.3s; }
+.back-btn:hover { background: var(--gold); color: #1a2a4a; }
+
+.floating-controls { position: fixed; top: 15px; left: 15px; display: flex; flex-direction: column; gap: 8px; z-index: 150; }
+.float-btn { width: 40px; height: 40px; border-radius: 50%; border: none; background: #fff; color: #1a2a4a; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.15); transition: 0.3s; }
+.float-btn:hover { background: var(--gold); color: #fff; transform: scale(1.1); }
+
+.main-card { width: 100%; max-width: 800px; background: var(--card-bg); border-radius: 25px; padding: 30px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); border: 2px solid var(--gold); position: relative; overflow: hidden; }
+
+#step1 { text-align: center; }
+#step1 h2 { color: var(--text); margin-bottom: 15px; }
+#step1 input { padding: 12px; border-radius: 10px; border: 2px solid #ddd; font-family: inherit; font-size: 1rem; width: 220px; text-align: center; margin-bottom: 15px; outline: none; }
+#step1 button { padding: 12px 30px; border: none; border-radius: 10px; background: var(--primary); color: #fff; font-weight: bold; cursor: pointer; font-size: 1rem; transition: 0.3s; }
+#step1 button:hover { background: var(--gold); }
+
+#step2 { display: none; }
+.topic-box { background: #fff8e1; border-right: 5px solid var(--gold); padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+body.dark .topic-box { background: #3a2e1a; }
+.topic-box h3 { color: var(--primary); margin-bottom: 5px; }
+.topic-box p { font-size: 0.95rem; line-height: 1.7; color: var(--text); }
+
+.timer-box { background: rgba(13,138,99,0.1); border: 1px dashed var(--primary); padding: 10px 15px; border-radius: 10px; margin-bottom: 20px; font-weight: bold; color: var(--primary); text-align: center; }
+.timer-box.expired { background: rgba(255,71,87,0.1); border-color: #ff4757; color: #ff4757; }
+
+.opinions-section { margin-bottom: 20px; }
+.opinions-section h4, .add-opinion h4 { color: var(--text); margin-bottom: 10px; }
+
+.opinion-item { background: #f5f5f5; border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
+body.dark .opinion-item { background: #1a3a2a; }
+.opinion-header { padding: 12px 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: bold; color: var(--text); }
+.opinion-header:hover { background: #e0e0e0; }
+body.dark .opinion-header:hover { background: #2a4a3a; }
+.opinion-body { display: none; padding: 15px; border-top: 1px solid #ddd; font-size: 0.9rem; color: var(--text); }
+body.dark .opinion-body { border-top-color: #2a4a3a; }
+
+.add-opinion textarea { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #ddd; font-family: inherit; margin-bottom: 15px; min-height: 80px; outline: none; }
+.add-opinion button { width: 100%; padding: 15px; border: none; border-radius: 12px; background: linear-gradient(135deg, #0d8a63, #1f9e73); color: #fff; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.3s; }
+.add-opinion button:hover { transform: scale(1.02); box-shadow: 0 5px 20px rgba(13,138,99,0.4); }
+.add-opinion button:disabled { background: #999; cursor: not-allowed; transform: none; box-shadow: none; }
+
+#trackingCode { display: none; text-align: center; padding: 20px; background: #e8f5e9; border-radius: 15px; margin-top: 20px; border: 2px solid var(--primary); }
+#trackingCode h3 { color: var(--primary); margin-bottom: 10px; }
+#trackingCode span { font-size: 1.5rem; font-weight: bold; letter-spacing: 2px; color: var(--text); }
+
+#satisfactionToggle { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #1a2a4a 0%, #2a3f6b 100%); color: #fff; padding: 8px 25px; border-radius: 15px 15px 0 0; cursor: pointer; z-index: 9999; font-weight: bold; font-size: 0.85rem; border: 1px solid var(--gold); border-bottom: none; }
+#satisfactionBox { position: fixed; bottom: -220px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 500px; background: var(--card-bg); padding: 15px; border-radius: 15px 15px 0 0; box-shadow: 0 -10px 30px rgba(0,0,0,0.3); z-index: 9998; text-align: center; border: 2px solid var(--gold); border-bottom: none; transition: bottom 0.4s ease; }
+</style>
+<script src="assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header>
+  <h1 data-fa="🧠 بخش هم‌اندیشی" data-en="🧠 Brainstorming">🧠 بخش هم‌اندیشی</h1>
+  <a href="index.html" class="back-btn" data-fa="بازگشت به سایت" data-en="Back to site">بازگشت به سایت</a>
+</header>
+
+<div class="floating-controls">
+  <button class="float-btn" onclick="toggleTheme()" title="تم روز/شب">🌓</button>
+  <button class="float-btn" onclick="toggleLang()" title="تغییر زبان">🌐</button>
+</div>
+
+<div class="main-card">
+  <!-- مرحله ۱: ورود کد پرسنلی -->
+  <div id="step1">
+    <h2 data-fa="🌟 خوش آمدید به هم‌اندیشی" data-en="🌟 Welcome to Brainstorming">🌟 خوش آمدید به هم‌اندیشی</h2>
+    <p style="margin-bottom: 20px; color: var(--muted);" data-fa="لطفاً کد پرسنلی خود را وارد کنید تا اجازه ورود به شما داده شود." data-en="Please enter your personnel code to be granted access.">لطفاً کد پرسنلی خود را وارد کنید تا اجازه ورود به شما داده شود.</p>
+    <input type="text" id="personnelCode" data-fa-placeholder="کد پرسنلی" data-en-placeholder="Personnel code" placeholder="کد پرسنلی">
+    <br>
+    <button onclick="checkPersonnel()" data-fa="ورود" data-en="Enter">ورود</button>
+  </div>
+
+  <!-- مرحله ۲: نمایش موضوع و نظرات -->
+  <div id="step2">
+    <div class="topic-box">
+      <h3 data-fa="📢 موضوع هم‌اندیشی امروز:" data-en="📢 Today's brainstorming topic:">📢 موضوع هم‌اندیشی امروز:</h3>
+      <p id="topicText">موضوعی برای امروز ثبت نشده است.</p>
+    </div>
+
+    <div class="timer-box" id="timerBox">
+      <span data-fa="⏳ زمان باقی‌مانده برای ثبت نظر:" data-en="⏳ Time left to submit:">⏳ زمان باقی‌مانده برای ثبت نظر:</span>
+      <span id="countdown">--:--:--</span>
+    </div>
+
+    <div class="opinions-section">
+      <h4 data-fa="نظرات سایر همکاران (برای مشاهده کلیک کنید):" data-en="Colleagues' opinions (click to view):">نظرات سایر همکاران (برای مشاهده کلیک کنید):</h4>
+      <div id="opinionsList"></div>
+    </div>
+
+    <div class="add-opinion" id="addOpinionBox">
+      <h4 data-fa="نظر خود را اضافه کنید:" data-en="Add your opinion:">نظر خود را اضافه کنید:</h4>
+      <textarea id="newOpinion" data-fa-placeholder="نظر خود را در مورد این موضوع بنویسید..." data-en-placeholder="Write your opinion about this topic..." placeholder="نظر خود را در مورد این موضوع بنویسید..."></textarea>
+      <button id="submitOpinionBtn" onclick="submitOpinion()" data-fa="ثبت نظر و دریافت کد رهگیری" data-en="Submit and get tracking code">ثبت نظر و دریافت کد رهگیری</button>
+    </div>
+
+    <div id="trackingCode">
+      <h3 data-fa="✅ نظر شما با موفقیت ثبت شد." data-en="✅ Your opinion was submitted successfully.">✅ نظر شما با موفقیت ثبت شد.</h3>
+      <p data-fa="کد رهگیری شما:" data-en="Your tracking code:">کد رهگیری شما:</p>
+      <span id="trackCodeDisplay">---</span>
+<br><br>
+<button onclick="copyTrackingCode()" style="padding:10px 20px; border:none; border-radius:10px; background:#0d8a63; color:#fff; font-weight:bold; cursor:pointer; font-family:inherit;">📋 کپی کد رهگیری</button>
+<button onclick="downloadTrackingCode()" style="padding:10px 20px; border:none; border-radius:10px; background:#d4a843; color:#1a2a4a; font-weight:bold; cursor:pointer; font-family:inherit; margin-right:8px;">💾 ذخیره در گوشی/کامپیوتر</button>
+    </div>
+  </div>
+</div>
+
+<!-- باکس نظرسنجی -->
+<div id="satisfactionToggle" onclick="toggleSatisfaction()" data-fa="⭐ ثبت رضایتمندی" data-en="⭐ Rate us">⭐ ثبت رضایتمندی</div>
+<div id="satisfactionBox">
+  <p style="margin-bottom: 10px; font-weight: bold; color: var(--text);" data-fa="میزان رضایت شما از این صفحه چقدر است؟" data-en="How satisfied are you with this page?">میزان رضایت شما از این صفحه چقدر است؟</p>
+  <div style="display: flex; gap: 10px; justify-content: center;">
+    <button onclick="submitSatisfaction(0)" style="width: 45px; height: 45px; border-radius: 50%; border: none; background: #ff4757; color: #fff; cursor: pointer; font-weight: bold; font-size: 1.1rem;">۰</button>
+    <button onclick="submitSatisfaction(1)" style="width: 45px; height: 45px; border-radius: 50%; border: none; background: #ff6b81; color: #fff; cursor: pointer; font-weight: bold; font-size: 1.1rem;">۱</button>
+    <button onclick="submitSatisfaction(2)" style="width: 45px; height: 45px; border-radius: 50%; border: none; background: #ffa502; color: #fff; cursor: pointer; font-weight: bold; font-size: 1.1rem;">۲</button>
+    <button onclick="submitSatisfaction(3)" style="width: 45px; height: 45px; border-radius: 50%; border: none; background: #eccc68; color: #1a2a4a; cursor: pointer; font-weight: bold; font-size: 1.1rem;">۳</button>
+    <button onclick="submitSatisfaction(4)" style="width: 45px; height: 45px; border-radius: 50%; border: none; background: #7bed9f; color: #1a2a4a; cursor: pointer; font-weight: bold; font-size: 1.1rem;">۴</button>
+    <button onclick="submitSatisfaction(5)" style="width: 45px; height: 45px; border-radius: 50%; border: none; background: #2ed573; color: #fff; cursor: pointer; font-weight: bold; font-size: 1.1rem;">۵</button>
+  </div>
+</div>
+
+<script>
+const LS = {
+  CONSULTANTS: 'hr_consultants',
+  TASKS: 'hr_tasks',
+  REPORTS: 'hr_reports',
+  BRAIN_TOPICS: 'hr_brainstorm_topics',
+  BRAIN_IDEAS: 'hr_brainstorm_ideas',
+  BRAIN_REPORTS: 'hr_brainstorm_reports',
+  PERSONNEL: 'hr_personnel',
+  SURVEYS: 'hr_surveys',
+  SETTINGS: 'hr_settings'
+};
+/* ================== تنظیمات ================== */
+const DEADLINE_HOURS = 12;
+const LS_DEADLINE = 'brainstorm_deadline';
+const LS_OPINIONS = 'brainstorm_opinions';
+const LS_THEME = 'theme';
+const LS_LANG = 'lang';
+const PERSONNEL_DB = ['101', '102', '103', '104', '105']; // بعداً از بانک اطلاعات پرسنل
+const TODAY_TOPIC_FA = 'چگونه می‌توانیم فرآیند صدور احکام را سریع‌تر و شفاف‌تر کنیم؟';
+const TODAY_TOPIC_EN = 'How can we make the decree issuance process faster and more transparent?';
+
+const INITIAL_OPINIONS = [
+  { name: 'علی رضایی', nameEn: 'Ali Rezaei', text: 'به نظرم استفاده از یک سیستم اتوماسیون اداری می‌تواند سرعت را افزایش دهد.', textEn: 'I think using an office automation system can increase speed.' },
+  { name: 'سارا محمدی', nameEn: 'Sara Mohammadi', text: 'آموزش کارکنان در استفاده از نرم‌افزار جدید بسیار مهم است.', textEn: 'Training staff on the new software is very important.' },
+  { name: 'رضا کریمی', nameEn: 'Reza Karimi', text: 'یکپارچه‌سازی با دیتابیس مرکزی می‌تواند از دوباره‌کاری جلوگیری کند.', textEn: 'Integration with the central database can prevent duplication.' }
+];
+
+/* ================== ذخیره‌سازی محلی (بدون فایل مجزا) ================== */
+function loadTheme() {
+  if (localStorage.getItem(LS_THEME) === 'dark') document.body.classList.add('dark');
+}
+function toggleTheme() {
+  document.body.classList.toggle('dark');
+  localStorage.setItem(LS_THEME, document.body.classList.contains('dark') ? 'dark' : 'light');
+}
+
+let currentLang = localStorage.getItem(LS_LANG) || 'fa';
+function applyLang() {
+  document.documentElement.lang = currentLang;
+  document.documentElement.dir = currentLang === 'fa' ? 'rtl' : 'ltr';
+  document.querySelectorAll('[data-fa]').forEach(el => {
+    el.textContent = currentLang === 'fa' ? el.dataset.fa : el.dataset.en;
+  });
+  document.querySelectorAll('[data-fa-placeholder]').forEach(el => {
+    el.placeholder = currentLang === 'fa' ? el.dataset.faPlaceholder : el.dataset.enPlaceholder;
+  });
+  // موضوع و نظرات
+  document.getElementById('topicText').textContent = currentLang === 'fa' ? TODAY_TOPIC_FA : TODAY_TOPIC_EN;
+  renderOpinions();
+}
+function toggleLang() {
+  currentLang = currentLang === 'fa' ? 'en' : 'fa';
+  localStorage.setItem(LS_LANG, currentLang);
+  applyLang();
+}
+
+/* ================== نظرسنجی ================== */
+function copyTrackingCode() {
+  const code = document.getElementById('trackCodeDisplay').innerText;
+  navigator.clipboard.writeText(code).then(function() {
+    alert('کد رهگیری کپی شد: ' + code);
+  }).catch(function() {
+    alert('کپی نشد. لطفاً دستی یادداشت کنید: ' + code);
+  });
+}
+
+function downloadTrackingCode() {
+  const code = document.getElementById('trackCodeDisplay').innerText;
+  const text = 'کد رهگیری نظر شما:\n' + code + '\n\nتاریخ: ' + new Date().toLocaleString('fa-IR');
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'brainstorm-tracking-' + code + '.txt';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(link.href);
+}
+function toggleSatisfaction() {
+  const box = document.getElementById('satisfactionBox');
+  box.style.bottom = (box.style.bottom === '0px') ? '-220px' : '0px';
+}
+function submitSatisfaction(score) {
+  localStorage.setItem('brainstorm_satisfaction', score);
+  alert(currentLang === 'fa' ? 'امتیاز ' + score + ' شما ثبت شد. با تشکر!' : 'Your score ' + score + ' was recorded. Thanks!');
+  document.getElementById('satisfactionBox').style.bottom = '-220px';
+}
+
+/* ================== ورود پرسنلی ================== */
+function checkPersonnel() {
+  const code = document.getElementById('personnelCode').value.trim();
+  if (PERSONNEL_DB.includes(code)) {
+    document.getElementById('step1').style.display = 'none';
+    document.getElementById('step2').style.display = 'block';
+    startDeadline();
+    applyLang();
+    startCountdown();
+  } else {
+    alert(currentLang === 'fa'
+      ? 'کد پرسنلی وارد شده در سامانه یافت نشد. لطفاً با اداره منابع انسانی تماس بگیرید.'
+      : 'Personnel code not found. Please contact HR.');
+  }
+}
+
+/* ================== مهلت ۱۲ ساعته ================== */
+function startDeadline() {
+  let deadline = localStorage.getItem(LS.DEADLINE);
+  if (!deadline) {
+    deadline = Date.now() + DEADLINE_HOURS * 3600 * 1000;
+    localStorage.setItem(LS_DEADLINE, deadline);
+  }
+}
+
+let countdownInterval = null;
+function startCountdown() {
+  const deadline = parseInt(localStorage.getItem(LS.deadline), 10);
+  const timerBox = document.getElementById('timerBox');
+  const countdownEl = document.getElementById('countdown');
+  const submitBtn = document.getElementById('submitOpinionBtn');
+  const textarea = document.getElementById('newOpinion');
+
+  function tick() {
+    const remaining = deadline - Date.now();
+    if (remaining <= 0) {
+      clearInterval(countdownInterval);
+      timerBox.classList.add('expired');
+      countdownEl.textContent = currentLang === 'fa' ? 'پایان یافت — گزارش به ادمین ارسال شد' : 'Expired — report sent to admin';
+      submitBtn.disabled = true;
+      textarea.disabled = true;
+      return;
+    }
+    const h = Math.floor(remaining / 3600000);
+    const m = Math.floor((remaining % 3600000) / 60000);
+    const s = Math.floor((remaining % 60000) / 1000);
+    countdownEl.textContent = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  }
+  tick();
+  countdownInterval = setInterval(tick, 1000);
+}
+
+/* ================== نظرات ================== */
+function getStoredOpinions() {
+  try { return JSON.parse(localStorage.getItem(LS_OPINIONS)) || []; }
+  catch(e) { return []; }
+}
+function saveOpinion(op) {
+  const list = getStoredOpinions();
+  list.push(op);
+  localStorage.setItem(LS_OPINIONS, JSON.stringify(list));
+}
+function getAllOpinions() {
+  return INITIAL_OPINIONS.concat(getStoredOpinions());
+}
+function renderOpinions() {
+  const list = document.getElementById('opinionsList');
+  if (!list) return;
+  list.innerHTML = '';
+  getAllOpinions().forEach(op => {
+    const item = document.createElement('div');
+    item.className = 'opinion-item';
+    const name = currentLang === 'fa' ? op.name : (op.nameEn || op.name);
+    const text = currentLang === 'fa' ? op.text : (op.textEn || op.text);
+    item.innerHTML = `
+      <div class="opinion-header" onclick="toggleOpinion(this)">${name} <span>▼</span></div>
+      <div class="opinion-body">${text}</div>
+    `;
+    list.appendChild(item);
+  });
+}
+function toggleOpinion(header) {
+  const body = header.nextElementSibling;
+  body.style.display = body.style.display === 'block' ? 'none' : 'block';
+}
+
+function submitOpinion() {
+  const deadline = parseInt(localStorage.getItem(LS.deadline), 10);
+  if (Date.now() > deadline) {
+    alert(currentLang === 'fa' ? 'مهلت ۱۲ ساعته به پایان رسیده است.' : 'The 12-hour deadline has expired.');
+    return;
+  }
+  const text = document.getElementById('newOpinion').value.trim();
+  if (!text) {
+    alert(currentLang === 'fa' ? 'لطفاً نظر خود را وارد کنید.' : 'Please enter your opinion.');
+    return;
+  }
+  const code = document.getElementById('personnelCode').value.trim();
+  const trackCode = 'BRN-' + Math.floor(Math.random() * 90000 + 10000);
+
+  saveOpinion({
+    name: currentLang === 'fa' ? 'کاربر ' + code : 'User ' + code,
+    nameEn: 'User ' + code,
+    text: text,
+    textEn: text,
+    trackingCode: trackCode,
+    createdAt: new Date().toISOString(),
+    personnelCode: code
+  });
+
+  document.getElementById('trackCodeDisplay').innerText = trackCode;
+  document.getElementById('trackingCode').style.display = 'block';
+  document.getElementById('newOpinion').value = '';
+  renderOpinions();
+  alert(currentLang === 'fa'
+    ? 'نظر شما با موفقیت ثبت شد. کد رهگیری: ' + trackCode
+    : 'Your opinion was submitted. Tracking code: ' + trackCode);
+}
+
+/* ================== راه‌اندازی ================== */
+loadTheme();
+applyLang();
+</script>
+
+</body>
+</html>
