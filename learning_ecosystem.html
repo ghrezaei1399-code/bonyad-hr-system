@@ -114,6 +114,47 @@ body.dark .report-list-item { background: rgba(255,255,255,0.08); }
 #satisfactionBox { position: fixed; bottom: -220px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 500px; background: var(--card-bg); padding: 15px; border-radius: 15px 15px 0 0; box-shadow: 0 -10px 30px rgba(0,0,0,0.3); z-index: 9998; text-align: center; border: 2px solid var(--gold); border-bottom: none; transition: bottom 0.4s ease; }
 
 @media (max-width: 768px) { header { flex-direction: column; text-align: center; } }
+
+/* ===== MOBILE FIX (auto) ===== */
+@media (max-width: 768px) {
+  body { padding: 10px !important; }
+  header { padding: 12px 15px !important; flex-direction: column !important; text-align: center !important; }
+  .header-actions, .header-content { justify-content: center !important; flex-wrap: wrap !important; }
+  .back-btn, .float-btn { font-size: 0.82rem !important; }
+  table { display: block !important; overflow-x: auto !important; white-space: nowrap !important; }
+  .list-box { max-height: none !important; }
+  .card, .main-card { padding: 15px !important; }
+  .grid, .unit-grid, .process-grid, .gallery-grid, .stats-grid { grid-template-columns: 1fr !important; }
+  input, select, textarea, button { font-size: 0.9rem !important; min-height: 40px !important; }
+  h1, h2 { font-size: 1rem !important; }
+  #achievementSlider { min-height: 280px !important; }
+  #achSlideContent { padding: 20px 15px !important; }
+  #satisfactionToggle { padding: 8px 18px !important; font-size: 0.82rem !important; }
+  #satisfactionBox { padding: 12px !important; max-width: 95% !important; }
+  #satisfactionBox button { width: 42px !important; height: 42px !important; font-size: 1rem !important; }
+  .chat-box { height: 70px !important; }
+  .main-container { padding: 8px !important; gap: 10px !important; }
+  .gallery-item { height: 110px !important; }
+}
+@media (max-width: 600px) {
+  .finger-modules { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+  .finger-btn { min-height: 85px !important; padding: 10px 6px !important; }
+  .finger-icon { font-size: 1.7rem !important; }
+  .finger-btn h3 { font-size: 0.82rem !important; }
+  .finger-btn p { font-size: 0.68rem !important; }
+  .header-titles h1 { font-size: 0.85rem !important; }
+  .header-logo { width: 45px !important; height: 45px !important; }
+  .float-btn { width: 42px !important; height: 42px !important; }
+  .chat-input-group input { font-size: 0.85rem !important; }
+}
+@media (max-width: 400px) {
+  .finger-modules { grid-template-columns: repeat(2, 1fr) !important; }
+  .finger-btn { min-height: 80px !important; padding: 8px 4px !important; }
+  .finger-icon { font-size: 1.5rem !important; }
+  .finger-btn h3 { font-size: 0.75rem !important; }
+  .finger-btn p { font-size: 0.6rem !important; }
+}
+/* ===== END MOBILE FIX ===== */
 </style>
 <script src="assets/js/i18n.js"></script>
 </head>
@@ -721,3 +762,4 @@ renderReports();
 </script>
 </body>
 </html>
+
