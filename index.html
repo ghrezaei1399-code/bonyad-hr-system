@@ -657,22 +657,32 @@ var achTimer = null;
 var achList = [];
 
 function loadAchievements() {
-  try {
-    achList = JSON.parse(localStorage.getItem('hr_achievements')) || [];
-  } catch(e) { achList = []; }
-  var emptyBox = document.getElementById('achEmpty');
-  var wrapBox = document.getElementById('achSlideWrap');
-  if (!emptyBox || !wrapBox) return;
-  if (achList.length === 0) {
-    emptyBox.style.display = 'block';
-    wrapBox.style.display = 'none';
-    return;
-  }
-  emptyBox.style.display = 'none';
-  wrapBox.style.display = 'block';
-  if (achIndex >= achList.length) achIndex = 0;
-  renderAchSlide();
-  startAchTimer();
+  fetch('assets/data/achievements.json')
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      achList = data || [];
+      var emptyBox = document.getElementById('achEmpty');
+      var wrapBox = document.getElementById('achSlideWrap');
+      if (!emptyBox || !wrapBox) return;
+      if (achList.length === 0) {
+        emptyBox.style.display = 'block';
+        wrapBox.style.display = 'none';
+        return;
+      }
+      emptyBox.style.display = 'none';
+      wrapBox.style.display = 'block';
+      if (achIndex >= achList.length) achIndex = 0;
+      renderAchSlide();
+      startAchTimer();
+    })
+    .catch(function(e) {
+      console.error('Error loading achievements:', e);
+      achList = [];
+      var emptyBox = document.getElementById('achEmpty');
+      var wrapBox = document.getElementById('achSlideWrap');
+      if (emptyBox) emptyBox.style.display = 'block';
+      if (wrapBox) wrapBox.style.display = 'none';
+    });
 }
 
 function renderAchSlide() {
