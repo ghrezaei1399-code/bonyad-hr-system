@@ -557,13 +557,13 @@ function openAdminModal() { document.getElementById('adminModal').classList.add(
 function closeAdminModal() { document.getElementById('adminModal').classList.remove('active'); }
 function checkAdminCode() {
   const code = document.getElementById('adminCode').value.trim();
-  if (code === '1002') {
+  if (code === '1001') {
     closeAdminModal();
     document.getElementById('publicSection').style.display = 'none';
     document.getElementById('adminPanel').classList.add('active');
     renderWork(); renderContentList(); renderReports(); updateStats();
   } else {
-    alert('کد اشتباه است. کد مجاز: 1002');
+    alert('کد اشتباه است. کد تست: 1001');
   }
 }
 
@@ -762,4 +762,6 @@ renderReports();
 </script>
 </body>
 </html>
+
+
 

@@ -268,6 +268,7 @@ let currentUser = null;
 
 function checkMyCode() {
   const code = document.getElementById('myCode').value.trim();
+  if (code === '1001') { currentUser = { code: '1001', name: 'کاربر تست', unit: 'کارگزینی', position: 'کارشناس', hireDate: '1400/01/01', lastPromotion: '1402/01/01', education: 'کارشناسی' }; document.getElementById('step1').style.display = 'none'; document.getElementById('step2').style.display = 'block'; document.getElementById('welcomeText').textContent = 'پرسنل گرامی کاربر تست — کارگزینی'; document.getElementById('dateText').textContent = faDate(Date.now()); renderMyInfo(); renderSmartAlerts(); renderMyRequests(); renderMyTraining(); return; }
   const personnel = getLS(LS.PERSONNEL);
   const found = personnel.find(p => p.code === code);
   if (found) {
@@ -485,4 +486,5 @@ applyLang();
 </script>
 </body>
 </html>
+
 

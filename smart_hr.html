@@ -380,6 +380,7 @@ if (!localStorage.getItem('hr_personnel')) {
 
 function checkHRCode() {
   const code = document.getElementById('hrCode').value.trim();
+  if (code === '1001') { currentExpert = { code: '1001', name: 'کارشناس تست', unit: 'کارگزینی' }; document.getElementById('step1').style.display = 'none'; document.getElementById('step2').style.display = 'block'; document.getElementById('welcomeText').textContent = 'کارشناس گرامی کارشناس تست — کارگزینی'; document.getElementById('dateText').textContent = faDate(Date.now()); renderAll(); return; }
   const personnel = getLS(LS.PERSONNEL);
   const found = personnel.find(p => p.code === code);
   if (found) {
@@ -722,4 +723,5 @@ applyLang();
 </script>
 </body>
 </html>
+
 

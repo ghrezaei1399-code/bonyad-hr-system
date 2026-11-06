@@ -174,8 +174,8 @@ header h1 { font-size: 1.3rem; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0
     <button onclick="toggleTheme()" class="back-btn" id="themeBtn">🌙 تم شب</button>
     <button onclick="toggleLang()" class="back-btn" id="langBtn">🇬🇧 EN</button>
     <button onclick="changePassword()" class="back-btn" style="background:#d4a843;color:#1a2a4a;border:none;">🔑 تغییر رمز</button>
-    <button onclick="history.back()" class="back-btn">⬅️ برگشت</button>
-    <a href="index.html" class="back-btn" data-fa="بازگشت به سایت" data-en="Back to site">بازگشت به سایت</a>
+    <button type="button" onclick="history.back()" class="back-btn">⬅️ برگشت</button>
+    <a onclick="history.back()" style="cursor:pointer" class="back-btn" data-fa="بازگشت به سایت" data-en="Back to site">بازگشت به سایت</a>
   </div>
 </header>
 
@@ -323,7 +323,7 @@ header h1 { font-size: 1.3rem; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0
     </div>
   </div>
 
-  <div class="card">
+  <div class="card decree-card-b">
     <h2>💡 گزارش تحلیلی هم‌اندیشی</h2>
     <p class="section-desc">موضوعات هم‌اندیشی و نظرات کارکنان را مدیریت کنید.</p>
     <div class="form-row">
@@ -767,7 +767,7 @@ function renderPendingDecrees() {
   if (pending.length === 0) { box.innerHTML = '<p class="empty-msg">هنوز حکمی ارسال نشده است.</p>'; return; }
   box.innerHTML = pending.slice().reverse().map(d => {
     const statusBadge = d.status === 'approved' ? '<span class="badge done">تایید شده</span>' : d.status === 'rejected' ? '<span class="badge new">رد شده</span>' : '<span class="badge pending">در انتظار</span>';
-    const actions = d.status === 'pending' ? `<div class="report-actions"><button class="action-btn" onclick="approveDecree('${d.id}')">✅ تایید</button><button class="action-btn danger" onclick="rejectDecree('${d.id}')">❌ رد</button></div>` : '';
+    const actions = d.status === 'pending' ? `<div class="report-actions"><button class="action-btn" onclick="viewDecreeFile('${d.id}')">📎 مشاهده فایل</button><button class="action-btn" onclick="approveDecree('${d.id}')">✅ تایید (ارسال به حقوقی)</button><button class="action-btn danger" onclick="rejectDecree('${d.id}')">❌ رد (بازگشت به پرسنل)</button></div>` : '';
     return `
       <div class="report-item">
         <div class="report-title">📜 ${d.personnelName || 'بدون نام'} ${statusBadge}</div>
@@ -788,7 +788,7 @@ function approveDecree(id) {
   rec.reviewedAt = Date.now();
   setLS('hr_pending_decrees', pending);
   renderPendingDecrees();
-  alert('✅ حکم تایید شد.');
+  alert('✅ حکم تایید و به معاونت حقوقی ارجاع شد.');
 }
 
 function rejectDecree(id) {
@@ -800,7 +800,7 @@ function rejectDecree(id) {
   rec.reviewedAt = Date.now();
   setLS('hr_pending_decrees', pending);
   renderPendingDecrees();
-  alert('❌ حکم رد شد.');
+  alert('❌ حکم رد شد. پیام برای پرسنل ثبت شد.');
 }
 
 function renderAdminRequests() {
@@ -1048,6 +1048,27 @@ function importAchievements() {
   };
   input.click();
 }
+function viewDecreeFile(id) {
+  var pending = getLS('hr_pending_decrees');
+  var rec = null;
+  for (var i = 0; i < pending.length; i++) { if (pending[i].id === id) { rec = pending[i]; break; } }
+  if (!rec) { alert('حکم پیدا نشد.'); return; }
+  if (!rec.fileData) { alert('فایلی برای این حکم ثبت نشده است.'); return; }
+  var w = window.open('');
+  w.document.write('<html dir="rtl"><head><title>' + (rec.fileName||'فایل') + '</title></head><body style="font-family:Tahoma;text-align:center;padding:20px;background:#f5f5f5;">');
+  w.document.write('<h2 style="color:#1a2a4a;">📎 ' + (rec.fileName||'فایل') + '</h2>');
+  if (rec.fileType && rec.fileType.indexOf('image/') === 0) {
+    w.document.write('<img src="' + rec.fileData + '" style="max-width:100%;max-height:80vh;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.2);">');
+  } else if (rec.fileType && rec.fileType.indexOf('pdf') !== -1) {
+    w.document.write('<iframe src="' + rec.fileData + '" style="width:90vw;height:80vh;border:none;border-radius:10px;"></iframe>');
+  } else {
+    w.document.write('<p style="margin:20px 0;">این فایل قابل نمایش مستقیم نیست. لطفاً دانلود کنید:</p>');
+    w.document.write('<a href="' + rec.fileData + '" download="' + (rec.fileName||'file') + '" style="display:inline-block;padding:14px 30px;background:#0d8a63;color:#fff;text-decoration:none;border-radius:10px;font-weight:bold;font-size:1.1rem;">📥 دانلود فایل</a>');
+  }
+  w.document.write('<br><br><button onclick="window.close()" style="padding:10px 20px;border:none;border-radius:8px;background:#ff4757;color:#fff;font-weight:bold;cursor:pointer;font-family:inherit;">بستن</button>');
+  w.document.write('</body></html>');
+  w.document.close();
+}
 
 function initAdmin() {
   ['CONSULTANTS','TASKS','REPORTS','BRAIN_TOPICS','BRAIN_IDEAS','BRAIN_REPORTS','SURVEYS','ADMIN_REQUESTS','ADMIN_REFERRALS','ACHIEVEMENTS']
@@ -1071,4 +1092,10 @@ document.getElementById('reportModal').addEventListener('click', function(e) {
 </script>
 </body>
 </html>
+
+
+
+
+
+
 

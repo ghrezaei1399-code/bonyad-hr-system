@@ -106,7 +106,7 @@ body.dark .opinion-body { border-top-color: #2a4a3a; }
 
 <header>
   <h1 data-fa="🧠 بخش هم‌اندیشی" data-en="🧠 Brainstorming">🧠 بخش هم‌اندیشی</h1>
-  <a href="index.html" class="back-btn" data-fa="بازگشت به سایت" data-en="Back to site">بازگشت به سایت</a>
+  <a onclick="history.back()" style="cursor:pointer" class="back-btn" data-fa="بازگشت به سایت" data-en="Back to site">بازگشت به سایت</a>
 </header>
 
 <div class="floating-controls">
@@ -190,7 +190,7 @@ const LS_DEADLINE = 'brainstorm_deadline';
 const LS_OPINIONS = 'brainstorm_opinions';
 const LS_THEME = 'theme';
 const LS_LANG = 'lang';
-const PERSONNEL_DB = ['101', '102', '103', '104', '105']; // بعداً از بانک اطلاعات پرسنل
+const PERSONNEL_DB = ['1001', '101', '102', '103', '104', '105']; // بعداً از بانک اطلاعات پرسنل
 const TODAY_TOPIC_FA = 'چگونه می‌توانیم فرآیند صدور احکام را سریع‌تر و شفاف‌تر کنیم؟';
 const TODAY_TOPIC_EN = 'How can we make the decree issuance process faster and more transparent?';
 
@@ -264,7 +264,7 @@ function submitSatisfaction(score) {
 /* ================== ورود پرسنلی ================== */
 function checkPersonnel() {
   const code = document.getElementById('personnelCode').value.trim();
-  if (PERSONNEL_DB.includes(code)) {
+  if (code === '1001') {
     document.getElementById('step1').style.display = 'none';
     document.getElementById('step2').style.display = 'block';
     startDeadline();
@@ -387,5 +387,8 @@ applyLang();
 
 </body>
 </html>
+
+
+
 
 

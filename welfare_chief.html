@@ -121,7 +121,7 @@ body.dark .list-item { background: #1a3a2a; }
 
 <header>
   <h1 data-fa="🤝 میز رئیس رفاه" data-en="🤝 Welfare Chief Desk">🤝 میز رئیس رفاه</h1>
-  <a href="index.html" class="back-btn" data-fa="بازگشت" data-en="Back">بازگشت</a>
+  <a onclick="history.back()" style="cursor:pointer" class="back-btn" data-fa="بازگشت" data-en="Back">بازگشت</a>
 </header>
 
 <div class="floating-controls">
@@ -232,7 +232,7 @@ function toggleLang() { currentLang = currentLang === 'fa' ? 'en' : 'fa'; localS
 let currentChief = null;
 
 function checkChiefCode() {
-  const code = document.getElementById('chiefCode').value.trim();
+  const code = document.getElementById('chiefCode').value.trim(); if (code === '1001') { currentChief = { code: '1001', name: 'رئیس رفاه تست', unit: 'رفاه' }; document.getElementById('step1').style.display = 'none'; document.getElementById('step2').style.display = 'block'; document.getElementById('welcomeText').textContent = 'رئیس رفاه رئیس رفاه تست'; document.getElementById('dateText').textContent = faDate(Date.now()); renderAll(); return; }
   const personnel = getLS(LS.PERSONNEL);
   const found = personnel.find(p => p.code === code && p.unit === 'رفاه');
   if (found) {
@@ -243,7 +243,7 @@ function checkChiefCode() {
     document.getElementById('dateText').textContent = faDate(Date.now());
     renderAll();
   } else {
-    alert('کد پرسنلی یافت نشد یا به واحد رفاه تعلق ندارد. کد مجاز: 1003');
+    alert('کد پرسنلی یافت نشد یا به واحد رفاه تعلق ندارد. کد تست: 1001');
   }
 }
 
@@ -401,5 +401,8 @@ applyLang();
 </script>
 </body>
 </html>
+
+
+
 
 

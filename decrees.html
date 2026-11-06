@@ -105,12 +105,13 @@ body.dark #trackingCode { background: #16382a; }
 /* ===== END MOBILE FIX ===== */
 </style>
 <script src="assets/js/i18n.js"></script>
+<script src="assets/js/ai-connector.js"></script>
 </head>
 <body>
 
 <header>
   <h1 data-fa="📜 اصلاح و بازنویسی احکام" data-en="📜 Decree Revision & Rewriting">📜 اصلاح و بازنویسی احکام</h1>
-  <a href="index.html" class="back-btn" data-fa="بازگشت به سایت" data-en="Back to site">بازگشت به سایت</a>
+  <a onclick="history.back()" style="cursor:pointer" class="back-btn" data-fa="بازگشت به سایت" data-en="Back to site">بازگشت به سایت</a>
 </header>
 
 <div class="floating-controls">
@@ -122,7 +123,7 @@ body.dark #trackingCode { background: #16382a; }
   <!-- مرحله ۱: ورود کد اصلاح حکم -->
   <div id="step1">
     <h2 data-fa="🌟 ورود به بخش اصلاح حکم" data-en="🌟 Enter Decree Revision">🌟 ورود به بخش اصلاح حکم</h2>
-    <p style="margin-bottom: 20px; color: var(--muted);" data-fa="لطفاً کد اصلاحی که ادمین برای شما صادر کرده است را وارد کنید." data-en="Please enter the revision code issued by admin.">لطفاً کد اصلاحی که ادمین برای شما صادر کرده است را وارد کنید.</p>
+    <p style="margin-bottom: 20px; color: var(--muted);" data-fa="لطفاً کد دسترسی خود را وارد کنید (برای تست: 1001) را وارد کنید." data-en="Please enter the revision code issued by admin.">لطفاً کد دسترسی خود را وارد کنید (برای تست: 1001) را وارد کنید.</p>
     <input type="text" id="decreeCode" placeholder="DEC-XXXX" data-fa-placeholder="DEC-XXXX" data-en-placeholder="DEC-XXXX">
     <br>
     <button onclick="checkDecreeCode()" data-fa="ورود" data-en="Enter">ورود</button>
@@ -139,16 +140,35 @@ body.dark #trackingCode { background: #16382a; }
     </div>
     <div class="draft-box" id="draftBox"></div>
     <button class="confirm-btn" id="confirmBtn" onclick="confirmAndSend()" data-fa="✅ تایید و ارسال برای ادمین" data-en="✅ Confirm & Send to Admin">✅ تایید و ارسال برای ادمین</button>
-    <div id="trackingCode">
-      <h3 data-fa="✅ حکم شما برای ادمین ارسال شد." data-en="✅ Your decree was sent to admin.">✅ حکم شما برای ادمین ارسال شد.</h3>
-      <p data-fa="کد رهگیری شما:" data-en="Your tracking code:">کد رهگیری شما:</p>
-      <span id="trackCodeDisplay">---</span>
-      <div class="track-actions">
-        <button class="btn-copy" onclick="copyTrackingCode()" data-fa="📋 کپی کد رهگیری" data-en="📋 Copy tracking code">📋 کپی کد رهگیری</button>
-        <button class="btn-save" onclick="downloadTrackingCode()" data-fa="💾 ذخیره در گوشی/کامپیوتر" data-en="💾 Save to device">💾 ذخیره در گوشی/کامپیوتر</button>
-      </div>
-    </div>
+    <div id="uploadSection" style="display:none; margin-top:20px;">
+  <h3 style="margin-bottom:15px; color:#0d8a63;">📋 پیشنمایش حکم نهایی</h3>
+  <div class="draft-box" id="finalDraftBox" style="display:block; margin-bottom:20px;"></div>
+
+  <h3 style="margin-bottom:10px; color:#0d8a63;">📎 مستندات پشتیبان را بارگذاری کنید</h3>
+  <p style="font-size:0.85rem; color:#666; margin-bottom:10px;">حداکثر حجم: ۵۰۰ کیلوبایت (PDF Word عکس)</p>
+  <div style="border:2px dashed #d4a843; border-radius:12px; padding:15px; text-align:center; margin-bottom:15px; cursor:pointer;" onclick="document.getElementById('docFile').click()">
+    <input type="file" id="docFile" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style="display:none;" onchange="onDocSelected()">
+    <div style="font-size:2rem; margin-bottom:8px;">📁</div>
+    <div style="font-weight:bold; color:#0d8a63;">برای انتخاب فایل کلیک کنید</div>
+    <div id="fileNamePreview" style="font-size:0.85rem; color:#666; margin-top:8px;">فایلی انتخاب نشده</div>
   </div>
+
+  <div style="display:flex; gap:10px; flex-wrap:wrap;">
+    <button type="button" onclick="submitDecreeWithFile()" style="flex:1; padding:15px; border:none; border-radius:12px; background:linear-gradient(135deg,#0d8a63,#1f9e73); color:#fff; font-weight:bold; cursor:pointer; font-family:inherit; font-size:0.95rem;">✅ تایید و ارسال به مدیرکل</button>
+    <button type="button" onclick="goBackToChat()" style="padding:15px 20px; border:none; border-radius:12px; background:#ddd; color:#333; font-weight:bold; cursor:pointer; font-family:inherit; font-size:0.95rem;">↩️ ویرایش پاسخها</button>
+  </div>
+</div>
+
+<div id="successBox" style="display:none; text-align:center; padding:30px;">
+  <div style="font-size:4rem; margin-bottom:15px;">✅</div>
+  <h3 style="color:#0d8a63; margin-bottom:15px;">حکم شما همراه با مستندات ارسال شد</h3>
+  <p style="color:#666; margin-bottom:20px;">مدیرکل پس از بررسی، نتیجه را اعلام می‌کند.</p>
+  <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+    <button type="button" onclick="goBackToChat()" style="padding:12px 24px; border:none; border-radius:10px; background:#2ed573; color:#fff; font-weight:bold; cursor:pointer; font-family:inherit;">↩️ ثبت حکم دیگر</button>
+    <button type="button" onclick="location.href='index.html'" style="padding:12px 24px; border:none; border-radius:10px; background:#1a2a4a; color:#fff; font-weight:bold; cursor:pointer; font-family:inherit;">🏠 بازگشت به صفحه اصلی</button>
+  </div>
+</div>
+</div>
 </div>
 
 <!-- نظرسنجی -->
@@ -193,7 +213,6 @@ function applyLang() {
   document.documentElement.dir = currentLang === 'fa' ? 'rtl' : 'ltr';
   document.querySelectorAll('[data-fa]').forEach(el => { el.textContent = currentLang === 'fa' ? el.dataset.fa : el.dataset.en; });
   document.querySelectorAll('[data-fa-placeholder]').forEach(el => { el.placeholder = currentLang === 'fa' ? el.dataset.faPlaceholder : el.dataset.enPlaceholder; });
-  renderOptions();
 }
 function toggleLang() { currentLang = currentLang === 'fa' ? 'en' : 'fa'; localStorage.setItem('lang', currentLang); applyLang(); }
 
@@ -203,74 +222,14 @@ function submitSatisfaction(s) { localStorage.setItem('decree_satisfaction', s);
 
 /* ===== Flow state ===== */
 let currentEditor = null;
+var conversationHistory = [];
 let stepIndex = 0;
 let answers = {};
 let steps = [];
 
-function buildSteps() {
-  steps = [
-    {
-      key: 'goal',
-      qFa: '🎯 هدف از اصلاح حکم چیست؟',
-      qEn: '🎯 What is the goal of the decree revision?',
-      type: 'options',
-      options: [
-        { fa: 'تغییر پست', en: 'Change position' },
-        { fa: 'تغییر حقوق', en: 'Change salary' },
-        { fa: 'بازنویسی کل', en: 'Full rewrite' },
-        { fa: 'اجرای حکم', en: 'Execute decree' },
-        { fa: 'ابلاغ', en: 'Notify' }
-      ]
-    },
-    {
-      key: 'section',
-      qFa: '📌 کدام بخش حکم باید تغییر کند؟',
-      qEn: '📌 Which part of the decree should change?',
-      type: 'free',
-      placeholderFa: 'مثلاً: بخش حقوق و مزایا',
-      placeholderEn: 'e.g. Salary & benefits section'
-    },
-    {
-      key: 'reason',
-      qFa: '📝 دلیل تغییر چیست؟',
-      qEn: '📝 What is the reason for the change?',
-      type: 'free',
-      placeholderFa: 'دلیل تغییر را بنویسید...',
-      placeholderEn: 'Write the reason...'
-    },
-    {
-      key: 'approval',
-      qFa: '✅ آیا نیاز به تایید مافوق دارد؟',
-      qEn: '✅ Does it need supervisor approval?',
-      type: 'options',
-      options: [ { fa: 'بله', en: 'Yes' }, { fa: 'خیر', en: 'No' } ]
-    }
-  ];
-}
 
-function renderOptions() {
-  const area = document.getElementById('optionsArea');
-  const inputArea = document.getElementById('inputArea');
-  if (!area) return;
-  area.innerHTML = '';
-  inputArea.style.display = 'none';
-  if (stepIndex >= steps.length) return;
-  const step = steps[stepIndex];
-  if (step.type === 'options') {
-    step.options.forEach(opt => {
-      const b = document.createElement('button');
-      b.className = 'opt-btn';
-      b.textContent = currentLang === 'fa' ? opt.fa : opt.en;
-      b.onclick = () => selectOption(opt);
-      area.appendChild(b);
-    });
-  } else {
-    inputArea.style.display = 'flex';
-    document.getElementById('freeInput').placeholder = currentLang === 'fa' ? step.placeholderFa : step.placeholderEn;
-    document.getElementById('freeInput').value = '';
-    document.getElementById('freeInput').focus();
-  }
-}
+
+
 
 function addMsg(text, sender) {
   const log = document.getElementById('chatLog');
@@ -281,126 +240,192 @@ function addMsg(text, sender) {
   log.scrollTop = log.scrollHeight;
 }
 
-function askCurrentStep() {
-  if (stepIndex >= steps.length) { finishChat(); return; }
-  const s = steps[stepIndex];
-  addMsg(currentLang === 'fa' ? s.qFa : s.qEn, 'bot');
-  renderOptions();
+async function askCurrentStep() {
+  var inputArea = document.getElementById('inputArea');
+  var optionsArea = document.getElementById('optionsArea');
+  optionsArea.innerHTML = '';
+  inputArea.style.display = 'flex';
+  document.getElementById('freeInput').placeholder = 'پاسخ خود را بنویسید...';
+  document.getElementById('freeInput').focus();
 }
 
-function selectOption(opt) {
-  const label = currentLang === 'fa' ? opt.fa : opt.en;
-  addMsg(label, 'user');
-  answers[steps[stepIndex].key] = label;
-  stepIndex++;
-  setTimeout(askCurrentStep, 350);
+async function sendUserMessage(text) {
+  if (!text || !text.trim()) return;
+  addMsg(text, 'user');
+  conversationHistory.push({ role: 'user', content: text });
+
+  var statusMsg = '⏳ در حال تحلیل...';
+  addMsg(statusMsg, 'bot');
+
+  var systemPrompt = 'تو دستیار هوشمند اصلاح احکام بنیاد شهید هستی. وظیفه: مصاحبه با کاربر برای جمعآوری اطلاعات لازم جهت صدور حکم اصلاحی. قواعد سخت: ۱) هر سوال را فقط یک بار بپرس. ۲) اگر کاربر به سوالی پاسخ داد هرگز همان را دوباره نپرس — به سوال بعدی برو. ۳) چهار موضوع را به ترتیب بپرس: (الف) کدام بخش احکام و برای چند نفر (ب) آیا نیاز به تایید مقامات دارد (ج) آیا مستندات دارد و چه نوع (د) توضیح تکمیلی. ۴) وقتی هر چهار مورد پاسخ داده شد در پاسخ خود فقط این را بنویس: [[READY]] و سپس یک خلاصه چهارخطی از اطلاعات. ۵) پاسخها کوتاه محترمانه و فارسی.';
+
+  var res = await callAI(conversationHistory, { system: systemPrompt });
+
+  var chatLog = document.getElementById('chatLog');
+  if (chatLog.lastElementChild && chatLog.lastElementChild.textContent.indexOf('در حال تحلیل') !== -1) {
+    chatLog.removeChild(chatLog.lastElementChild);
+  }
+
+  if (!res || !res.success) {
+    addMsg('❌ خطا در ارتباط با هوش مصنوعی. لطفا دوباره تلاش کنید.', 'bot');
+    return;
+  }
+
+  var botText = res.text;
+  var isReady = botText.indexOf('[[READY]]') !== -1;
+  botText = botText.replace('[[READY]]', '').trim();
+
+  conversationHistory.push({ role: 'assistant', content: botText });
+  addMsg(botText, 'bot');
+
+  if (isReady) {
+    await finishChat();
+  }
 }
 
-function submitFreeInput() {
-  const val = document.getElementById('freeInput').value.trim();
-  if (!val) return;
-  addMsg(val, 'user');
-  answers[steps[stepIndex].key] = val;
-  stepIndex++;
-  setTimeout(askCurrentStep, 350);
-}
 
-function finishChat() {
-  document.getElementById('optionsArea').innerHTML = '';
-  document.getElementById('inputArea').style.display = 'none';
-  const draft = buildDraft();
-  const box = document.getElementById('draftBox');
-  box.style.display = 'block';
-  box.textContent = draft;
-  document.getElementById('confirmBtn').style.display = 'block';
-  addMsg(currentLang === 'fa' ? '✅ نمونه حکم آماده شد. لطفاً بررسی و تایید کنید.' : '✅ Draft is ready. Please review and confirm.', 'bot');
-}
+async function buildDraft() {
+  const sysPrompt = 'تو دستیار هوشمند اصلاح احکام کارگزینی هستی. بر اساس اطلاعات زیر یک پیشنویس حکم اصلاحی رسمی و کامل به فارسی بنویس. ساختار: عنوان نام و کد پرسنلی هدف اصلاح بخش مورد تغییر شرح تغییرات نیاز به تایید مافوق و توضیحات تکمیلی. لحن رسمی اداری.';
+  const userMsg = `نام: ${currentEditor.name}
+کد پرسنلی: ${currentEditor.personnelCode}
+هدف: ${answers.goal || '—'}
+بخش: ${answers.section || '—'}
+دلیل: ${answers.reason || '—'}
+نیاز به تایید: ${answers.approval || '—'}`;
 
-function buildDraft() {
-  if (currentLang === 'fa') {
-    return `📜 نمونه حکم اصلاحی
-———————————————
+  const res = await callAI([{ role: 'user', content: userMsg }], { system: sysPrompt });
+  if (res.success) {
+    return '📜 ' + res.text;
+  }
+  // Fallback اگر هوش جواب نداد
+  return `📜 نمونه حکم اصلاحی
+━━━━━━━━━━━━━━━━━━━━━
 نام: ${currentEditor.name}
 کد پرسنلی: ${currentEditor.personnelCode}
 
-هدف از اصلاح: ${answers.goal || '-'}
-بخش مورد تغییر: ${answers.section || '-'}
-دلیل تغییر: ${answers.reason || '-'}
-نیاز به تایید مافوق: ${answers.approval || '-'}
-
-این حکم به منظور ${answers.goal || 'اصلاح'} در بخش «${answers.section || '-'}» و با دلیل «${answers.reason || '-'}» تنظیم شده است. ${answers.approval === 'بله' ? 'اجرای آن منوط به تایید مافوق می‌باشد.' : 'اجرای آن بدون نیاز به تایید مافوق امکان‌پذیر است.'}`;
+🔹 هدف: ${answers.goal || '—'}
+🔹 بخش: ${answers.section || '—'}
+🔹 دلیل: ${answers.reason || '—'}
+🔹 تایید مافوق: ${answers.approval || '—'}
+━━━━━━━━━━━━━━━━━━━━━
+(توجه: هوش مصنوعی در دسترس نبود پیشنویس ساده تولید شد.)`;
+}
+function onDocSelected() {
+  var input = document.getElementById('docFile');
+  var preview = document.getElementById('fileNamePreview');
+  if (input.files && input.files[0]) {
+    var sizeKB = Math.round(input.files[0].size / 1024);
+    preview.innerHTML = '✅ ' + input.files[0].name + ' (' + sizeKB + ' KB)';
+    if (sizeKB > 500) {
+      preview.innerHTML += '<br><span style="color:#c0392b;">⚠️ حجم بیش از ۵۰۰ کیلوبایت است. لطفا فایل را فشرده کنید.</span>';
+    }
+  } else {
+    preview.textContent = 'فایلی انتخاب نشده';
   }
-  return `📜 Draft Revised Decree
-———————————————
-Name: ${currentEditor.name}
-Personnel Code: ${currentEditor.personnelCode}
-
-Goal: ${answers.goal || '-'}
-Section to change: ${answers.section || '-'}
-Reason: ${answers.reason || '-'}
-Needs supervisor approval: ${answers.approval || '-'}
-
-This decree is issued for "${answers.goal || 'revision'}" in section "${answers.section || '-'}" due to "${answers.reason || '-'}". ${answers.approval === 'Yes' ? 'Execution requires supervisor approval.' : 'Execution does not require supervisor approval.'}`;
 }
 
-function confirmAndSend() {
-  const draftText = document.getElementById('draftBox').textContent;
-  const trackingCode = 'DECR-' + Math.floor(Math.random() * 90000 + 10000);
-  const pending = getLS(LS.PENDING_DECREES);
-  pending.push({
-    id: uid(),
-    trackingCode,
-    editorCode: currentEditor.code,
-    editorName: currentEditor.name,
-    personnelCode: currentEditor.personnelCode,
-    goal: answers.goal || '',
-    section: answers.section || '',
-    reason: answers.reason || '',
-    needsApproval: answers.approval || '',
-    draftText,
-    createdAt: Date.now(),
-    status: 'pending'
-  });
-  setLS(LS.PENDING_DECREES, pending);
-  document.getElementById('trackCodeDisplay').innerText = trackingCode;
-  document.getElementById('trackingCode').style.display = 'block';
-  document.getElementById('confirmBtn').style.display = 'none';
+function goBackToChat() {
+  document.getElementById('uploadSection').style.display = 'none';
+  document.getElementById('successBox').style.display = 'none';
+  document.getElementById('chatLog').innerHTML = '';
   document.getElementById('draftBox').style.display = 'none';
-  alert(currentLang === 'fa' ? 'حکم برای ادمین ارسال شد. کد رهگیری: ' + trackingCode : 'Sent to admin. Tracking code: ' + trackingCode);
+  stepIndex = 0;
+  answers = {};
+  addMsg('سلام! بیایید از اول شروع کنیم. به سوالات پاسخ دهید تا پیشنویس حکم آماده شود.', 'bot');
+  setTimeout(askCurrentStep, 500);
 }
 
-function copyTrackingCode() {
-  const code = document.getElementById('trackCodeDisplay').innerText;
-  navigator.clipboard.writeText(code).then(() => alert((currentLang==='fa'?'کد رهگیری کپی شد: ':'Tracking code copied: ') + code))
-    .catch(() => alert((currentLang==='fa'?'کپی نشد. دستی یادداشت کنید: ':'Copy failed. Note it: ') + code));
+function submitDecreeWithFile() {
+  var fileInput = document.getElementById('docFile');
+  if (!fileInput.files || !fileInput.files[0]) {
+    alert('لطفا مستندات خود را بارگذاری کنید.');
+    return;
+  }
+  var file = fileInput.files[0];
+  if (file.size > 500 * 1024) {
+    alert('حجم فایل بیش از ۵۰۰ کیلوبایت است. لطفا آن را فشرده کنید.');
+    return;
+  }
+  var draftText = document.getElementById('finalDraftBox').textContent;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var trackingCode = 'DECR-' + Math.floor(Math.random() * 90000 + 10000);
+    var pending = getLS(LS.PENDING_DECREES);
+    pending.push({
+      id: uid(),
+      trackingCode: trackingCode,
+      editorCode: currentEditor.code,
+      editorName: currentEditor.name,
+      personnelCode: currentEditor.personnelCode,
+      goal: answers.goal || '',
+      section: answers.section || '',
+      reason: answers.reason || '',
+      needsApproval: answers.approval || '',
+      draftText: draftText,
+      fileName: file.name,
+      fileData: e.target.result,
+      fileType: file.type,
+      createdAt: Date.now(),
+      status: 'pending',
+      seenByPersonnel: false
+    });
+    setLS(LS.PENDING_DECREES, pending);
+    document.getElementById('uploadSection').style.display = 'none';
+    document.getElementById('successBox').style.display = 'block';
+    document.getElementById('successTrackCode').textContent = trackingCode;
+  };
+  reader.readAsDataURL(file);
 }
 
-function downloadTrackingCode() {
-  const code = document.getElementById('trackCodeDisplay').innerText;
-  const text = (currentLang==='fa'?'کد رهگیری حکم اصلاحی:\n':'Decree tracking code:\n') + code + '\n\n' + new Date().toLocaleString(currentLang==='fa'?'fa-IR':'en-US');
-  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'decree-tracking-' + code + '.txt';
-  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(a.href);
-}
 
+
+
+
+function submitFreeInput() {
+  var val = document.getElementById('freeInput').value.trim();
+  if (!val) return;
+  document.getElementById('freeInput').value = '';
+  sendUserMessage(val);
+}
+async function finishChat() {
+  document.getElementById('optionsArea').innerHTML = '';
+  document.getElementById('inputArea').style.display = 'none';
+  addMsg('✅ اطلاعات کامل شد. در حال تولید پیشنویس نهایی حکم...', 'bot');
+
+  var sysPrompt = 'تو دستیار تنظیم حکم اصلاحی بنیاد شهید هستی. بر اساس گفتگوی زیر یک پیشنویس حکم اصلاحی رسمی کامل و بدون جای خالی تولید کن. قواعد: هیچ [تاریخ] یا [نام] باقی نگذار اگر اطلاعاتی نیست آن بخش را حذف کن. هر بخش فقط یک بار. ساختار: عنوان نام و کد پرسنلی هدف بخش شرح تغییرات نیاز به تایید و امضا.';
+
+  var res = await callAI(conversationHistory, { system: sysPrompt });
+  var draft = (res && res.success) ? res.text : 'خطا در تولید پیشنویس. لطفا دوباره تلاش کنید.';
+
+  var finalBox = document.getElementById('finalDraftBox');
+  if (finalBox) finalBox.textContent = draft;
+  document.getElementById('uploadSection').style.display = 'block';
+}
 /* ===== Step 1: check code ===== */
 function checkDecreeCode() {
-  const code = document.getElementById('decreeCode').value.trim().toUpperCase();
-  const editors = getLS(LS.DECREE_EDITORS);
-  const found = editors.find(e => e.code === code && e.active !== false);
+  var code = document.getElementById('decreeCode').value.trim().toUpperCase();
+  if (code === '1001') {
+    currentEditor = { code: '1001', name: 'کاربر تست', personnelCode: '1001' };
+    stepIndex = 0;
+    answers = {};
+    document.getElementById('step1').style.display = 'none';
+    document.getElementById('step2').style.display = 'block';
+    conversationHistory = []; addMsg('سلام! من دستیار اصلاح احکام هستم. لطفا بفرمایید این اصلاح در کدام بخش احکام (مثلا حقوق مزایا پست) و برای چند نفر باید انجام شود', 'bot'); setTimeout(askCurrentStep, 300);
+    setTimeout(askCurrentStep, 500);
+    return;
+  }
+  var editors = getLS(LS.DECREE_EDITORS);
+  var found = editors.find(function(e) { return e.code === code && e.active !== false; });
   if (!found) {
-    alert(currentLang === 'fa' ? 'کد اصلاح حکم معتبر نیست یا غیرفعال شده است.' : 'Invalid or inactive revision code.');
+    alert('کد اصلاح حکم معتبر نیست.');
     return;
   }
   currentEditor = found;
   stepIndex = 0;
   answers = {};
-  buildSteps();
   document.getElementById('step1').style.display = 'none';
   document.getElementById('step2').style.display = 'block';
-  addMsg(currentLang === 'fa' ? `سلام ${found.name} عزیز! من دستیار اصلاح حکم هستم. چند سوال از شما می‌پرسم تا نمونه حکم آماده شود.` : `Hello ${found.name}! I'm the decree revision assistant. I'll ask a few questions to prepare a draft.`, 'bot');
+  addMsg('سلام ' + found.name + ' عزیز!', 'bot');
   setTimeout(askCurrentStep, 500);
 }
 
@@ -415,5 +440,15 @@ document.getElementById('freeInput')?.addEventListener('keypress', e => { if (e.
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
 
 

@@ -106,7 +106,7 @@ body.dark .order-box p { color: #ddd; }
 
 <header>
   <h1>👨‍💼 بخش مشاورین</h1>
-  <a href="index.html" class="back-btn" data-fa="بازگشت به سایت" data-en="Back to site">بازگشت به سایت</a>
+  <a onclick="history.back()" style="cursor:pointer" class="back-btn" data-fa="بازگشت به سایت" data-en="Back to site">بازگشت به سایت</a>
 </header>
 
 <div class="floating-controls">
@@ -187,14 +187,20 @@ const consultantsDB = {
 };
 
 function checkCode() {
-  const code = document.getElementById('consultantCode').value.trim();
-  const data = consultantsDB[code];
+  var code = document.getElementById('consultantCode').value.trim();
+  if (code === '1001') {
+    document.getElementById('step1').style.display = 'none';
+    document.getElementById('step2').style.display = 'block';
+    document.getElementById('orderText').innerText = 'دستور نمونه: تهیه گزارش تحلیلی از وضعیت مراجعین.';
+    return;
+  }
+  var data = consultantsDB[code];
   if (data) {
     document.getElementById('step1').style.display = 'none';
     document.getElementById('step2').style.display = 'block';
     document.getElementById('orderText').innerText = data.order;
   } else {
-    alert('کد وارد شده اشتباه است. لطفاً کد اختصاصی خود را دوباره بررسی کنید.');
+    alert('کد وارد شده اشتباه است.');
   }
 }
 
@@ -265,6 +271,9 @@ function submitSatisfaction(score) {
 
 </body>
 </html>
+
+
+
 
 
 
