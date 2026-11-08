@@ -94,12 +94,19 @@ header h1 { font-size: 1.2rem; font-weight: 800; color: var(--gold); }
 /* ===== END MOBILE FIX ===== */
 </style>
 <script src="assets/js/i18n.js"></script>
+<script src="https://js.puter.com/v2/"></script>
+<script src="assets/js/ui-helper.js"></script>
+<script src="assets/js/ai-connector.js"></script>
+<script src="assets/js/org-knowledge.js"></script>
 </head>
 <body>
 
+
 <header>
+<div class="header-actions" style="display:flex;gap:6px;align-items:center;"></div>
+<div class="header-actions"></div>
   <h1>📘 راهنمای توانمندسازی در اکوسیستم یادگیری</h1>
-  <a href="index.html" class="back-btn">بازگشت به صفحه اصلی</a>
+  
 </header>
 
 <div class="ticker-wrap">
@@ -209,10 +216,28 @@ function toggleSatisfaction() {
 }
 
 function submitSatisfaction(score) {
-  alert('امتیاز ' + score + ' شما ثبت شد. با تشکر از همکاری شما!');
-  document.getElementById('satisfactionBox').style.bottom = '-200px';
+  var page = 'learning_guide.html';
+  var all = JSON.parse(localStorage.getItem('hr_surveys') || '[]');
+  all.push({ page: page, score: score, at: Date.now() });
+  localStorage.setItem('hr_surveys', JSON.stringify(all));
+  alert('امتیاز ' + score + ' شما ثبت شد. با تشکر!');
+  var box = document.getElementById('satisfactionBox');
+  if (box) box.style.bottom = '-220px';
 }
 </script>
-</body>
-</html>
 
+<script>
+function toggleTheme() {
+  document.body.classList.toggle('dark');
+  localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+}
+function toggleLang() {
+  var cur = localStorage.getItem('lang') || 'fa';
+  var next = cur === 'fa' ? 'en' : 'fa';
+  localStorage.setItem('lang', next);
+  document.documentElement.lang = next;
+  document.documentElement.dir = next === 'fa' ? 'rtl' : 'ltr';
+}
+if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
+</script></body>
+</html>
