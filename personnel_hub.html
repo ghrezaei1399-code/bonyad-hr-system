@@ -179,18 +179,21 @@ header h1 { font-size: 1.2rem; color: var(--gold); position: relative; z-index: 
 /* ===== END MOBILE FIX ===== */
 </style>
 <script src="assets/js/i18n.js"></script>
+<script src="https://js.puter.com/v2/"></script>
+<script src="assets/js/ui-helper.js"></script>
+<script src="assets/js/ai-connector.js"></script>
+<script src="assets/js/org-knowledge.js"></script>
 </head>
 <body>
 
 <header>
+<div class="header-actions" style="display:flex;gap:6px;align-items:center;"></div>
+<div class="header-actions"></div>
   <h1 data-fa="📋 کارگزینی" data-en="📋 Personnel">📋 کارگزینی</h1>
-  <a href="index.html" class="back-btn" data-fa="بازگشت به سایت" data-en="Back to site">بازگشت به سایت</a>
+  
 </header>
 
-<div class="floating-controls">
-  <button class="float-btn" onclick="toggleTheme()" title="تم روز/شب">🌓</button>
-  <button class="float-btn" onclick="toggleLang()" title="تغییر زبان">🌐</button>
-</div>
+
 
 <div class="intro-box">
   <h2 data-fa="🌟 به کارگزینی هوشمند خوش آمدید" data-en="🌟 Welcome to Smart Personnel">🌟 به کارگزینی هوشمند خوش آمدید</h2>
@@ -259,9 +262,13 @@ function toggleSatisfaction() {
   box.style.bottom = (box.style.bottom === '0px') ? '-220px' : '0px';
 }
 function submitSatisfaction(score) {
-  localStorage.setItem('personnel_hub_satisfaction', score);
-  alert(currentLang === 'fa' ? 'امتیاز ' + score + ' شما ثبت شد. با تشکر!' : 'Your score ' + score + ' was recorded. Thanks!');
-  document.getElementById('satisfactionBox').style.bottom = '-220px';
+  var page = 'personnel_hub.html';
+  var all = JSON.parse(localStorage.getItem('hr_surveys') || '[]');
+  all.push({ page: page, score: score, at: Date.now() });
+  localStorage.setItem('hr_surveys', JSON.stringify(all));
+  alert('امتیاز ' + score + ' شما ثبت شد. با تشکر!');
+  var box = document.getElementById('satisfactionBox');
+  if (box) box.style.bottom = '-220px';
 }
 
 loadTheme();
@@ -270,5 +277,13 @@ applyLang();
 
 </body>
 </html>
+
+
+
+
+
+
+
+
 
 
