@@ -124,18 +124,189 @@ body.dark .status-step { background: rgba(255,255,255,0.05); }
 /* ===== END MOBILE FIX ===== */
 </style>
 <script src="assets/js/i18n.js"></script>
+<script src="https://js.puter.com/v2/"></script>
+<script src="assets/js/ui-helper.js"></script>
+<script src="assets/js/ai-connector.js"></script>
+<script src="assets/js/org-knowledge.js"></script>
+
+
+
+
+
+<style>
+/* ===== زیباسازی درخواست‌ها ===== */
+@keyframes fadeInUpForm {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes shineButton {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 15px rgba(79,172,254,0.4); }
+  50% { box-shadow: 0 0 30px rgba(79,172,254,0.8); }
+}
+
+.form-box {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f0fdf4 100%) !important;
+  border: none !important;
+  border-radius: 20px !important;
+  padding: 25px !important;
+  box-shadow: 0 15px 35px rgba(79,172,254,0.15), inset 0 1px 0 rgba(255,255,255,0.8) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  animation: fadeInUpForm 0.6s ease !important;
+}
+.form-box::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 5px;
+  background: linear-gradient(90deg, #4facfe, #43e97b, #fa709a, #a18cd1, #4facfe);
+  background-size: 200% 100%;
+  animation: shineButton 3s linear infinite;
+}
+.form-box h3 {
+  color: #1a4a8a !important;
+  font-size: 1.15rem !important;
+  margin-bottom: 18px !important;
+  font-weight: 900 !important;
+  display: flex; align-items: center; gap: 8px;
+}
+
+#reqType {
+  width: 100% !important;
+  padding: 14px !important;
+  border: 2px solid #4facfe !important;
+  border-radius: 12px !important;
+  font-family: inherit !important;
+  font-size: 0.95rem !important;
+  background: linear-gradient(135deg, #ffffff, #f0f9ff) !important;
+  cursor: pointer !important;
+  transition: all 0.3s !important;
+  box-shadow: inset 0 2px 5px rgba(79,172,254,0.1) !important;
+}
+#reqType:hover { border-color: #0d8a63 !important; transform: translateY(-2px) !important; }
+#reqType:focus { outline: none !important; border-color: #0d8a63 !important; box-shadow: 0 0 0 4px rgba(13,138,99,0.15) !important; }
+
+#reqDesc {
+  width: 100% !important;
+  padding: 16px !important;
+  border: 2px solid #4facfe !important;
+  border-radius: 12px !important;
+  font-family: inherit !important;
+  font-size: 0.95rem !important;
+  min-height: 120px !important;
+  resize: vertical !important;
+  line-height: 1.9 !important;
+  transition: all 0.3s !important;
+  background: #ffffff !important;
+  box-shadow: inset 0 2px 5px rgba(79,172,254,0.1) !important;
+}
+#reqDesc:focus {
+  outline: none !important;
+  border-color: #0d8a63 !important;
+  box-shadow: 0 0 0 4px rgba(13,138,99,0.15), inset 0 2px 5px rgba(79,172,254,0.1) !important;
+  transform: translateY(-2px) !important;
+}
+
+button[onclick="smartFillRequest()"] {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b) !important;
+  color: #fff !important;
+  border: none !important;
+  padding: 8px 16px !important;
+  border-radius: 10px !important;
+  font-weight: 900 !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+  font-size: 0.85rem !important;
+  transition: all 0.3s !important;
+  box-shadow: 0 4px 12px rgba(251,191,36,0.4) !important;
+}
+button[onclick="smartFillRequest()"]:hover {
+  transform: translateY(-2px) scale(1.05) !important;
+  box-shadow: 0 8px 20px rgba(251,191,36,0.6) !important;
+}
+button[onclick="smartFillRequest()"]:disabled {
+  opacity: 0.6 !important;
+  cursor: wait !important;
+}
+
+button[onclick="submitRequest()"] {
+  background: linear-gradient(135deg, #4facfe 0%, #0d8a63 50%, #43e97b 100%) !important;
+  background-size: 200% 200% !important;
+  color: #fff !important;
+  padding: 16px !important;
+  border: none !important;
+  border-radius: 14px !important;
+  font-weight: 900 !important;
+  font-size: 1rem !important;
+  cursor: pointer !important;
+  width: 100% !important;
+  font-family: inherit !important;
+  transition: all 0.4s !important;
+  box-shadow: 0 10px 25px rgba(79,172,254,0.4) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+button[onclick="submitRequest()"]::after {
+  content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+  background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.5), rgba(255,255,255,0));
+  transform: skewX(-25deg); animation: shineButton 3s infinite;
+}
+button[onclick="submitRequest()"]:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 15px 35px rgba(79,172,254,0.6) !important;
+  background-position: 100% 50% !important;
+}
+
+.track-code-box {
+  background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%) !important;
+  border: none !important;
+  border-radius: 18px !important;
+  padding: 22px !important;
+  margin: 18px 0 !important;
+  text-align: center !important;
+  box-shadow: 0 12px 30px rgba(46,213,115,0.3) !important;
+  animation: fadeInUpForm 0.5s ease, pulseGlow 2s infinite !important;
+}
+.track-code-box .label {
+  font-size: 0.9rem !important;
+  color: #065f46 !important;
+  font-weight: 900 !important;
+  margin-bottom: 8px !important;
+}
+.track-code-box .code {
+  font-size: 2.2rem !important;
+  font-weight: 900 !important;
+  color: #065f46 !important;
+  letter-spacing: 4px !important;
+  margin: 12px 0 !important;
+  text-shadow: 0 2px 10px rgba(46,213,115,0.4) !important;
+}
+
+#myRequestsList {
+  max-height: 500px !important;
+  overflow-y: auto !important;
+  padding: 10px !important;
+}
+#myRequestsList::-webkit-scrollbar { width: 8px !important; }
+#myRequestsList::-webkit-scrollbar-track { background: #f0f9ff !important; border-radius: 4px !important; }
+#myRequestsList::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #4facfe, #0d8a63) !important;
+  border-radius: 4px !important;
+}
+</style>
 </head>
 <body>
 
 <header>
+<div class="header-actions" style="display:flex;gap:6px;align-items:center;"></div>
+<div class="header-actions"></div>
   <h1 data-fa="👤 کارگزینی شخصی" data-en="👤 My Personnel">👤 کارگزینی شخصی</h1>
-  <a href="personnel_hub.html" class="back-btn" data-fa="بازگشت" data-en="Back">بازگشت</a>
+  
 </header>
 
-<div class="floating-controls">
-  <button class="float-btn" onclick="toggleTheme()" title="تم روز/شب">🌓</button>
-  <button class="float-btn" onclick="toggleLang()" title="تغییر زبان">🌐</button>
-</div>
+
 
 <div class="main-card">
 
@@ -185,17 +356,26 @@ body.dark .status-step { background: rgba(255,255,255,0.05); }
     </div>
 
     <div id="tab-requests" class="tab-content">
-      <div class="form-box">
-        <h3 data-fa="➕ ثبت درخواست جدید" data-en="➕ New Request">➕ ثبت درخواست جدید</h3>
-        <select id="reqType">
-          <option value="مرخصی">مرخصی</option>
-          <option value="گواهی اشتغال">گواهی اشتغال</option>
-          <option value="انتقال">انتقال</option>
-          <option value="وام">وام</option>
-          <option value="سایر">سایر</option>
-        </select>
-        <textarea id="reqDesc" placeholder="توضیحات درخواست..."></textarea>
-        <button onclick="submitRequest()" data-fa="ثبت درخواست" data-en="Submit">ثبت درخواست</button>
+      <div class="form-box" style="background:linear-gradient(135deg,rgba(79,172,254,0.08),rgba(67,233,123,0.08));border-radius:15px;padding:20px;border:2px solid rgba(79,172,254,0.3);">
+        <h3 style="color:#1a4a8a;margin-bottom:15px;font-size:1.05rem;">➕ ثبت درخواست جدید</h3>
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:0.85rem;color:#666;margin-bottom:5px;">نوع درخواست</label>
+          <select id="reqType" style="width:100%;padding:12px;border:2px solid #ddd;border-radius:10px;font-family:inherit;font-size:0.92rem;background:#fff;">
+            <option value="مرخصی">🏖️ مرخصی</option>
+            <option value="گواهی اشتغال">📄 گواهی اشتغال</option>
+            <option value="انتقال">🔄 انتقال</option>
+            <option value="وام">💰 وام</option>
+            <option value="سایر">📋 سایر</option>
+          </select>
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:0.85rem;color:#666;margin-bottom:5px;">توضیحات درخواست</label>
+          <textarea id="reqDesc" placeholder="جزئیات درخواست خود را بنویسید..." style="width:100%;padding:12px;border:2px solid #ddd;border-radius:10px;font-family:inherit;font-size:0.92rem;min-height:90px;resize:vertical;"></textarea>
+          <div style="margin-top:6px;font-size:0.78rem;color:#4facfe;">
+            <button type="button" onclick="smartFillRequest()" style="background:none;border:none;color:#4facfe;text-decoration:underline;cursor:pointer;font-family:inherit;font-size:0.78rem;padding:0;">✨ کمک هوشیار برای نوشتن</button>
+          </div>
+        </div>
+        <button onclick="submitRequest()" style="width:100%;padding:14px;background:linear-gradient(135deg,#0d8a63,#1f9e73);color:#fff;border:none;border-radius:10px;font-weight:900;font-size:0.95rem;cursor:pointer;font-family:inherit;">📤 ثبت درخواست و دریافت کد رهگیری</button>
         <div id="newTrackBox"></div>
       </div>
 
@@ -233,7 +413,6 @@ body.dark .status-step { background: rgba(255,255,255,0.05); }
 </div>
 
 <script src="assets/js/site_knowledge.js"></script>
-<script src="assets/js/smart_assistant.js"></script>
 <script>
 const LS = { PERSONNEL: 'hr_personnel', QUERIES: 'hr_personal_queries', PROMOTIONS: 'hr_promotion_cases', ICAN: 'hr_ican_cases', LEARNING: 'hr_learning_requests', KNOWLEDGE: 'hr_knowledge_entries', LEAVES: 'hr_leaves', ADMIN_REQUESTS: 'hr_admin_requests', TRAINING_RECORDS: 'hr_training_records' };
 function getLS(key, fallback = []) { try { return JSON.parse(localStorage.getItem(key)) || fallback; } catch { return fallback; } }
@@ -296,59 +475,163 @@ function showTab(name, btn) {
 
 function renderMyInfo() {
   if (!currentUser) return;
-  document.getElementById('myInfoBox').innerHTML = `
-    <div class="list-item">
-      <h4>👤 ${currentUser.name}</h4>
-      <p><strong>کد پرسنلی:</strong> ${currentUser.code}</p>
-      <p><strong>واحد سازمانی:</strong> ${currentUser.unit}</p>
-      <p><strong>سمت:</strong> ${currentUser.position || '—'}</p>
-      <p><strong>مدرک تحصیلی:</strong> ${currentUser.education || '—'}</p>
-      <p><strong>تاریخ استخدام:</strong> ${currentUser.hireDate || '—'}</p>
-      <p><strong>آخرین ترفیع:</strong> ${currentUser.lastPromotion || '—'}</p>
-    </div>`;
+  var infoBox = document.getElementById('myInfoBox');
+  if (!infoBox) return;
+  
+  // خواندن دادهها از بخشهای مختلف
+  var training = JSON.parse(localStorage.getItem('hr_training_records') || '[]').filter(function(t){
+    return t.personnelId === currentUser.code || t.personnelName === currentUser.name;
+  });
+  var requests = JSON.parse(localStorage.getItem('hr_admin_requests') || '[]').filter(function(r){
+    return r.personnelCode === currentUser.code;
+  });
+  var queries = JSON.parse(localStorage.getItem('hr_personal_queries') || '[]').filter(function(q){
+    return q.personnelCode === currentUser.code;
+  });
+  var leaves = JSON.parse(localStorage.getItem('hr_leaves') || '[]').filter(function(l){
+    return l.personnelCode === currentUser.code;
+  });
+  var decrees = JSON.parse(localStorage.getItem('hr_pending_decrees') || '[]').filter(function(d){
+    return d.personnelCode === currentUser.code;
+  });
+  
+  var passedCourses = training.filter(function(t){ return t.status === 'passed' || t.status === 'completed'; }).length;
+  var pendingReqs = requests.filter(function(r){ return r.status === 'pending'; }).length;
+  var approvedReqs = requests.filter(function(r){ return r.status === 'approved'; }).length;
+  var answeredQueries = queries.filter(function(q){ return q.status === 'answered'; }).length;
+  
+  // تاریخ امروز
+  var today = new Date();
+  var todayStr = today.toLocaleDateString('fa-IR');
+  
+  infoBox.innerHTML = 
+    '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">' +
+      '<div style="background:linear-gradient(135deg,#4facfe,#00f2fe);color:#fff;padding:15px;border-radius:12px;">' +
+        '<div style="font-size:0.8rem;opacity:0.9;">نام و کد پرسنلی</div>' +
+        '<div style="font-size:1.1rem;font-weight:900;margin-top:5px;">' + currentUser.name + '</div>' +
+        '<div style="font-size:0.85rem;opacity:0.9;">کد: ' + currentUser.code + '</div>' +
+      '</div>' +
+      '<div style="background:linear-gradient(135deg,#43e97b,#38f9d7);color:#fff;padding:15px;border-radius:12px;">' +
+        '<div style="font-size:0.8rem;opacity:0.9;">واحد / سمت</div>' +
+        '<div style="font-size:1.1rem;font-weight:900;margin-top:5px;">' + (currentUser.unit || '—') + '</div>' +
+        '<div style="font-size:0.85rem;opacity:0.9;">' + (currentUser.position || 'کارشناس') + '</div>' +
+      '</div>' +
+      '<div style="background:linear-gradient(135deg,#fa709a,#fee140);color:#fff;padding:15px;border-radius:12px;">' +
+        '<div style="font-size:0.8rem;opacity:0.9;">مدرک تحصیلی</div>' +
+        '<div style="font-size:1.1rem;font-weight:900;margin-top:5px;">' + (currentUser.education || '—') + '</div>' +
+      '</div>' +
+      '<div style="background:linear-gradient(135deg,#a18cd1,#fbc2eb);color:#fff;padding:15px;border-radius:12px;">' +
+        '<div style="font-size:0.8rem;opacity:0.9;">تاریخ استخدام</div>' +
+        '<div style="font-size:1.1rem;font-weight:900;margin-top:5px;">' + (currentUser.hireDate || '—') + '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div style="margin-top:15px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;">' +
+      '<div style="background:rgba(46,213,115,0.15);padding:12px;border-radius:10px;border-right:3px solid #2ed573;">' +
+        '<div style="font-size:0.8rem;color:#666;">دورههای گذرانده</div>' +
+        '<div style="font-size:1.5rem;font-weight:900;color:#2ed573;">' + passedCourses + '</div>' +
+      '</div>' +
+      '<div style="background:rgba(255,165,2,0.15);padding:12px;border-radius:10px;border-right:3px solid #ffa502;">' +
+        '<div style="font-size:0.8rem;color:#666;">درخواست در انتظار</div>' +
+        '<div style="font-size:1.5rem;font-weight:900;color:#ffa502;">' + pendingReqs + '</div>' +
+      '</div>' +
+      '<div style="background:rgba(79,172,254,0.15);padding:12px;border-radius:10px;border-right:3px solid #4facfe;">' +
+        '<div style="font-size:0.8rem;color:#666;">درخواست تاییدشده</div>' +
+        '<div style="font-size:1.5rem;font-weight:900;color:#4facfe;">' + approvedReqs + '</div>' +
+      '</div>' +
+      '<div style="background:rgba(161,140,209,0.15);padding:12px;border-radius:10px;border-right:3px solid #a18cd1;">' +
+        '<div style="font-size:0.8rem;color:#666;">سوال پاسخدادهشده</div>' +
+        '<div style="font-size:1.5rem;font-weight:900;color:#a18cd1;">' + answeredQueries + '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div style="margin-top:15px;padding:10px;background:rgba(13,138,99,0.1);border-radius:8px;font-size:0.85rem;color:#666;">' +
+      '📅 آخرین بهروزرسانی: ' + todayStr +
+    '</div>';
 }
 
 function renderSmartAlerts() {
   if (!currentUser) return;
-  const box = document.getElementById('smartAlertsBox');
-  const alerts = [];
-  const myReqs = getLS(LS.ADMIN_REQUESTS).filter(r => r.personnelCode === currentUser.code);
-  const pending = myReqs.filter(r => r.status === 'pending').length;
-  if (pending > 0) alerts.push({ icon: '⏳', text: `${pending} درخواست شما در انتظار بررسی است.` });
-  const approved = myReqs.filter(r => r.status === 'approved').length;
-  if (approved > 0) alerts.push({ icon: '✅', text: `${approved} درخواست شما تایید شده است.` });
-  const rejected = myReqs.filter(r => r.status === 'rejected').length;
-  if (rejected > 0) alerts.push({ icon: '❌', text: `${rejected} درخواست شما رد شده است.` });
-  const myQueries = getLS(LS.QUERIES).filter(q => q.personnelCode === currentUser.code);
-  const answered = myQueries.filter(q => q.status === 'answered').length;
-  if (answered > 0) alerts.push({ icon: '💬', text: `${answered} سوال شما پاسخ داده شده است.` });
-  if (alerts.length === 0) {
-    box.innerHTML = '<p class="empty-msg">هشدار جدیدی ندارید.</p>';
-    return;
-  }
-  box.innerHTML = alerts.map(a => `<div class="list-item"><p>${a.icon} ${a.text}</p></div>`).join('');
+  var box = document.getElementById('smartAlertsBox');
+  if (!box) return;
+  
+  var myReqs = JSON.parse(localStorage.getItem('hr_admin_requests') || '[]').filter(function(r){ return r.personnelCode === currentUser.code; });
+  var myQueries = JSON.parse(localStorage.getItem('hr_personal_queries') || '[]').filter(function(q){ return q.personnelCode === currentUser.code; });
+  var myDecrees = JSON.parse(localStorage.getItem('hr_pending_decrees') || '[]').filter(function(d){ return d.personnelCode === currentUser.code; });
+  var myTraining = JSON.parse(localStorage.getItem('hr_training_records') || '[]').filter(function(t){ return t.personnelId === currentUser.code || t.personnelName === currentUser.name; });
+  
+  var alerts = [];
+  
+  // منبع ۱: درخواستهای اداری
+  var pending = myReqs.filter(function(r){ return r.status === 'pending'; }).length;
+  var approved = myReqs.filter(function(r){ return r.status === 'approved'; }).length;
+  var rejected = myReqs.filter(function(r){ return r.status === 'rejected'; }).length;
+  if (pending > 0) alerts.push({ icon: '⏳', text: pending + ' درخواست اداری در انتظار', src: 'درخواستهای اداری' });
+  if (approved > 0) alerts.push({ icon: '✅', text: approved + ' درخواست اداری تایید شده', src: 'درخواستهای اداری' });
+  if (rejected > 0) alerts.push({ icon: '❌', text: rejected + ' درخواست اداری رد شده', src: 'درخواستهای اداری' });
+  if (pending === 0 && approved === 0 && rejected === 0) alerts.push({ icon: 'ℹ️', text: 'هشدار جدیدی از درخواستهای اداری نیامده', src: 'درخواستهای اداری', info: true });
+  
+  // منبع ۲: سوالات پرسنل
+  var unanswered = myQueries.filter(function(q){ return q.status === 'pending'; }).length;
+  var answered = myQueries.filter(function(q){ return q.status === 'answered'; }).length;
+  if (unanswered > 0) alerts.push({ icon: '💬', text: unanswered + ' سوال شما در انتظار پاسخ', src: 'سوالات پرسنل' });
+  if (answered > 0) alerts.push({ icon: '✅', text: answered + ' سوال شما پاسخ داده شده', src: 'سوالات پرسنل' });
+  if (unanswered === 0 && answered === 0) alerts.push({ icon: 'ℹ️', text: 'هشدار جدیدی از سوالات پرسنل نیامده', src: 'سوالات پرسنل', info: true });
+  
+  // منبع ۳: احکام
+  var pendingDecrees = myDecrees.filter(function(d){ return d.status === 'pending'; }).length;
+  var approvedDecrees = myDecrees.filter(function(d){ return d.status === 'approved'; }).length;
+  var rejectedDecrees = myDecrees.filter(function(d){ return d.status === 'rejected'; }).length;
+  if (pendingDecrees > 0) alerts.push({ icon: '📜', text: pendingDecrees + ' حکم در انتظار بررسی', src: 'احکام' });
+  if (approvedDecrees > 0) alerts.push({ icon: '✅', text: approvedDecrees + ' حکم تایید شده', src: 'احکام' });
+  if (rejectedDecrees > 0) alerts.push({ icon: '❌', text: rejectedDecrees + ' حکم رد شده', src: 'احکام' });
+  if (pendingDecrees === 0 && approvedDecrees === 0 && rejectedDecrees === 0) alerts.push({ icon: 'ℹ️', text: 'هشدار جدیدی از احکام نیامده', src: 'احکام', info: true });
+  
+  // منبع ۴: سوابق آموزشی
+  var passed = myTraining.filter(function(t){ return t.status === 'passed' || t.status === 'completed'; }).length;
+  var enrolled = myTraining.filter(function(t){ return t.status === 'enrolled'; }).length;
+  if (enrolled > 0) alerts.push({ icon: '🎓', text: enrolled + ' دوره آموزشی در جریان', src: 'سوابق آموزشی' });
+  if (passed > 0) alerts.push({ icon: '✅', text: passed + ' دوره آموزشی گذراندهشده', src: 'سوابق آموزشی' });
+  if (enrolled === 0 && passed === 0) alerts.push({ icon: 'ℹ️', text: 'هشدار جدیدی از سوابق آموزشی نیامده', src: 'سوابق آموزشی', info: true });
+  
+  box.innerHTML = alerts.map(function(a) {
+    var bg = a.info ? 'rgba(100,100,100,0.08)' : 'rgba(255,255,255,0.9)';
+    var border = a.info ? '#999' : '#d4a843';
+    var color = a.info ? '#666' : '#1a2a4a';
+    return '<div style="background:' + bg + ';border-radius:10px;padding:10px 14px;margin-bottom:6px;border-right:4px solid ' + border + ';font-size:0.88rem;color:' + color + ';">' +
+      a.icon + ' ' + a.text +
+      '<div style="font-size:0.72rem;color:#999;margin-top:3px;">منبع: ' + a.src + '</div>' +
+      '</div>';
+  }).join('');
 }
 
 function renderMyRequests() {
-  const box = document.getElementById('myRequestsList');
-  if (!currentUser) return;
-  const queries = getLS(LS.QUERIES).filter(q => q.personnelCode === currentUser.code);
-  const adminReqs = getLS(LS.ADMIN_REQUESTS).filter(r => r.personnelCode === currentUser.code);
-  const all = [...queries.map(q => ({...q, kind: 'سوال'})), ...adminReqs.map(r => ({...r, kind: 'درخواست'}))];
+  var box = document.getElementById('myRequestsList');
+  if (!box || !currentUser) return;
+  var queries = JSON.parse(localStorage.getItem('hr_personal_queries') || '[]').filter(function(q){ return q.personnelCode === currentUser.code; });
+  var adminReqs = JSON.parse(localStorage.getItem('hr_admin_requests') || '[]').filter(function(r){ return r.personnelCode === currentUser.code; });
+  var all = queries.map(function(q){ q.kind = 'سوال'; return q; }).concat(adminReqs.map(function(r){ r.kind = 'درخواست'; return r; }));
   if (all.length === 0) {
-    box.innerHTML = '<p class="empty-msg">درخواستی ثبت نکرده‌اید.</p>';
+    box.innerHTML = '<div style="text-align:center;padding:30px;color:#999;font-style:italic;">هنوز درخواستی ثبت نکردهاید.</div>';
     return;
   }
-  const statusMap = { pending: 'در انتظار بررسی', answered: 'پاسخ داده شده', approved: 'تایید شده', rejected: 'رد شده', referred: 'ارجاع به مدیرکل' };
-  box.innerHTML = all.slice().reverse().map(r => `
-    <div class="list-item">
-      <h4>${r.kind} — ${r.trackingCode || ''}</h4>
-      <p>${r.question || r.description || r.type || ''}</p>
-      <div class="meta">${faDate(r.createdAt)} — وضعیت: ${statusMap[r.status] || r.status}</div>
-      ${r.destination ? `<div class="meta" style="color:#0d8a63;"><strong>ارجاع به:</strong> ${r.destination}</div>` : ''}
-      ${r.answer ? `<div class="meta" style="color:#0d8a63;margin-top:4px;"><strong>پاسخ:</strong> ${r.answer}</div>` : ''}
-    </div>
-  `).join('');
+  var statusMap = { pending: 'در انتظار', answered: 'پاسخ داده شده', approved: 'تایید شده', rejected: 'رد شده', referred: 'ارجاع شده' };
+  var statusColor = { pending: '#ffa502', answered: '#2ed573', approved: '#2ed573', rejected: '#ff4757', referred: '#4facfe' };
+  all.sort(function(a,b){ return (b.createdAt||0) - (a.createdAt||0); });
+  box.innerHTML = all.map(function(r) {
+    var st = statusMap[r.status] || r.status;
+    var sc = statusColor[r.status] || '#999';
+    return '<div style="background:#fff;border-radius:12px;padding:14px;margin-bottom:10px;border-right:4px solid ' + sc + ';box-shadow:0 3px 10px rgba(0,0,0,0.06);">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
+        '<span style="font-weight:900;color:#1a2a4a;font-size:0.92rem;">' + (r.kind || 'درخواست') + ': ' + (r.type || '') + '</span>' +
+        '<span style="background:' + sc + ';color:#fff;padding:3px 10px;border-radius:10px;font-size:0.72rem;font-weight:bold;">' + st + '</span>' +
+      '</div>' +
+      '<div style="font-size:0.85rem;color:#555;margin-bottom:6px;line-height:1.6;">' + (r.description || r.question || '') + '</div>' +
+      '<div style="font-size:0.75rem;color:#999;">' +
+        'کد رهگیری: <b style="color:#0d8a63;">' + (r.trackingCode || '—') + '</b> | ' + faDate(r.createdAt) +
+      '</div>' +
+      (r.destination ? '<div style="font-size:0.78rem;color:#0d8a63;margin-top:4px;">📍 ارجاع به: ' + r.destination + '</div>' : '') +
+      (r.answer ? '<div style="font-size:0.78rem;color:#0d8a63;margin-top:4px;">💬 پاسخ: ' + r.answer + '</div>' : '') +
+      '</div>';
+  }).join('');
 }
 
 function renderMyTraining() {
@@ -483,8 +766,135 @@ function submitSatisfaction(score) { localStorage.setItem('my_hr_satisfaction', 
 
 loadTheme();
 applyLang();
-</script>
+
+async function getBotResponse(query) {
+  var q = query.trim();
+  if (!q) return 'لطفا سوال خود را بنویسید.';
+  
+  var userContext = '';
+  try {
+    // شناسایی کاربر از روی کد وارد شده
+    var currentCode = '';
+    if (typeof currentUser !== 'undefined' && currentUser && currentUser.code) currentCode = currentUser.code;
+    else if (localStorage.getItem('current_user_code')) currentCode = localStorage.getItem('current_user_code');
+    else if (typeof currentExpert !== 'undefined' && currentExpert && currentExpert.code) currentCode = currentExpert.code;
+    else if (typeof currentChief !== 'undefined' && currentChief && currentChief.code) currentCode = currentChief.code;
+    
+    if (currentCode) {
+      var personnel = JSON.parse(localStorage.getItem('hr_personnel') || '[]');
+      var me = null;
+      for (var i = 0; i < personnel.length; i++) {
+        if ((personnel[i].code || personnel[i].personnelCode) === currentCode) { me = personnel[i]; break; }
+      }
+      if (me) {
+        userContext += '\nکاربر فعلی: ' + (me.name || '') + ' (کد پرسنلی: ' + currentCode + ') واحد: ' + (me.unit || 'نامشخص') + ' سمت: ' + (me.position || 'نامشخص') + '.';
+      } else {
+        userContext += '\nکاربر فعلی با کد ' + currentCode + ' وارد شده ولی اطلاعات پرونده او در دسترس نیست.';
+      }
+      
+      // خلاصه دادههای مرتبط با این کاربر
+      var requests = JSON.parse(localStorage.getItem('hr_admin_requests') || '[]').filter(function(r){ return r.personnelCode === currentCode; });
+      var training = JSON.parse(localStorage.getItem('hr_training_records') || '[]').filter(function(t){ return t.personnelId === currentCode || t.personnelName === (me && me.name); });
+      var queries = JSON.parse(localStorage.getItem('hr_personal_queries') || '[]').filter(function(q2){ return q2.personnelCode === currentCode; });
+      
+      if (requests.length) userContext += '\nاین کاربر ' + requests.length + ' درخواست اداری دارد.';
+      if (training.length) userContext += '\nاین کاربر ' + training.length + ' سابقه آموزشی دارد.';
+      if (queries.length) userContext += '\nاین کاربر ' + queries.length + ' سوال قبلی از کارشناس پرسیده است.';
+    }
+  } catch (e) {}
+  
+  var sysPrompt = 'تو «هوشی» هستی همیار هوشمند سامانه یکپارچه سرمایه انسانی بنیاد شهید و امور ایثارگران. با کاربر با لحن نرم آرام و دوستانه صحبت کن. این سایت شامل بخشهای: کارگزینی (شخصی و هوشمند) رفاه آموزش و توانمندسازی احکام مسیریاب مشاورین هماندیشی و مدیریت است. هر کاربر با کد پرسنلی خودش وارد بخشهای مختلف میشود و با تو تعامل میکند. ممکن است هزاران نفر با تو صحبت کنند پس بر اساس کدی که کاربر وارد کرده او را بشناس و اطلاعاتش را از بخشهای مختلف سایت در نظر بگیر. اگر اطلاعات کافی داری راهنمایی کن. اگر نداری صادق باش و پیشنهاد بده چه کاری میتواند بکند.' + userContext;
+  
+  try {
+    var res = await callAI([{ role: 'user', content: q }], { system: sysPrompt });
+    if (res && res.success && res.text) return res.text;
+  } catch (e) {
+    console.warn('AI error:', e);
+  }
+  return 'در حال حاضر نمیتوانم پاسخ دهم. لطفا دوباره تلاش کنید.';
+}
+async function askProfile() {
+  var q = document.getElementById('profileQuestion').value.trim();
+  var ans = document.getElementById('profileAnswer');
+  if (!q) { ans.innerHTML = '<span style="color:#c0392b;">سوال خود را بنویسید.</span>'; return; }
+  if (!currentUser) { ans.innerHTML = '<span style="color:#c0392b;">ابتدا وارد شوید.</span>'; return; }
+  ans.innerHTML = '⏳ در حال بررسی پرونده...';
+  
+  var profile = 'اطلاعات پرونده من: نام: ' + currentUser.name + ' کد: ' + currentUser.code + ' واحد: ' + currentUser.unit + ' سمت: ' + (currentUser.position || 'نامشخص') + ' مدرک: ' + (currentUser.education || 'نامشخص') + ' تاریخ استخدام: ' + (currentUser.hireDate || 'نامشخص') + ' آخرین ترفیع: ' + (currentUser.lastPromotion || 'نامشخص');
+  
+  var sysPrompt = 'تو همیار هوشمند سامانه سرمایه انسانی بنیاد شهید هستی. بر اساس اطلاعات پرونده کاربر که در ادامه میآید به سوال او پاسخ بده. اگر پاسخ در پرونده هست دقیق بگو. اگر نیست صادقانه بگو. کوتاه و دوستانه پاسخ بده.';
+  
+  try {
+    var res = await callAI([{ role: 'user', content: profile + '\n\nسوال: ' + q }], { system: sysPrompt });
+    if (res && res.success && res.text) {
+      ans.innerHTML = '<div style="background:rgba(13,138,99,0.1);padding:12px;border-radius:8px;border-right:3px solid #0d8a63;">' + res.text + '</div>';
+      return;
+    }
+  } catch (e) { console.warn(e); }
+  ans.innerHTML = '<span style="color:#c0392b;">خطا در ارتباط با هوش.</span>';
+}
+async function smartFillRequest() {
+  var type = document.getElementById('reqType').value;
+  var desc = document.getElementById('reqDesc').value.trim();
+  if (!desc) { alert('لطفاً چند کلمه درباره درخواست خود بنویسید.'); return; }
+  if (!currentUser) { alert('ابتدا وارد شوید.'); return; }
+  var btn = document.querySelector('button[onclick="smartFillRequest()"]');
+  if (btn) { btn.textContent = '⏳ در حال نوشتن نامه...'; btn.disabled = true; }
+  
+  var profile = 'کاربر: ' + currentUser.name + ' (کد ' + currentUser.code + ')، واحد: ' + (currentUser.unit || '—') + '، سمت: ' + (currentUser.position || 'کارشناس');
+  var sysPrompt = 'تو دستیار هوشمند نامه‌نگاری اداری هستی. یک نامه اداری رسمی به فارسی بنویس. نوع درخواست را دقیقاً از این مقدار بردار: «' + type + '» — هرگز نوع دیگری ننویس. نامه شامل: عنوان، مقدمه، متن اصلی، درخواست، امضا. لحن رسمی، شفاف. فقط متن نامه، بدون توضیح.';
+  var userMsg = profile + '\n\nتوضیح درخواست: ' + desc;
+  
+  try {
+    var res = await callAI([{ role: 'user', content: userMsg }], { system: sysPrompt });
+    if (res && res.success && res.text) {
+      document.getElementById('reqDesc').value = res.text;
+      var ta = document.getElementById('reqDesc');
+      ta.style.minHeight = '200px';
+      var oldHint = document.getElementById('editHint');
+      if (oldHint) oldHint.remove();
+      var editHint = document.createElement('div');
+      editHint.id = 'editHint';
+      editHint.style.cssText = 'margin-top:10px;padding:10px;background:linear-gradient(135deg,#fff3cd,#fef3c7);border-right:4px solid #fbbf24;border-radius:8px;font-size:0.85rem;color:#92400e;font-weight:bold;';
+      editHint.textContent = '✏️ متن نامه را ویرایش کنید، سپس دکمه «ثبت درخواست» را بزنید.';
+      ta.parentNode.appendChild(editHint);
+    } else {
+      alert('خطا در تولید نامه. لطفاً دوباره تلاش کنید.');
+    }
+  } catch (e) {
+    alert('خطا در ارتباط با هوش.');
+  } finally {
+    if (btn) { btn.textContent = '✨ کمک هوشیار برای نوشتن نامه'; btn.disabled = false; }
+  }
+}
+function openEditLetter() {
+  var current = document.getElementById('reqDesc').value;
+  var old = document.getElementById('editLetterModal');
+  if (old) old.remove();
+  
+  var modal = document.createElement('div');
+  modal.id = 'editLetterModal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+  modal.innerHTML = 
+    '<div style="background:#fff;border-radius:16px;max-width:800px;width:100%;max-height:90vh;overflow:auto;padding:20px;">' +
+      '<h3 style="margin-bottom:15px;color:#1a4a8a;">✏️ ویرایش متن نامه</h3>' +
+      '<textarea id="editLetterText" style="width:100%;min-height:400px;padding:14px;border:2px solid #4facfe;border-radius:10px;font-family:inherit;font-size:0.92rem;line-height:1.9;resize:vertical;">' + current + '</textarea>' +
+      '<div style="display:flex;gap:10px;margin-top:15px;">' +
+        '<button type="button" onclick="saveEditedLetter()" style="flex:1;padding:12px;background:linear-gradient(135deg,#0d8a63,#43e97b);color:#fff;border:none;border-radius:10px;font-weight:900;cursor:pointer;font-family:inherit;font-size:0.95rem;">✅ ذخیره</button>' +
+        '<button type="button" onclick="document.getElementById(\'editLetterModal\').remove()" style="padding:12px 20px;background:#ddd;color:#333;border:none;border-radius:10px;font-weight:900;cursor:pointer;font-family:inherit;font-size:0.95rem;">لغو</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(modal);
+}
+
+function saveEditedLetter() {
+  var newText = document.getElementById('editLetterText').value;
+  document.getElementById('reqDesc').value = newText;
+  document.getElementById('editLetterModal').remove();
+  var hint = document.getElementById('editHint');
+  if (hint) {
+    hint.innerHTML = '<div style="color:#0d8a63;font-weight:900;font-size:0.85rem;">✅ متن ویرایش شد. اکنون دکمه «ثبت درخواست» را بزنید.</div>';
+  }
+}</script>
 </body>
 </html>
-
-
