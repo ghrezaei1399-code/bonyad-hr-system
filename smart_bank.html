@@ -104,22 +104,25 @@ header h1 { font-size: 1.3rem; font-weight: 800; color: var(--gold); }
 /* ===== END MOBILE FIX ===== */
 </style>
 <script src="assets/js/i18n.js"></script>
+<script src="https://js.puter.com/v2/"></script>
+<script src="assets/js/ui-helper.js"></script>
+<script src="assets/js/ai-connector.js"></script>
+<script src="assets/js/org-knowledge.js"></script>
 </head>
 <body>
 
 <header>
+<div class="header-actions" style="display:flex;gap:6px;align-items:center;"></div>
+<div class="header-actions"></div>
   <h1>🧠 بانک هوشمندسازی (Smart AI Bank)</h1>
   <div class="header-actions">
-    <button onclick="toggleTheme()" class="back-btn">🌓</button>
-    <button onclick="toggleLang()" class="back-btn">🌐</button>
-    <a href="index.html" class="back-btn" data-fa="بازگشت به سایت" data-en="Back to site">بازگشت به سایت</a>
+    
+    
+    
   </div>
 </header>
 
-<div class="floating-controls">
-  <button class="float-btn" onclick="toggleTheme()" title="تم روز/شب">🌓</button>
-  <button class="float-btn" onclick="toggleLang()" title="تغییر زبان">🌐</button>
-</div>
+
 
 <!-- بخش ۱: چت‌بات‌ها و دستیاران -->
 <div class="section-title" data-fa="🤖 چت‌بات‌ها و دستیاران هوشمند" data-en="🤖 Assistants & Chatbots">🤖 چت‌بات‌ها و دستیاران هوشمند</div>
@@ -240,9 +243,13 @@ function toggleSatisfaction() {
   box.style.bottom = (box.style.bottom === '0px') ? '-220px' : '0px';
 }
 function submitSatisfaction(score) {
-  localStorage.setItem('smart_bank_satisfaction', score);
-  alert(currentLang === 'fa' ? 'امتیاز ' + score + ' شما ثبت شد. با تشکر!' : 'Your score ' + score + ' was recorded. Thanks!');
-  document.getElementById('satisfactionBox').style.bottom = '-220px';
+  var page = 'smart_bank.html';
+  var all = JSON.parse(localStorage.getItem('hr_surveys') || '[]');
+  all.push({ page: page, score: score, at: Date.now() });
+  localStorage.setItem('hr_surveys', JSON.stringify(all));
+  alert('امتیاز ' + score + ' شما ثبت شد. با تشکر!');
+  var box = document.getElementById('satisfactionBox');
+  if (box) box.style.bottom = '-220px';
 }
 
 loadTheme();
@@ -251,5 +258,3 @@ applyLang();
 
 </body>
 </html>
-
-
