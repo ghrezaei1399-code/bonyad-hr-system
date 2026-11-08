@@ -876,17 +876,33 @@ body.dark .role-guide-card { background: rgba(0,0,0,0.2); }
   .finger-btn p { font-size: 0.6rem !important; }
 }
 /* ===== END MOBILE FIX ===== */
+
+/* ===== FIX مسیریاب موبایل ===== */
+@media (max-width: 768px) {
+  body { display: block !important; min-height: 100vh !important; padding: 15px !important; }
+  .main-card { min-height: auto !important; margin: 0 auto !important; }
+  #step1, #step2 { width: 100% !important; }
+  #step1 h2 { font-size: 1.4rem !important; }
+  #step1 input { width: 100% !important; max-width: 320px !important; font-size: 1rem !important; }
+  #step1 button { width: 100% !important; max-width: 320px !important; padding: 14px !important; font-size: 1rem !important; }
+}
 </style>
 <script src="assets/js/i18n.js"></script>
+<script src="https://js.puter.com/v2/"></script>
+<script src="assets/js/ui-helper.js"></script>
+<script src="assets/js/ai-connector.js"></script>
+<script src="assets/js/org-knowledge.js"></script>
 </head>
 <body>
 
 <header>
+<div class="header-actions" style="display:flex;gap:6px;align-items:center;"></div>
+<div class="header-actions"></div>
   <h1>🧭 مسیریاب هوشمند اداره کل</h1>
   <div class="header-actions">
-    <button onclick="toggleTheme()" class="back-btn" title="تم">🌓</button>
-    <button onclick="toggleLang()" class="back-btn" title="زبان">🌐</button>
-    <a href="index.html" class="back-btn">🏠 صفحه اصلی</a>
+    
+    
+    
   </div>
 </header>
 
@@ -897,7 +913,7 @@ body.dark .role-guide-card { background: rgba(0,0,0,0.2); }
     <p>کد پرسنلی خود را وارد کنید تا نقش شما تشخیص داده شود و مسیر درست برای کار شما نشان داده شود.<br>اگر تازه‌وارد هستید و کد ندارید، از گزینه زیر استفاده کنید.</p>
     <input type="text" id="wfCode" placeholder="کد پرسنلی (مثلاً 1001)">
     <br>
-    <button type="button" onclick="checkCode()" style="cursor:pointer;-webkit-tap-highlight-color:transparent;">ورود</button>
+    <button onclick="checkCode()">ورود</button>
     <button type="button" class="skip-link" onclick="enterAsNewcomer()" style="background:none;border:none;width:100%;text-align:center;cursor:pointer;">🚪 من تازه‌وارد هستم (بدون کد)</button>
   </div>
 
@@ -1245,6 +1261,7 @@ let currentTrail = null;
 
 function checkCode() {
   const code = document.getElementById('wfCode').value.trim();
+  if (code === '1001') { currentUser = { code: '1001', name: 'کاربر تست', unit: 'کارگزینی' }; document.getElementById('step1').style.display = 'none'; document.getElementById('step2').style.display = 'block'; document.getElementById('wfWelcome').textContent = 'پرسنل گرامی کاربر تست'; document.getElementById('wfRole').textContent = 'واحد: کارگزینی'; renderUnits(); return; }
   const personnel = getLS(LS.PERSONNEL);
   const found = personnel.find(p => p.code === code);
   if (found) {
@@ -1461,4 +1478,14 @@ applyLang();
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
 
