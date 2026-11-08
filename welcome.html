@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>خوش آمدید | سامانه یکپارچه سرمایه انسانی بنیاد شهید</title>
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Vazirmatn', Tahoma, sans-serif; }
+body {
+  min-height:100vh;
+  background: linear-gradient(135deg, #0d5c41 0%, #13865f 40%, #d4a843 100%);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  color:#fff; text-align:center; padding:20px; overflow:hidden; position:relative;
+}
+@keyframes logoEntrance {
+  0% { transform: translate(200%, -200%) rotate(45deg) scale(0.3); opacity: 0; }
+  100% { transform: translate(0,0) rotate(0) scale(1); opacity: 1; }
+}
+@keyframes floatLogo {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(100px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-100px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+@keyframes shineBox {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}
+.logo {
+  width:220px; height:220px; object-fit:contain; margin-bottom:30px;
+  animation: logoEntrance 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards,
+             floatLogo 3s ease-in-out 1.5s infinite,
+             pulse 2s ease-in-out 1.5s infinite;
+  filter: drop-shadow(0 10px 30px rgba(0,0,0,0.4));
+  position:relative; z-index:2;
+}
+@media (max-width:600px) { .logo { width:150px; height:150px; margin-bottom:20px; } }
+.title {
+  font-size:1.6rem; font-weight:900; margin-bottom:15px;
+  text-shadow: 0 3px 10px rgba(0,0,0,0.3);
+  opacity:0; animation: slideInRight 1s ease 1s forwards;
+  position:relative; z-index:2;
+}
+.subtitle {
+  font-size:1rem; opacity:0; margin-bottom:35px; line-height:1.7;
+  animation: slideInLeft 1s ease 1.2s forwards;
+  position:relative; z-index:2;
+}
+.enter-btn {
+  padding:16px 45px; border:none; border-radius:16px;
+  background:#fff; color:#0d5c41; font-weight:900; font-size:1.1rem;
+  cursor:pointer; transition:all 0.3s;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  opacity:0; animation: slideInRight 1s ease 1.5s forwards;
+  position:relative; z-index:2; overflow:hidden;
+}
+.enter-btn::after {
+  content:''; position:absolute; top:0; left:-100%; width:50%; height:100%;
+  background:linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.5), rgba(255,255,255,0));
+  transform: skewX(-25deg); animation: shineBox 3s infinite 2.5s;
+}
+.enter-btn:hover { transform:translateY(-5px) scale(1.05); box-shadow:0 15px 40px rgba(0,0,0,0.4); }
+.boxes {
+  display:flex; flex-direction:column; gap:15px; width:90%; max-width:500px;
+  margin-bottom:30px; position:relative; z-index:2;
+}
+.box {
+  padding:15px 25px; border-radius:15px; font-size:1.1rem; font-weight:bold;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2); opacity:0;
+  position:relative; overflow:hidden;
+}
+.box::after {
+  content:''; position:absolute; top:0; left:-100%; width:50%; height:100%;
+  background:linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.4), rgba(255,255,255,0));
+  transform:skewX(-25deg); animation: shineBox 3s infinite 2s;
+}
+.box.green { background: linear-gradient(135deg, #1f9e73, #0d8a63); animation: slideInRight 1s ease 1s forwards; }
+.box.gold { background: linear-gradient(135deg, #f1c65e, #d4a843); color:#1a3b32; animation: slideInLeft 1s ease 1.2s forwards; }
+@media (max-width:600px) {
+  .title { font-size:1.2rem; }
+  .subtitle { font-size:0.9rem; }
+  .enter-btn { padding:14px 35px; font-size:1rem; }
+  .box { padding:12px 18px; font-size:0.95rem; }
+}
+</style>
+</head>
+<body>
+  <img src="logo.png" alt="لوگو" class="logo" onerror="this.style.display='none'">
+  <div class="boxes">
+    <div class="box green">به سامانه یکپارچه سرمایه انسانی خوش آمدید</div>
+    <div class="box gold">بنیاد شهید و امور ایثارگران — درگاه خدمات هوشمند</div>
+  </div>
+  <h1 class="title">سامانه یکپارچه سرمایه انسانی</h1>
+  <button class="enter-btn" onclick="enterSite()">ورود به سامانه</button>
+  <script>
+    function enterSite() {
+      sessionStorage.setItem('welcomeShown', '1');
+      window.location.href = 'index.html';
+    }
+    if (sessionStorage.getItem('welcomeShown')) {
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>
