@@ -323,16 +323,17 @@ footer { text-align: center; padding: 8px; font-size: 0.7rem; color: var(--text-
 }
 </style>
 <script src="assets/js/i18n.js"></script>
+<script src="https://js.puter.com/v2/"></script>
+<script src="assets/js/ui-helper.js"></script>
+<script src="assets/js/ai-connector.js"></script>
+<script>
+if (!sessionStorage.getItem('welcomeShown')) {
+  window.location.href = 'welcome.html';
+}
+</script>
+<script src="assets/js/org-knowledge.js"></script>
 </head>
 <body>
-
-<div id="splash">
-  <img src="logo.png" alt="لوگو" class="splash-logo" onerror="this.style.display='none'">
-  <div class="splash-boxes">
-    <div class="splash-box green" data-fa="به سامانه یکپارچه اداره کل سرمایه انسانی خوش آمدید" data-en="Welcome to the Integrated HR System">به سامانه یکپارچه اداره کل سرمایه انسانی خوش آمدید</div>
-    <div class="splash-box gold" data-fa="بنیاد شهید و امور ایثارگران - درگاه خدمات هوشمند" data-en="Martyrs and Veterans Foundation - Smart Services Portal">بنیاد شهید و امور ایثارگران - درگاه خدمات هوشمند</div>
-  </div>
-</div>
 
 <header>
   <div class="header-content">
@@ -344,10 +345,7 @@ footer { text-align: center; padding: 8px; font-size: 0.7rem; color: var(--text-
   </div>
 </header>
 
-<div class="floating-controls">
-  <button class="float-btn" onclick="toggleTheme()" title="تغییر تم">🌓</button>
-  <button class="float-btn" onclick="toggleLang()" title="تغییر زبان">🌐</button>
-</div>
+
 
 <div class="ticker-wrap">
   <div class="ticker">
@@ -472,7 +470,6 @@ footer { text-align: center; padding: 8px; font-size: 0.7rem; color: var(--text-
   </div>
 </div>
 
-<script src="assets/js/smart_assistant.js"></script>
 <script>
 const LS = {
   CONSULTANTS: 'hr_consultants',
@@ -551,7 +548,7 @@ function getLS(key, fallback = []) {
   catch { return fallback; }
 }
 
-async function callAI(query, context) { return null; }
+// callAI از ai-connector.js
 
 function searchSiteKnowledge(query) {
   if (typeof SITE_KNOWLEDGE === 'undefined' || !SITE_KNOWLEDGE.pages) {
@@ -601,12 +598,50 @@ function searchSiteKnowledge(query) {
 }
 
 async function getBotResponse(query) {
-  const q = query.trim();
-  if (!q) return 'لطفاً سوال خود را بنویسید.';
-  if (/^(سلام|درود|hi|hello)/i.test(q)) return 'سلام! به سامانه یکپارچه سرمایه انسانی خوش آمدید. 🌟';
-  if (/^(ممنون|تشکر|thanks)/i.test(q)) return 'خواهش می‌کنم! 🌟';
-  try { const aiAnswer = await callAI(query, SITE_KNOWLEDGE); if (aiAnswer) return aiAnswer; } catch (e) {}
-  return searchSiteKnowledge(query);
+  var q = query.trim();
+  if (!q) return 'لطفا سوال خود را بنویسید.';
+  
+  var userContext = '';
+  try {
+    // شناسایی کاربر از روی کد وارد شده
+    var currentCode = '';
+    if (typeof currentUser !== 'undefined' && currentUser && currentUser.code) currentCode = currentUser.code;
+    else if (localStorage.getItem('current_user_code')) currentCode = localStorage.getItem('current_user_code');
+    else if (typeof currentExpert !== 'undefined' && currentExpert && currentExpert.code) currentCode = currentExpert.code;
+    else if (typeof currentChief !== 'undefined' && currentChief && currentChief.code) currentCode = currentChief.code;
+    
+    if (currentCode) {
+      var personnel = JSON.parse(localStorage.getItem('hr_personnel') || '[]');
+      var me = null;
+      for (var i = 0; i < personnel.length; i++) {
+        if ((personnel[i].code || personnel[i].personnelCode) === currentCode) { me = personnel[i]; break; }
+      }
+      if (me) {
+        userContext += '\nکاربر فعلی: ' + (me.name || '') + ' (کد پرسنلی: ' + currentCode + ') واحد: ' + (me.unit || 'نامشخص') + ' سمت: ' + (me.position || 'نامشخص') + '.';
+      } else {
+        userContext += '\nکاربر فعلی با کد ' + currentCode + ' وارد شده ولی اطلاعات پرونده او در دسترس نیست.';
+      }
+      
+      // خلاصه دادههای مرتبط با این کاربر
+      var requests = JSON.parse(localStorage.getItem('hr_admin_requests') || '[]').filter(function(r){ return r.personnelCode === currentCode; });
+      var training = JSON.parse(localStorage.getItem('hr_training_records') || '[]').filter(function(t){ return t.personnelId === currentCode || t.personnelName === (me && me.name); });
+      var queries = JSON.parse(localStorage.getItem('hr_personal_queries') || '[]').filter(function(q2){ return q2.personnelCode === currentCode; });
+      
+      if (requests.length) userContext += '\nاین کاربر ' + requests.length + ' درخواست اداری دارد.';
+      if (training.length) userContext += '\nاین کاربر ' + training.length + ' سابقه آموزشی دارد.';
+      if (queries.length) userContext += '\nاین کاربر ' + queries.length + ' سوال قبلی از کارشناس پرسیده است.';
+    }
+  } catch (e) {}
+  
+  var sysPrompt = 'تو «هوشی» هستی همیار هوشمند سامانه یکپارچه سرمایه انسانی بنیاد شهید و امور ایثارگران. با کاربر با لحن نرم آرام و دوستانه صحبت کن. این سایت شامل بخشهای: کارگزینی (شخصی و هوشمند) رفاه آموزش و توانمندسازی احکام مسیریاب مشاورین هماندیشی و مدیریت است. هر کاربر با کد پرسنلی خودش وارد بخشهای مختلف میشود و با تو تعامل میکند. ممکن است هزاران نفر با تو صحبت کنند پس بر اساس کدی که کاربر وارد کرده او را بشناس و اطلاعاتش را از بخشهای مختلف سایت در نظر بگیر. اگر اطلاعات کافی داری راهنمایی کن. اگر نداری صادق باش و پیشنهاد بده چه کاری میتواند بکند.' + userContext;
+  
+  try {
+    var res = await callAI([{ role: 'user', content: q }], { system: sysPrompt });
+    if (res && res.success && res.text) return res.text;
+  } catch (e) {
+    console.warn('AI error:', e);
+  }
+  return 'در حال حاضر نمیتوانم پاسخ دهم. لطفا دوباره تلاش کنید.';
 }
 
 function openLightbox(src) {
@@ -655,34 +690,26 @@ if (localStorage.getItem('theme') === 'dark') {
 var achIndex = 0;
 var achTimer = null;
 var achList = [];
-
 function loadAchievements() {
-  fetch('assets/data/achievements.json')
-    .then(function(res) { return res.json(); })
-    .then(function(data) {
-      achList = data || [];
-      var emptyBox = document.getElementById('achEmpty');
-      var wrapBox = document.getElementById('achSlideWrap');
-      if (!emptyBox || !wrapBox) return;
-      if (achList.length === 0) {
-        emptyBox.style.display = 'block';
-        wrapBox.style.display = 'none';
-        return;
-      }
-      emptyBox.style.display = 'none';
-      wrapBox.style.display = 'block';
-      if (achIndex >= achList.length) achIndex = 0;
-      renderAchSlide();
-      startAchTimer();
-    })
-    .catch(function(e) {
-      console.error('Error loading achievements:', e);
-      achList = [];
-      var emptyBox = document.getElementById('achEmpty');
-      var wrapBox = document.getElementById('achSlideWrap');
-      if (emptyBox) emptyBox.style.display = 'block';
-      if (wrapBox) wrapBox.style.display = 'none';
-    });
+  try {
+    var stored = JSON.parse(localStorage.getItem('hr_achievements') || '[]');
+    achList = Array.isArray(stored) ? stored : [];
+  } catch (e) {
+    achList = [];
+  }
+  var emptyBox = document.getElementById('achEmpty');
+  var wrapBox = document.getElementById('achSlideWrap');
+  if (!emptyBox || !wrapBox) return;
+  if (achList.length === 0) {
+    emptyBox.style.display = 'block';
+    wrapBox.style.display = 'none';
+    return;
+  }
+  emptyBox.style.display = 'none';
+  wrapBox.style.display = 'block';
+  if (achIndex >= achList.length) achIndex = 0;
+  renderAchSlide();
+  startAchTimer();
 }
 
 function renderAchSlide() {
@@ -749,3 +776,22 @@ window.addEventListener('load', function(){ setTimeout(loadAchievements, 300); }
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

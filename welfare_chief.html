@@ -116,18 +116,21 @@ body.dark .list-item { background: #1a3a2a; }
 /* ===== END MOBILE FIX ===== */
 </style>
 <script src="assets/js/i18n.js"></script>
+<script src="https://js.puter.com/v2/"></script>
+<script src="assets/js/ui-helper.js"></script>
+<script src="assets/js/ai-connector.js"></script>
+<script src="assets/js/org-knowledge.js"></script>
 </head>
 <body>
 
 <header>
+<div class="header-actions" style="display:flex;gap:6px;align-items:center;"></div>
+<div class="header-actions"></div>
   <h1 data-fa="🤝 میز رئیس رفاه" data-en="🤝 Welfare Chief Desk">🤝 میز رئیس رفاه</h1>
-  <a onclick="history.back()" style="cursor:pointer" class="back-btn" data-fa="بازگشت" data-en="Back">بازگشت</a>
+  
 </header>
 
-<div class="floating-controls">
-  <button class="float-btn" onclick="toggleTheme()" title="تم روز/شب">🌓</button>
-  <button class="float-btn" onclick="toggleLang()" title="تغییر زبان">🌐</button>
-</div>
+
 
 <div class="main-card">
 
@@ -192,7 +195,6 @@ body.dark .list-item { background: #1a3a2a; }
 </div>
 
 <script src="assets/js/site_knowledge.js"></script>
-<script src="assets/js/smart_assistant.js"></script>
 <script>
 const LS = {
   PERSONNEL: 'hr_personnel',
@@ -399,8 +401,178 @@ function submitSatisfaction(score) { localStorage.setItem('welfare_chief_satisfa
 loadTheme();
 applyLang();
 </script>
+<script>
+/* ==================== هوشمندسازی میز رئیس رفاه ==================== */
+(function(){
+  function buildContext() {
+    const ctx = { org:null, site:null, live:{}, chief:null };
+    try { ctx.org = window.ORG_KNOWLEDGE || null; } catch(e){}
+    try { ctx.site = window.SITE_KNOWLEDGE || null; } catch(e){}
+    const pull = (k,label) => {
+      try {
+        const v = JSON.parse(localStorage.getItem(k)||'[]');
+        if (!Array.isArray(v)||!v.length) return;
+        ctx.live[label] = v.slice(-15).map(x => {
+          const o={};
+          ['title','name','type','description','reason','personnelCode','status','destination','answer','amount','priority','unit'].forEach(f=>{
+            if(x[f]!==undefined && x[f]!==null && x[f]!=='') o[f]=x[f];
+          });
+          return o;
+        });
+      } catch(e){}
+    };
+    pull('hr_personnel','پروندهها');
+    // فقط درخواستهای حوزهٔ رفاه
+    try {
+      const all = JSON.parse(localStorage.getItem('hr_admin_requests')||'[]');
+      const welfareOnly = all.filter(x => {
+        const t = (x.type||'') + ' ' + (x.title||'') + ' ' + (x.description||'');
+        return /وام|رفاه|بیمه|کمک.?هزینه|تسهیلات|درمان|مسکن|ازدواج|سفر|غذا/i.test(t) && !/مرخصی|حکم|آموزش/i.test(t);
+      });
+      if (welfareOnly.length) ctx.live['درخواستهای رفاه'] = welfareOnly.slice(-15).map(x => {
+        const o = {}; ['type','title','description','personnelCode','status','destination','answer'].forEach(f=>{ if(x[f]) o[f]=x[f]; }); return o;
+      });
+    } catch(e){}
+    try {
+      const w = JSON.parse(localStorage.getItem('welfare_requests')||'[]');
+      if (w.length) ctx.live['درخواستهای رفاه مستقیم'] = w.slice(-15);
+    } catch(e){}
+    try {
+      const r = JSON.parse(localStorage.getItem('hr_admin_referrals')||'[]');
+      const welfareRef = r.filter(x => /وام|رفاه|بیمه|کمک.?هزینه|تسهیلات|درمان|مسکن|ازدواج/i.test((x.title||'')+(x.description||'')));
+      if (welfareRef.length) ctx.live['ارجاعات رفاه'] = welfareRef.slice(-10);
+    } catch(e){}
+    return ctx;
+  }
+
+  function ctxText(ctx) {
+    return '=== سازمان ===\n' + (ctx.org?JSON.stringify({laws:ctx.org.laws,leave:ctx.org.leave,processes:ctx.org.processes,departments:ctx.org.departments}).slice(0,1800):'ندارد') +
+      '\n=== دادههای زنده ===\n' + (Object.keys(ctx.live).length?Object.entries(ctx.live).map(([k,v])=>`• ${k}: ${JSON.stringify(v).slice(0,700)}`).join('\n'):'خالی');
+  }
+
+  const PROMPTS = {
+    bot: 'تو دستیار هوشمند «رئیس رفاه» سازمان بنیاد شهید هستی. دامنهٔ تخصصی تو فقط: وام کمکهزینه بیمه تسهیلات کمکهزینه درمان مسکن ازدواج و امور رفاهی کارکنان. مرخصی احکام آموزش و کارگزینی جزو حوزهٔ تو نیست — اگر کاربر در این باره پرسید محترمانه بگو «این مورد در حوزهٔ کارگزینی است لطفا در صفحهٔ کارگزینی پیگیری کنید». قواعد پاسخ: (۱) همیشه فارسی روان بنویس هرگز «pending» «approved» «rejected» یا کدهای لاتین مثل R-XXXXX را بدون ترجمه نیاور — بهجایشان بنویس «در انتظار بررسی» «تایید شده» «رد شده». (۲) اگر کاربر با کد پرسنلی مشخص سوال کرد و دادهای در سیستم هست مستقیم همان را با نام و واحد ذکر کن — از کاربر کد نپرس اگر خودت داری. (۳) اگر داده نیست صریح بگو «در سامانه اطلاعاتی برای شما ثبت نشده» و مسیر صحیح پیگیری را نشان بده. (۴) اگر در سامانه درخواستی ثبت نشده فقط نگو «ثبت نشده» — حتما اضافه کن: «شرایط معمول و مدارک لازم برای این نوع درخواست معمولا چیست» تا کاربر بداند از کجا شروع کند. (۵) پاسخ حداکثر ۵ خط عملی بدون مقدمه.',
+    approve: 'تو دستیار تصمیمیار رئیس رفاه هستی. پیش از تایید یک درخواست رفاه تحلیل کوتاه بده: ۱) انطباق با قوانین و سهمیهها ۲) بررسی سوابق درخواستهای مشابه همان پرسنل ۳) پیشنهاد: تایید / نیاز به مدرک / رد — با دلیل. حداکثر ۴ خط فارسی رسمی. بدون اصطلاح انگلیسی.',
+    reject: 'تو دستیار رئیس رفاه هستی. دلیل رد یک درخواست رفاه را به فارسی رسمی محترمانه و مستند به قانون پیشنهاد بده تا در پرونده ثبت شود. حداکثر ۲ خط.',
+    refer: 'تو دستیار رئیس رفاه هستی. یک خلاصهٔ فارسی برای ارجاع درخواست رفاه به مدیرکل بنویس: موضوع خلاصهٔ پرونده دلیل ارجاع پیشنهاد اقدام. حداکثر ۴ خط رسمی. تأکید: بعد از ارجاع یا تایید وام کد رهگیری صادر نکن — فقط باید به پرسنل در «کارگزینی شخصی / وضعیت من» اطلاع داده شود.',
+    summary: 'تو تحلیلگر میز رفاه هستی. فقط درخواستهای حوزهٔ رفاه (وام کمکهزینه بیمه تسهیلات درمان مسکن ازدواج) را در جمعبندی بیاور. مرخصی احکام آموزش و کارگزینی را حذف کن. ساختار: ۱) خلاصهٔ وضعیت ۲) درخواستهای در انتظار (با نام و کد پرسنلی) ۳) تایید/رد/ارجاع امروز ۴) نکات کلیدی و پیگیری. قانون سختگیرانه: اگر در یک رکورد هم نام هم کد پرسنلی هست همان را ذکر کن. اگر فقط کد هست فقط کد بده. اگر فقط نام هست بنویس «نام ثبتشده بدون کد پرسنلی». هرگز نامی که در رکورد نیست حدس نزن و آن را به کد دیگری نسبت نده. حداکثر ۶ خط فارسی روان بدون اصطلاح لاتین.'
+  };
+
+  async function askWelfare(role, payload) {
+    const sys = PROMPTS[role] || PROMPTS.bot;
+    const ctx = buildContext();
+    const messages = [
+      { role:'system', content: sys },
+      { role:'system', content: ctxText(ctx).slice(0,6000) },
+      { role:'user', content: payload }
+    ];
+    try {
+      if (typeof window.callAI === 'function') {
+        const r = await window.callAI(messages, { max_tokens: 500, temperature: 0.2 });
+        if (typeof r==='string' && r.trim()) return r.trim();
+        if (r && r.success && r.text) return r.text;
+        if (r && r.text) return r.text;
+      }
+    } catch(e){ console.warn('askWelfare error:', e); }
+    return 'متأسفم پاسخگویی هوش در دسترس نیست.';
+  }
+
+  /* ---------- getBotResponse برای چت ---------- */
+  if (typeof window.getBotResponse !== 'function') {
+    window.getBotResponse = async function(text) {
+      return await askWelfare('bot', text);
+    };
+  }
+
+  /* ---------- تایید هوشمند ---------- */
+  const origApprove = window.approveWelfare;
+  window.approveWelfare = async function(id) {
+    let req = null;
+    ['welfare_requests','hr_admin_requests','hr_admin_referrals'].forEach(k => {
+      try { const v = JSON.parse(localStorage.getItem(k)||'[]'); const m = v.find(x=>x.id===id); if (m) req = m; } catch(e){}
+    });
+    const payload = req ? `درخواست: ${req.title||req.type||''} — ${req.description||req.reason||''} — پرسنل ${req.personnelCode||''}` : 'درخواست رفاه';
+    const analysis = await askWelfare('approve', payload);
+    alert('🔍 تحلیل تصمیمیار:\n\n'+analysis);
+    if (confirm('با این تحلیل موافقید و میخواهید تایید کنید')) {
+      if (typeof origApprove === 'function') origApprove(id);
+    }
+  };
+
+  /* ---------- رد هوشمند ---------- */
+  const origReject = window.rejectWelfare;
+  window.rejectWelfare = async function(id) {
+    let req = null;
+    ['welfare_requests','hr_admin_requests','hr_admin_referrals'].forEach(k => {
+      try { const v = JSON.parse(localStorage.getItem(k)||'[]'); const m = v.find(x=>x.id===id); if (m) req = m; } catch(e){}
+    });
+    const payload = req ? `درخواست: ${req.title||req.type||''} — ${req.description||''}` : 'درخواست رفاه';
+    const reason = await askWelfare('reject', payload);
+    const finalReason = prompt('دلیل رد (قابل ویرایش):', reason);
+    if (!finalReason) return;
+    if (typeof origReject === 'function') {
+      // ذخیرهٔ دلیل سفارشی قبل از اجرای تابع اصلی
+      ['welfare_requests','hr_admin_requests','hr_admin_referrals'].forEach(k => {
+        try {
+          const v = JSON.parse(localStorage.getItem(k)||'[]');
+          const i = v.findIndex(x=>x.id===id);
+          if (i >= 0) { v[i].answer = finalReason; localStorage.setItem(k, JSON.stringify(v)); }
+        } catch(e){}
+      });
+      origReject(id);
+    }
+  };
+
+  /* ---------- ارجاع هوشمند ---------- */
+  const origRefer = window.referToAdmin;
+  window.referToAdmin = async function(id) {
+    let req = null;
+    ['welfare_requests','hr_admin_requests','hr_admin_referrals'].forEach(k => {
+      try { const v = JSON.parse(localStorage.getItem(k)||'[]'); const m = v.find(x=>x.id===id); if (m) req = m; } catch(e){}
+    });
+    const payload = req ? `درخواست: ${req.title||req.type||''} — ${req.description||''} — پرسنل ${req.personnelCode||''}` : 'درخواست رفاه';
+    const summary = await askWelfare('refer', payload);
+    alert('📤 خلاصهٔ ارجاع:\n\n'+summary);
+    if (confirm('ارجاع با این خلاصه انجام شود')) {
+      if (typeof origRefer === 'function') origRefer(id);
+    }
+  };
+
+  /* ---------- دکمهٔ جمعبندی هوشمند بالای صفحه ---------- */
+  document.addEventListener('DOMContentLoaded', function(){
+    const header = document.querySelector('header') || document.body.firstElementChild;
+    if (!header || document.getElementById('welfareSummaryBtn')) return;
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'max-width:1100px;margin:10px auto;padding:0 15px;';
+    const btn = document.createElement('button');
+    btn.id = 'welfareSummaryBtn';
+    btn.textContent = '📊 جمعبندی هوشمند میز رفاه';
+    btn.style.cssText = 'padding:10px 20px;border:none;border-radius:12px;background:linear-gradient(135deg,#0d8a63,#2ed573);color:#fff;font-weight:bold;cursor:pointer;font-family:inherit;';
+    btn.onclick = async () => {
+      const box = document.getElementById('welfareSummaryBox');
+      if (box) box.innerHTML = '<p style="color:#666;">⏳ در حال تحلیل...</p>';
+      const result = await askWelfare('summary', 'وضعیت امروز میز رفاه را جمعبندی کن.');
+      if (box) box.innerHTML = '<div style="background:#fff;border:2px solid #d4a843;border-radius:12px;padding:14px;white-space:pre-wrap;line-height:1.8;">'+result+'</div>';
+    };
+    wrap.appendChild(btn);
+    const box = document.createElement('div');
+    box.id = 'welfareSummaryBox';
+    box.style.cssText = 'max-width:1100px;margin:10px auto;padding:0 15px;';
+    header.parentNode.insertBefore(wrap, header.nextSibling);
+    wrap.parentNode.insertBefore(box, wrap.nextSibling);
+  });
+})();
+</script>
 </body>
 </html>
+
+
+
+
+
+
+
+
 
 
 

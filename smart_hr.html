@@ -214,18 +214,21 @@ body.dark .list-item { background: #1a3a2a; }
 /* ===== END MOBILE FIX ===== */
 </style>
 <script src="assets/js/i18n.js"></script>
+<script src="https://js.puter.com/v2/"></script>
+<script src="assets/js/ui-helper.js"></script>
+<script src="assets/js/ai-connector.js"></script>
+<script src="assets/js/org-knowledge.js"></script>
 </head>
 <body>
 
 <header>
+<div class="header-actions" style="display:flex;gap:6px;align-items:center;"></div>
+<div class="header-actions"></div>
   <h1 data-fa="⚙️ کارگزینی هوشمند" data-en="⚙️ Smart Personnel">⚙️ کارگزینی هوشمند</h1>
-  <a href="personnel_hub.html" class="back-btn" data-fa="بازگشت" data-en="Back">بازگشت</a>
+  
 </header>
 
-<div class="floating-controls">
-  <button class="float-btn" onclick="toggleTheme()" title="تم روز/شب">🌓</button>
-  <button class="float-btn" onclick="toggleLang()" title="تغییر زبان">🌐</button>
-</div>
+
 
 <div class="main-card">
 
@@ -323,7 +326,6 @@ body.dark .list-item { background: #1a3a2a; }
 </div>
 
 <script src="assets/js/site_knowledge.js"></script>
-<script src="assets/js/smart_assistant.js"></script>
 <script>
 const LS = {
   PERSONNEL: 'hr_personnel',
@@ -713,15 +715,286 @@ function toggleSatisfaction() {
   box.style.bottom = (box.style.bottom === '0px') ? '-220px' : '0px';
 }
 function submitSatisfaction(score) {
-  localStorage.setItem('smart_hr_satisfaction', score);
+  var page = 'smart_hr.html';
+  var all = JSON.parse(localStorage.getItem('hr_surveys') || '[]');
+  all.push({ page: page, score: score, at: Date.now() });
+  localStorage.setItem('hr_surveys', JSON.stringify(all));
   alert('امتیاز ' + score + ' شما ثبت شد. با تشکر!');
-  document.getElementById('satisfactionBox').style.bottom = '-220px';
+  var box = document.getElementById('satisfactionBox');
+  if (box) box.style.bottom = '-220px';
 }
 
 loadTheme();
 applyLang();
 </script>
+
+
+<script>
+/* === دستیار هوشمند کارشناس کارگزینی — نسخهٔ کوتاه و عملی === */
+if (typeof window.getBotResponse !== 'function') {
+  window.getBotResponse = async function(userText) {
+    const OFF_TOPIC = 'متأسفم فقط در حوزهٔ منابع انسانی کارگزینی احکام آموزش رفاه و امور اداری سازمان پاسخگو هستم.';
+
+    const offTopic = [/شعر|ترانه|آهنگ|فیلم|سریال|بازی|ورزش|فوتبال/i, /سیاست|انتخابات|رئیسجمهور|مجلس|خبر/i, /هوا|آبوهوا|دلار|بیتکوین|بورس|طلا|ارز/i, /دستور پخت|غذا|پزشکی|دارو|بیماری/i, /جوک|خنده|سرگرمی/i, /کد بنویس|برنامه بنویس|python|javascript|html/i];
+    if (offTopic.some(p => p.test(userText))) return OFF_TOPIC;
+
+    const ctx = { org: null, pages: null, site: null, live: {}, expert: null };
+    try { ctx.org = window.ORG_KNOWLEDGE || null; } catch(e) {}
+    try { ctx.pages = window.PAGES_KNOWLEDGE || null; } catch(e) {}
+    try { ctx.site = window.SITE_KNOWLEDGE || null; } catch(e) {}
+    try {
+      const pull = (k, label, fields) => {
+        try {
+          const v = JSON.parse(localStorage.getItem(k) || '[]');
+          if (!Array.isArray(v) || !v.length) return;
+          ctx.live[label] = v.slice(-10).map(x => {
+            const o = {};
+            (fields || Object.keys(x).slice(0,5)).forEach(f => { if (x[f] !== undefined && x[f] !== null && x[f] !== '') o[f] = x[f]; });
+            return o;
+          });
+        } catch(e) {}
+      };
+      pull('hr_personnel', 'پروندهها', ['code','name','unit']);
+      pull('hr_personal_queries', 'سوالات', ['personnelCode','question','status']);
+      pull('hr_admin_requests', 'درخواستها', ['personnelCode','type','description','status','destination']);
+      pull('hr_pending_decrees', 'احکام', ['personnelName','trackingCode','status','section']);
+      pull('hr_ican_cases', 'توانمندیها', ['personnelCode','type','status']);
+      pull('hr_learning_requests', 'آموزش', ['personnelCode','skill','status']);
+      pull('hr_consultants', 'مشاورین', ['code','name']);
+      pull('hr_reports', 'گزارشها', ['title','code']);
+      pull('hr_surveys', 'نظرسنجی');
+    } catch(e) {}
+    try { if (typeof currentExpert !== 'undefined' && currentExpert) ctx.expert = { name: currentExpert.name, unit: currentExpert.unit }; } catch(e) {}
+
+    const systemPrompt = 
+      'تو دستیار هوشمند کارشناس کارگزینی سازمان بنیاد شهید هستی. ' +
+      'قواعد:\n' +
+      '۱) فقط در حوزهٔ منابع انسانی کارگزینی احکام آموزش رفاه امور اداری و این سازمان پاسخ بده. اگر خارج بود محترمانه بگو در حوزهٔ من نیست.\n' +
+      '۲) پاسخ باید حداکثر ۴ خط باشد — هر خط یک نکتهٔ عملی بدون مقدمه و بدون تکرار.\n' +
+      '۳) اگر دادهای در پروندهها هست دقیق بگو کدام پرونده و چه چیزی. اگر نیست صریح بگو «دادهای نیست».\n' +
+      '۴) اگر محاسبه لازم است نتیجه را بده (نه فرمول را).\n' +
+      '۵) لحن: محترمانه کوتاه بدون اغراق بدون جعل.';
+
+    const knowledgeBlock =
+      '=== سازمان ===\n' + (ctx.org ? JSON.stringify({ laws: ctx.org.laws, leave: ctx.org.leave, departments: ctx.org.departments, processes: ctx.org.processes }).slice(0, 2000) : 'ندارد') +
+      '\n=== صفحات ===\n' + (ctx.site && ctx.site.pages ? Object.values(ctx.site.pages).map(p => `• ${p.title}: ${(p.description||'').slice(0,120)}`).join('\n').slice(0, 1200) : 'ندارد') +
+      '\n=== دادههای زنده ===\n' + (Object.keys(ctx.live).length ? Object.entries(ctx.live).map(([k,v]) => `• ${k}: ${JSON.stringify(v).slice(0,600)}`).join('\n') : 'خالی') +
+      '\n=== کارشناس ===\n' + (ctx.expert ? JSON.stringify(ctx.expert) : 'ناشناس');
+
+    const messages = [
+      { role: 'system', content: systemPrompt },
+      { role: 'system', content: knowledgeBlock.slice(0, 6000) },
+      { role: 'user', content: userText }
+    ];
+
+    try {
+      if (typeof window.callAI === 'function') {
+        const r = await window.callAI(messages, { max_tokens: 350, temperature: 0.2 });
+        if (typeof r === 'string' && r.trim()) return r.trim();
+        if (r && r.success && r.text) return r.text;
+        if (r && r.text) return r.text;
+        if (r && r.content) return r.content;
+      }
+    } catch(e) { console.warn('callAI error:', e); }
+    return 'متأسفم فعلا پاسخگویی هوش مصنوعی در دسترس نیست. لطفا بعدا تلاش کنید.';
+  };
+}
+</script>
+<script>
+/* ==================== هوشمندسازی دکمههای smart_hr ==================== */
+(function(){
+  function buildContext() {
+    const ctx = { org:null, site:null, live:{}, expert:null };
+    try { ctx.org = window.ORG_KNOWLEDGE || null; } catch(e){}
+    try { ctx.site = window.SITE_KNOWLEDGE || null; } catch(e){}
+    const pull = (k,label,fields) => {
+      try {
+        const v = JSON.parse(localStorage.getItem(k)||'[]');
+        if (!Array.isArray(v)||!v.length) return;
+        ctx.live[label] = v.slice(-15).map(x => {
+          const o={}; (fields||Object.keys(x).slice(0,5)).forEach(f=>{ if(x[f]!==undefined&&x[f]!==null&&x[f]!=='') o[f]=x[f]; });
+          return o;
+        });
+      } catch(e){}
+    };
+    pull('hr_personnel','پروندهها',['code','name','unit']);
+    pull('hr_personal_queries','سوالات',['personnelCode','question','status','trackingCode']);
+    pull('hr_ican_cases','توانمندیها',['personnelCode','type','description','status']);
+    pull('hr_learning_requests','آموزش',['personnelCode','skill','status']);
+    pull('hr_admin_requests','درخواستها',['personnelCode','type','description','status']);
+    pull('hr_pending_decrees','احکام',['personnelName','trackingCode','status','section']);
+    try { if (typeof currentExpert!=='undefined' && currentExpert) ctx.expert={name:currentExpert.name,unit:currentExpert.unit}; } catch(e){}
+    return ctx;
+  }
+
+  function ctxText(ctx) {
+    return '=== سازمان ===\n' + (ctx.org?JSON.stringify({laws:ctx.org.laws,leave:ctx.org.leave,processes:ctx.org.processes,departments:ctx.org.departments}).slice(0,1800):'ندارد') +
+      '\n=== صفحات ===\n' + (ctx.site&&ctx.site.pages?Object.values(ctx.site.pages).map(p=>`• ${p.title}: ${(p.description||'').slice(0,100)}`).join('\n').slice(0,900):'ندارد') +
+      '\n=== دادهها ===\n' + (Object.keys(ctx.live).length?Object.entries(ctx.live).map(([k,v])=>`• ${k}: ${JSON.stringify(v).slice(0,700)}`).join('\n'):'خالی') +
+      '\n=== کارشناس ===\n' + (ctx.expert?JSON.stringify(ctx.expert):'ناشناس');
+  }
+
+  async function askHR(role, payload) {
+    const prompts = {
+      answer: 'تو دستیار هوشمند کارشناس کارگزینی هستی. یک «پیشنویس پاسخ» برای سوال پرسنل بنویس. پاسخ باید: ۱) مبتنی بر قوانین و فرایندهای سازمان باشد ۲) حداکثر ۵ خط ۳) محترمانه و روشن ۴) اگر داده کافی نیست صریح بگو. فقط متن پاسخ را بده بدون مقدمه.',
+      refer: 'تو دستیار هوشمند کارشناس کارگزینی هستی. یک «خلاصهٔ حرفهای برای ارجاع به مدیرکل» بنویس. شامل: موضوع خلاصه پرونده دلیل ارجاع پیشنهاد اقدام. حداکثر ۵ خط. محترمانه و رسمی.',
+      ican: 'تو دستیار هوشمند کارشناس کارگزینی هستی. یک «تحلیل توانمندی» برای مدیرکل بنویس. شامل: ارزیابی انطباق با قوانین پیشنهاد مسیر (تایید/کمیته راهبری/رد) دلیل. حداکثر ۵ خط. رسمی.',
+      summary: 'تو دستیار هوشمند کارشناس کارگزینی هستی. یک «جمعبندی روز» از وضعیت بخشهای مختلف بنویس. شامل: تعداد سوالات در انتظار ارجاعیها توانمندیها نیازهای آموزشی احکام. حداکثر ۶ خط. هر خط یک بخش. رسمی و کوتاه.'
+    };
+    const sys = prompts[role] || prompts.answer;
+    const ctx = buildContext();
+    const messages = [
+      { role:'system', content: sys + '\n\nقواعد: فقط در حوزهٔ منابع انسانی سازمان. بدون جعل. اگر داده نیست بگو.' },
+      { role:'system', content: ctxText(ctx).slice(0,6000) },
+      { role:'user', content: payload }
+    ];
+    try {
+      if (typeof window.callAI === 'function') {
+        const r = await window.callAI(messages, { max_tokens: 500, temperature: 0.2 });
+        if (typeof r==='string' && r.trim()) return r.trim();
+        if (r && r.success && r.text) return r.text;
+        if (r && r.text) return r.text;
+      }
+    } catch(e){ console.warn('askHR error:', e); }
+    return 'متأسفم پاسخگویی هوش در دسترس نیست.';
+  }
+
+  /* ---------- ۱) پاسخ هوشمند به سوال پرسنل ---------- */
+  window.answerQuerySmart = async function(id) {
+    const queries = JSON.parse(localStorage.getItem('hr_personal_queries')||'[]');
+    const q = queries.find(x=>x.id===id);
+    if (!q) return alert('سوال پیدا نشد.');
+    const draft = await askHR('answer', `سوال پرسنل ${q.personnelCode||''}: ${q.question||q.text||''}`);
+    const finalAnswer = prompt('پیشنویس پاسخ هوش (میتوانید ویرایش کنید):', draft);
+    if (!finalAnswer) return;
+    q.answer = finalAnswer;
+    q.status = 'answered';
+    q.answeredAt = Date.now();
+    q.answeredBy = (typeof currentExpert!=='undefined'&&currentExpert)?currentExpert.name:'کارشناس';
+    localStorage.setItem('hr_personal_queries', JSON.stringify(queries));
+    if (typeof renderQueries==='function') renderQueries();
+    if (typeof updateStats==='function') updateStats();
+    alert('پاسخ ثبت شد.');
+  };
+
+  /* ---------- ۲) ارجاع هوشمند به مدیرکل ---------- */
+  window.referQuerySmart = async function(id) {
+    const queries = JSON.parse(localStorage.getItem('hr_personal_queries')||'[]');
+    const q = queries.find(x=>x.id===id);
+    if (!q) return alert('سوال پیدا نشد.');
+    const summary = await askHR('refer', `سوال پرسنل ${q.personnelCode||''}: ${q.question||q.text||''}`);
+    const finalTitle = prompt('خلاصهٔ ارجاع (قابل ویرایش):', summary);
+    if (!finalTitle) return;
+    const promotions = JSON.parse(localStorage.getItem('hr_promotion_cases')||'[]');
+    promotions.push({
+      id: Date.now().toString(36)+Math.random().toString(36).slice(2,7),
+      type:'query', sourceId:id,
+      title:'ارجاع سوال پرسنل: '+finalTitle.slice(0,80),
+      personnelCode:q.personnelCode,
+      question:q.question||q.text,
+      aiSummary: summary,
+      status:'pending', createdAt:Date.now(),
+      referredBy:(typeof currentExpert!=='undefined'&&currentExpert)?currentExpert.name:'کارشناس'
+    });
+    localStorage.setItem('hr_promotion_cases', JSON.stringify(promotions));
+    q.status = 'referred';
+    localStorage.setItem('hr_personal_queries', JSON.stringify(queries));
+    if (typeof renderQueries==='function') renderQueries();
+    if (typeof renderPromotions==='function') renderPromotions();
+    if (typeof updateStats==='function') updateStats();
+    alert('به مدیرکل ارجاع شد.');
+  };
+
+  /* ---------- ۳) تحلیل هوشمند توانمندی ---------- */
+  window.analyzeIcanSmart = async function(id) {
+    const items = JSON.parse(localStorage.getItem('hr_ican_cases')||'[]');
+    const it = items.find(x=>x.id===id);
+    if (!it) return alert('مورد پیدا نشد.');
+    const analysis = await askHR('ican', `توانمندی پرسنل ${it.personnelCode||''}: نوع=${it.type||''} توضیح=${it.description||it.text||''}`);
+    alert('🧠 تحلیل هوش:\n\n'+analysis);
+    const decision = prompt('تصمیم نهایی را وارد کنید (approved / committee / rejected):', 'approved');
+    if (!decision) return;
+    if (['approved','committee','rejected'].includes(decision)) {
+      it.status = decision;
+      it.reviewedAt = Date.now();
+      it.aiAnalysis = analysis;
+      localStorage.setItem('hr_ican_cases', JSON.stringify(items));
+      if (typeof renderIcan==='function') renderIcan();
+      if (typeof updateStats==='function') updateStats();
+      alert('ثبت شد.');
+    } else alert('مقدار نامعتبر. یکی از: approved, committee, rejected');
+  };
+
+  /* ---------- ۴) جمعبندی روز ---------- */
+  window.dailySummarySmart = async function() {
+    const box = document.getElementById('dailySummaryBox');
+    if (box) { box.innerHTML = '<p style="color:#666;font-style:italic;">⏳ در حال تحلیل...</p>'; }
+    const summary = await askHR('summary', 'وضعیت امروز بخش کارگزینی را جمعبندی کن.');
+    if (box) {
+      box.innerHTML = '<div style="background:#fff;border:2px solid #d4a843;border-radius:12px;padding:14px;white-space:pre-wrap;line-height:1.8;font-size:0.9rem;">'+summary+'</div>';
+    } else alert(summary);
+  };
+
+  /* ---------- ۵) جایگزینی دکمههای قدیمی با نسخهٔ هوشمند ---------- */
+  document.addEventListener('DOMContentLoaded', function(){
+    // دکمههای «پاسخ» و «ارجاع» در queriesList
+    const qBox = document.getElementById('queriesList');
+    if (qBox) {
+      const obs = new MutationObserver(()=>{
+        qBox.querySelectorAll('button.btn-approve').forEach(btn=>{
+          if (btn.dataset.smart) return;
+          const m = btn.getAttribute('onclick')||''; const id = (m.match(/'([^']+)'/)||[])[1];
+          if (id) { btn.setAttribute('onclick', `answerQuerySmart('${id}')`); btn.textContent='پاسخ هوشمند'; btn.dataset.smart='1'; }
+        });
+        qBox.querySelectorAll('button.btn-refer').forEach(btn=>{
+          if (btn.dataset.smart) return;
+          const m = btn.getAttribute('onclick')||''; const id = (m.match(/'([^']+)'/)||[])[1];
+          if (id) { btn.setAttribute('onclick', `referQuerySmart('${id}')`); btn.textContent='ارجاع هوشمند'; btn.dataset.smart='1'; }
+        });
+      });
+      obs.observe(qBox, {childList:true, subtree:true});
+    }
+    // دکمههای «تایید» روی توانمندیها
+    const iBox = document.getElementById('icanList');
+    if (iBox) {
+      const obs = new MutationObserver(()=>{
+        iBox.querySelectorAll('button.btn-approve').forEach(btn=>{
+          if (btn.dataset.smart) return;
+          const m = btn.getAttribute('onclick')||''; const id = (m.match(/'([^']+)'/)||[])[1];
+          if (id) { btn.setAttribute('onclick', `analyzeIcanSmart('${id}')`); btn.textContent='تایید هوشمند'; btn.dataset.smart='1'; }
+        });
+      });
+      obs.observe(iBox, {childList:true, subtree:true});
+    }
+    // دکمهٔ جمعبندی روز
+    const welcomeBar = document.querySelector('.welcome-bar');
+    if (welcomeBar && !document.getElementById('dailySummaryBtn')) {
+      const btn = document.createElement('button');
+      btn.id='dailySummaryBtn';
+      btn.textContent='📊 جمعبندی هوشمند امروز';
+      btn.style.cssText='margin-top:10px;padding:8px 16px;border:none;border-radius:10px;background:#d4a843;color:#1a2a4a;font-weight:bold;cursor:pointer;font-family:inherit;';
+      btn.onclick = ()=>window.dailySummarySmart();
+      const wrapper = document.createElement('div');
+      wrapper.style.marginTop='10px';
+      wrapper.appendChild(btn);
+      welcomeBar.parentNode.insertBefore(wrapper, welcomeBar.nextSibling);
+      const box = document.createElement('div');
+      box.id='dailySummaryBox';
+      box.style.marginTop='10px';
+      wrapper.parentNode.insertBefore(box, wrapper.nextSibling);
+    }
+  });
+})();
+</script>
 </body>
 </html>
+
+
+
+
+
+
+
+
 
 

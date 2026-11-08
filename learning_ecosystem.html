@@ -157,18 +157,24 @@ body.dark .report-list-item { background: rgba(255,255,255,0.08); }
 /* ===== END MOBILE FIX ===== */
 </style>
 <script src="assets/js/i18n.js"></script>
+<script src="https://js.puter.com/v2/"></script>
+<script src="assets/js/ui-helper.js"></script>
+<script src="assets/js/ai-connector.js"></script>
+<script src="assets/js/org-knowledge.js"></script>
 </head>
 <body>
 
 <header>
+<div class="header-actions" style="display:flex;gap:6px;align-items:center;"></div>
+<div class="header-actions"></div>
   <h1 data-fa="🌿 اکوسیستم توانمندسازی زنده" data-en="🌿 Living Empowerment Ecosystem">🌿 اکوسیستم توانمندسازی زنده</h1>
   <div class="header-actions">
-    <button onclick="toggleTheme()" class="back-btn" title="تم">🌓</button>
-    <button onclick="toggleLang()" class="back-btn" title="زبان">🌐</button>
+    
+    
     <a href="learning_guide.html" class="back-btn" style="background:rgba(46,213,115,0.35);border-color:#2ed573;">📘 راهنمای توانمندسازی</a>
-    <button onclick="goBack()" class="back-btn" style="background:rgba(255,255,255,0.15);">⬅️ برگشت</button>
+    
     <button onclick="openAdminModal()" class="back-btn" style="background:#d4a843;color:#1a2a4a;border:none;">🔐 ورود مدیر</button>
-    <a href="index.html" class="back-btn">🏠 صفحه اصلی</a>
+    
   </div>
 </header>
 
@@ -203,6 +209,26 @@ body.dark .report-list-item { background: rgba(255,255,255,0.08); }
     </div>
     <div class="form-group">
       <textarea id="challengeText" placeholder="چالش یا ایده خود را بنویسید..."></textarea>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+          <input type="text" id="challengeTitle" placeholder="عنوان کوتاه چالش (مثلا: آموزش گزارشنویسی)" style="padding:8px;border-radius:8px;border:1px solid #ccc;">
+          <select id="challengeUnit" style="padding:8px;border-radius:8px;border:1px solid #ccc;">
+            <option value="">واحد درگیر...</option>
+            <option>کارگزینی</option>
+            <option>آموزش</option>
+            <option>رفاه</option>
+            <option>جبران خدمت</option>
+            <option>فناوری اطلاعات</option>
+          </select>
+          <select id="challengePriority" style="padding:8px;border-radius:8px;border:1px solid #ccc;">
+            <option value="">اولویت...</option>
+            <option>کم</option>
+            <option>متوسط</option>
+            <option>فوری</option>
+          </select>
+          <input type="date" id="challengeDueDate" placeholder="تاریخ هدف" style="padding:8px;border-radius:8px;border:1px solid #ccc;">
+        </div>
+        <label style="display:block;margin-top:8px;font-size:0.85rem;color:#666;">📎 پیوست مستند (اختیاری):</label>
+        <input type="file" id="challengeFile" accept=".pdf,.doc,.docx,.jpg,.png,.mp4" style="width:100%;margin-top:4px;padding:6px;">
     </div>
     <button class="btn-submit" onclick="submitChallenge()">📤 ثبت چالش</button>
     <div id="challengeResult" style="margin-top:10px;font-size:0.82rem;line-height:1.6;"></div>
@@ -233,6 +259,12 @@ body.dark .report-list-item { background: rgba(255,255,255,0.08); }
     </div>
     <div class="form-group">
       <textarea id="newKnowledgeText" placeholder="متن دانش..."></textarea>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+          <input type="text" id="knowledgeTags" placeholder="برچسبها (با کاما: گزارشنویسی هوش مصنوعی)" style="padding:8px;border-radius:8px;border:1px solid #ccc;">
+          <input type="text" id="knowledgeSource" placeholder="منبع/مرجع (مثلا: قانون مدیریت خدمات کشوری)" style="padding:8px;border-radius:8px;border:1px solid #ccc;">
+        </div>
+        <label style="display:block;margin-top:8px;font-size:0.85rem;color:#666;">📎 پیوست مستند (اختیاری):</label>
+        <input type="file" id="knowledgeFile" accept=".pdf,.doc,.docx,.jpg,.png" style="width:100%;margin-top:4px;padding:6px;">
     </div>
     <button class="btn-submit" onclick="addKnowledge()">➕ افزودن دانش</button>
   </div>
@@ -447,28 +479,39 @@ function downloadFile(id) {
   document.body.appendChild(link); link.click(); document.body.removeChild(link);
 }
 
-function submitChallenge() {
-  const name = document.getElementById('challengeName').value.trim() || 'ناشناس';
-  const text = document.getElementById('challengeText').value.trim();
-  const resultDiv = document.getElementById('challengeResult');
-  if (!text) { resultDiv.innerHTML = '<span style="color:#ff4757;">متن چالش را وارد کنید.</span>'; return; }
-  const challenges = getLS(LS.ECO_CHALLENGES);
-  challenges.push({ id: uid(), name, text, createdAt: Date.now(), status: 'open' });
-  setLS(LS.ECO_CHALLENGES, challenges);
-  resultDiv.innerHTML = '<span>⏳ ایجنت همیاب در حال تحلیل...</span>';
-  setTimeout(() => {
-    const similar = challenges.slice(0, -1).slice(-3);
-    let html = '<strong>✅ ثبت شد.</strong><br>';
-    if (similar.length > 0) html += '🔍 چالش‌های مشابه: ' + similar.map(s => s.name).join('، ');
-    else html += '🆕 اولین چالش در این موضوع. گره موقت ایجاد شد.';
-    resultDiv.innerHTML = html;
-    const work = getLS(LS.ECO_WORK);
-    work.push({ id: uid(), type: 'challenge', source: text, submittedBy: name, status: 'pending', createdAt: Date.now() });
-    setLS(LS.ECO_WORK, work);
-  }, 1000);
-  document.getElementById('challengeText').value = '';
-  document.getElementById('challengeName').value = '';
-  renderArchive(); updateStats();
+async function submitChallenge() {
+  function grab(ids) { for (const id of ids) { const el = document.getElementById(id); if (el && el.value && el.value.trim()) return el.value.trim(); } return ''; }
+  const text = grab(['challengeText','newChallengeText','challText','challengerText','chalText']);
+  const name = grab(['challengerName','newChallengerName','challName','chName']);
+  const title = grab(['challengeTitle','newChallengeTitle','challTitle','chTitle']);
+  if (!text) { alert('متن چالش را بنویسید.'); return; }
+  const rec = {
+    id: (typeof uid === 'function') ? uid() : (Date.now().toString(36)+Math.random().toString(36).slice(2,7)),
+    name: name || 'ناشناس',
+    title: title || text.slice(0, 60),
+    text: text,
+    status: 'open',
+    createdAt: Date.now()
+  };
+  try {
+    const u = document.getElementById('challengeUnit');
+    const p = document.getElementById('challengePriority');
+    const d = document.getElementById('challengeDueDate');
+    const f = document.getElementById('challengeFile');
+    if (u && u.value) rec.unit = u.value;
+    if (p && p.value) rec.priority = p.value;
+    if (d && d.value) rec.dueDate = d.value;
+    if (f && f.files && f.files[0] && typeof window.__readFileAsDataURL === 'function') {
+      const file = await window.__readFileAsDataURL(f.files[0]);
+      if (file) { rec.fileName = file.name; rec.fileType = file.type; rec.fileData = file.data; }
+    }
+  } catch(e) { console.warn('attach error:', e); }
+  const list = (typeof getLS === 'function') ? getLS('hr_eco_challenges', []) : JSON.parse(localStorage.getItem('hr_eco_challenges')||'[]');
+  list.push(rec);
+  if (typeof setLS === 'function') setLS('hr_eco_challenges', list); else localStorage.setItem('hr_eco_challenges', JSON.stringify(list));
+  if (typeof renderArchive === 'function') renderArchive();
+  alert('✅ چالش ثبت شد. (تعداد کل: ' + list.length + ')');
+  ['challengeText','newChallengeText','challText','challengeTitle','newChallengeTitle','challTitle','challengerName','newChallengerName','challName','challengeFile'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
 }
 
 function renderArchive() {
@@ -512,20 +555,36 @@ function searchKnowledge() {
     : found.map(k => `<div class="archive-item"><div class="name">💡 ${k.title}</div><div>${k.text}</div></div>`).join('');
 }
 
-function addKnowledge() {
-  const title = document.getElementById('newKnowledgeTitle').value.trim();
-  const text = document.getElementById('newKnowledgeText').value.trim();
-  if (!title || !text) return alert('عنوان و متن را وارد کنید.');
-  const knowledge = getLS(LS.ECO_KNOWLEDGE);
-  knowledge.push({ id: uid(), title, text, createdAt: Date.now() });
-  setLS(LS.ECO_KNOWLEDGE, knowledge);
-  const work = getLS(LS.ECO_WORK);
-  work.push({ id: uid(), type: 'knowledge', source: title + ' — ' + text.substring(0, 100), submittedBy: 'کاربر', status: 'pending', createdAt: Date.now() });
-  setLS(LS.ECO_WORK, work);
-  document.getElementById('newKnowledgeTitle').value = '';
-  document.getElementById('newKnowledgeText').value = '';
-  renderArchive(); updateStats();
-  alert('✅ دانش ثبت شد و به دستور کار رئیس ارسال شد.');
+async function addKnowledge() {
+  function grab(ids) { for (const id of ids) { const el = document.getElementById(id); if (el && el.value && el.value.trim()) return el.value.trim(); } return ''; }
+  const title = grab(['newKnowledgeTitle','knowledgeTitle','knTitle','knowTitle']);
+  const text = grab(['newKnowledgeText','knowledgeText','knText','knowText']);
+  if (!title || !text) { alert('عنوان و متن دانش را وارد کنید.'); return; }
+  const rec = {
+    id: (typeof uid === 'function') ? uid() : (Date.now().toString(36)+Math.random().toString(36).slice(2,7)),
+    title: title, content: text, text: text, status: 'published', createdAt: Date.now()
+  };
+  try {
+    const tagsEl = document.getElementById('knowledgeTags');
+    const srcEl = document.getElementById('knowledgeSource');
+    const fileEl = document.getElementById('knowledgeFile');
+    if (tagsEl && tagsEl.value.trim()) rec.tags = tagsEl.value.split(',').map(x=>x.trim()).filter(Boolean);
+    if (srcEl && srcEl.value.trim()) rec.source = srcEl.value.trim();
+    if (fileEl && fileEl.files && fileEl.files[0] && typeof window.__readFileAsDataURL === 'function') {
+      const file = await window.__readFileAsDataURL(fileEl.files[0]);
+      if (file) { rec.fileName = file.name; rec.fileType = file.type; rec.fileData = file.data; }
+    }
+  } catch(e) { console.warn('attach error:', e); }
+  const list = (typeof getLS === 'function') ? getLS('hr_eco_knowledge', []) : JSON.parse(localStorage.getItem('hr_eco_knowledge')||'[]');
+  list.push(rec);
+  if (typeof setLS === 'function') setLS('hr_eco_knowledge', list); else localStorage.setItem('hr_eco_knowledge', JSON.stringify(list));
+  if (typeof renderArchive === 'function') renderArchive();
+  alert('✅ دانش با موفقیت ثبت شد. (تعداد کل: ' + list.length + ')');
+  const t = document.getElementById('newKnowledgeTitle') || document.getElementById('knowledgeTitle'); if (t) t.value = '';
+  const x = document.getElementById('newKnowledgeText') || document.getElementById('knowledgeText'); if (x) x.value = '';
+  const tf = document.getElementById('knowledgeFile'); if (tf) tf.value = '';
+  const tg = document.getElementById('knowledgeTags'); if (tg) tg.value = '';
+  const sr = document.getElementById('knowledgeSource'); if (sr) sr.value = '';
 }
 
 function updateCatalyst() {
@@ -760,8 +819,207 @@ updateStats();
 renderContentList();
 renderReports();
 </script>
+<script>
+/* ==================== هوشمندسازی اکوسیستم یادگیری (بر اساس طرح پایلوت) ==================== */
+(function(){
+  function buildContext() {
+    const ctx = { org:null, site:null, live:{}, expert:null };
+    try { ctx.org = window.ORG_KNOWLEDGE || null; } catch(e){}
+    try { ctx.site = window.SITE_KNOWLEDGE || null; } catch(e){}
+    const pull = (k,label,fields) => {
+      try {
+        const v = JSON.parse(localStorage.getItem(k)||'[]');
+        if (!Array.isArray(v)||!v.length) return;
+        ctx.live[label] = v.slice(-15).map(x => {
+          const o={}; (fields||Object.keys(x).slice(0,6)).forEach(f=>{ if(x[f]!==undefined&&x[f]!==null&&x[f]!=='') o[f]=x[f]; });
+          return o;
+        });
+      } catch(e){}
+    };
+    pull('hr_eco_challenges','چالشها',['title','description','personnelCode','status']);
+    pull('hr_eco_suggestions','پیشنهادها',['personnelCode','text','status']);
+    pull('hr_eco_knowledge','دانشها',['title','content','tags']);
+    pull('hr_eco_work','آثار',['title','description','personnelCode','status']);
+    pull('hr_eco_content','محتواها',['title','content','status']);
+    pull('hr_eco_reports','گزارشها',['title','content','status']);
+    pull('hr_personnel','پروندهها',['code','name','unit']);
+    pull('hr_learning_requests','نیازهای آموزشی',['personnelCode','skill','status']);
+    return ctx;
+  }
+
+  function ctxText(ctx) {
+    return '=== سازمان ===\n' + (ctx.org?JSON.stringify({laws:ctx.org.laws,leave:ctx.org.leave,processes:ctx.org.processes}).slice(0,1200):'ندارد') +
+      '\n=== دادههای اکوسیستم ===\n' + (Object.keys(ctx.live).length?Object.entries(ctx.live).map(([k,v])=>`• ${k}: ${JSON.stringify(v).slice(0,600)}`).join('\n'):'خالی');
+  }
+
+  const ECO_PROMPTS = {
+    matchmaker: 'تو «اینجنت همیاب» اکوسیستم یادگیری زنده و ارگانیک سازمان بنیاد شهید هستی. چالش ثبتشده را تحلیل کن و بده: ۱) موضوع اصلی چالش ۲) مهارتها/تخصصهای مرتبط ۳) همتایان یا گرههای سازمانی که ممکن است بتوانند کمک کنند (بر اساس دادهها) ۴) سه گام پیشنهادی بعدی برای یادگیرنده. حداکثر ۶ خط فارسی دقیق.',
+    gardener: 'تو «اینجنت باغبان» اکوسیستم یادگیری هستی. پیشنهاد/دانش ثبتشده را تحلیل کن و بده: ۱) خلاصهٔ یکخطی ۲) برچسبهای موضوعی پیشنهادی (۳ تا ۵ تگ) ۳) جای مناسب در باغ دانش (کدام شاخه: قوانین فرایندها مهارتها تجربهها). حداکثر ۵ خط.',
+    catalyst: 'تو «اینجنت ترغیبگر» اکوسیستم یادگیری هستی. بر اساس دادههای موجود الگوی مشارکت را تحلیل کن و بده: ۱) وضعیت مشارکت (کم/متوسط/فعال) ۲) دلیل احتمالی ۳) یک پیام تحریکی کوتاه و شخصیسازیشده که میتوان به کاربر فرستاد. حداکثر ۵ خط.',
+    report: 'تو دستیار تحلیلگر اکوسیستم یادگیری هستی. یک گزارش تحلیلی جامع برای مدیرکل بنویس. الزامات: (الف) هر چالش ثبتشده را با عنوان نام ببر (نه فقط یکی) (ب) هر دانش ثبتشده را با عنوان نام ببر (ج) هر اثر/گزارش pending را جدا بشمار (د) ساختار: ۱) خلاصهٔ وضعیت ۲) فهرست کامل چالشها ۳) فهرست کامل دانشها ۴) یافتههای کلیدی ۵) پیشنهادهای عملی ۶) ریسکها. حداکثر ۲۰ خط. رسمی و بدون حذف جزئیات.',
+    decision: 'تو دستیار تصمیمیار مدیر اکوسیستم هستی. برای تایید/رد این مورد تحلیل بده: ۱) انطباق با طرح پایلوت ۲) کیفیت/اثربخشی ۳) پیشنهاد (تایید/اصلاح/رد) با دلیل. حداکثر ۴ خط.'
+  };
+
+  async function askEco(role, payload) {
+    const sys = ECO_PROMPTS[role] || ECO_PROMPTS.matchmaker;
+    const ctx = buildContext();
+    const messages = [
+      { role:'system', content: sys + '\n\nقواعد: فقط در حوزهٔ یادگیری توسعه شغلی و اکوسیستم سازمان. بدون جعل. اگر داده نیست بگو.' },
+      { role:'system', content: ctxText(ctx).slice(0,6000) },
+      { role:'user', content: payload }
+    ];
+    try {
+      if (typeof window.callAI === 'function') {
+        const r = await window.callAI(messages, { max_tokens: 500, temperature: 0.3 });
+        if (typeof r==='string' && r.trim()) return r.trim();
+        if (r && r.success && r.text) return r.text;
+        if (r && r.text) return r.text;
+      }
+    } catch(e){ console.warn('askEco error:', e); }
+    return 'متأسفم پاسخگویی هوش در دسترس نیست.';
+  }
+
+  /* ---------- ۱) ثبت چالش → همیاب ---------- */
+  const origSubmitChallenge = window.submitChallenge;
+  window.submitChallenge = async function() {
+    const titleEl = document.getElementById('challengeTitle') || document.querySelector('input[placeholder*="چالش"]');
+    const descEl = document.getElementById('challengeDesc') || document.querySelector('textarea[placeholder*="چالش"]');
+    const title = titleEl ? titleEl.value.trim() : '';
+    const desc = descEl ? descEl.value.trim() : '';
+    if (!title || !desc) { if (typeof origSubmitChallenge==='function') return origSubmitChallenge(); return; }
+    const analysis = await askEco('matchmaker', `عنوان: ${title}\nتوضیح: ${desc}`);
+    alert('🤝 تحلیل همیاب:\n\n'+analysis+'\n\nحالا چالش ثبت میشود.');
+    if (typeof origSubmitChallenge==='function') origSubmitChallenge();
+  };
+
+  /* ---------- ۲) ذخیره پیشنهاد → باغبان ---------- */
+  const origSaveSuggestion = window.saveSuggestion;
+  window.saveSuggestion = async function() {
+    const el = document.getElementById('suggestionText') || document.querySelector('textarea');
+    const text = el ? el.value.trim() : '';
+    if (!text) { if (typeof origSaveSuggestion==='function') return origSaveSuggestion(); return; }
+    const analysis = await askEco('gardener', `متن پیشنهاد: ${text}`);
+    alert('🌿 تحلیل باغبان:\n\n'+analysis+'\n\nحالا پیشنهاد ثبت میشود.');
+    if (typeof origSaveSuggestion==='function') origSaveSuggestion();
+  };
+
+  /* ---------- ۳) اجرای برنامهریز → ترغیبگر ---------- */
+  const origRunPlanner = window.runPlanner;
+  window.runPlanner = async function() {
+    const analysis = await askEco('catalyst', 'وضعیت مشارکت کاربران اکوسیستم را تحلیل کن و پیام تحریکی پیشنهاد بده.');
+    alert('⚡ تحلیل ترغیبگر:\n\n'+analysis);
+    if (typeof origRunPlanner==='function') origRunPlanner();
+  };
+
+  /* ---------- ۴) ایجاد گزارش → گزارش تحلیلی ---------- */
+  const origCreateReport = window.createReport;
+  window.createReport = async function() {
+    const report = await askEco('report', 'گزارش تحلیلی وضعیت اکوسیستم یادگیری را برای مدیرکل بنویس.');
+    const el = document.getElementById('reportContent') || document.querySelector('textarea');
+    if (el) { el.value = report; alert('📄 گزارش تحلیلی تولید شد. میتوانید ویرایش و ذخیره کنید.'); return; }
+    alert('📄 گزارش تحلیلی:\n\n'+report);
+    if (typeof origCreateReport==='function') origCreateReport();
+  };
+
+  /* ---------- ۵) تایید اثر/گزارش → تصمیمیار ---------- */
+  const origApproveWork = window.approveWork;
+  window.approveWork = async function(id) {
+    const works = JSON.parse(localStorage.getItem('hr_eco_work')||'[]');
+    const w = works.find(x=>x.id===id);
+    if (!w) { if (typeof origApproveWork==='function') return origApproveWork(id); return; }
+    const analysis = await askEco('decision', `اثر: ${w.title||''} — ${w.description||''}`);
+    alert('🔍 تحلیل تصمیمیار:\n\n'+analysis);
+    if (confirm('با این تحلیل موافقید و میخواهید تایید کنید')) {
+      if (typeof origApproveWork==='function') origApproveWork(id);
+    }
+  };
+
+  const origApproveReport = window.approveReport;
+  window.approveReport = async function(id) {
+    const reports = JSON.parse(localStorage.getItem('hr_eco_reports')||'[]');
+    const r = reports.find(x=>x.id===id);
+    if (!r) { if (typeof origApproveReport==='function') return origApproveReport(id); return; }
+    const analysis = await askEco('decision', `گزارش: ${r.title||''} — ${r.content||''}`);
+    alert('🔍 تحلیل تصمیمیار:\n\n'+analysis);
+    if (confirm('با این تحلیل موافقید و میخواهید تایید کنید')) {
+      if (typeof origApproveReport==='function') origApproveReport(id);
+    }
+  };
+
+  /* ---------- ۶) دکمهٔ جدید: جمعبندی هوشمند اکوسیستم ---------- */
+  document.addEventListener('DOMContentLoaded', function(){
+    const header = document.querySelector('header') || document.body.firstElementChild;
+    if (!header || document.getElementById('ecoSummaryBtn')) return;
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'max-width:1100px;margin:10px auto;padding:0 15px;text-align:left;';
+    const btn = document.createElement('button');
+    btn.id = 'ecoSummaryBtn';
+    btn.textContent = '📊 جمعبندی هوشمند اکوسیستم';
+    btn.style.cssText = 'padding:10px 20px;border:none;border-radius:12px;background:linear-gradient(135deg,#1a2a4a,#2a3f6b);color:#fff;font-weight:bold;cursor:pointer;font-family:inherit;';
+    btn.onclick = async () => {
+      const box = document.getElementById('ecoSummaryBox');
+      if (box) box.innerHTML = '<p style="color:#666;">⏳ در حال تحلیل...</p>';
+      const result = await askEco('report', 'جمعبندی وضعیت اکوسیستم در چند خط.');
+      if (box) box.innerHTML = '<div style="background:#fff;border:2px solid #d4a843;border-radius:12px;padding:14px;white-space:pre-wrap;line-height:1.8;">'+result+'</div>';
+    };
+    wrap.appendChild(btn);
+    const box = document.createElement('div');
+    box.id = 'ecoSummaryBox';
+    box.style.cssText = 'max-width:1100px;margin:10px auto;padding:0 15px;';
+    header.parentNode.insertBefore(wrap, header.nextSibling);
+    wrap.parentNode.insertBefore(box, wrap.nextSibling);
+  });
+})();
+</script>
+<script>
+window.__readFileAsDataURL = function(file) {
+  return new Promise((resolve, reject) => {
+    if (!file) return resolve(null);
+    const r = new FileReader();
+    r.onload = e => resolve({ name: file.name, type: file.type, data: e.target.result });
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
+};
+window.__augmentChallenge = async function(record) {
+  const t = document.getElementById('challengeTitle');
+  const u = document.getElementById('challengeUnit');
+  const p = document.getElementById('challengePriority');
+  const d = document.getElementById('challengeDueDate');
+  const f = document.getElementById('challengeFile');
+  if (t && t.value.trim()) record.title = t.value.trim();
+  if (u && u.value) record.unit = u.value;
+  if (p && p.value) record.priority = p.value;
+  if (d && d.value) record.dueDate = d.value;
+  if (f && f.files && f.files[0]) {
+    const file = await window.__readFileAsDataURL(f.files[0]);
+    if (file) { record.fileName = file.name; record.fileType = file.type; record.fileData = file.data; }
+  }
+  return record;
+};
+window.__augmentKnowledge = async function(record) {
+  const t = document.getElementById('knowledgeTags');
+  const s = document.getElementById('knowledgeSource');
+  const f = document.getElementById('knowledgeFile');
+  if (t && t.value.trim()) record.tags = t.value.split(',').map(x=>x.trim()).filter(Boolean);
+  if (s && s.value.trim()) record.source = s.value.trim();
+  if (f && f.files && f.files[0]) {
+    const file = await window.__readFileAsDataURL(f.files[0]);
+    if (file) { record.fileName = file.name; record.fileType = file.type; record.fileData = file.data; }
+  }
+  return record;
+};
+</script>
 </body>
 </html>
+
+
+
+
+
+
+
+
 
 
 

@@ -101,18 +101,21 @@ body.dark .order-box p { color: #ddd; }
 /* ===== END MOBILE FIX ===== */
 </style>
 <script src="assets/js/i18n.js"></script>
+<script src="https://js.puter.com/v2/"></script>
+<script src="assets/js/ui-helper.js"></script>
+<script src="assets/js/ai-connector.js"></script>
+<script src="assets/js/org-knowledge.js"></script>
 </head>
 <body>
 
 <header>
+<div class="header-actions" style="display:flex;gap:6px;align-items:center;"></div>
+<div class="header-actions"></div>
   <h1>👨‍💼 بخش مشاورین</h1>
-  <a onclick="history.back()" style="cursor:pointer" class="back-btn" data-fa="بازگشت به سایت" data-en="Back to site">بازگشت به سایت</a>
+  
 </header>
 
-<div class="floating-controls">
-  <button class="float-btn" onclick="toggleTheme()">🌓</button>
-  <button class="float-btn" onclick="toggleLang()">🌐</button>
-</div>
+
 
 <div class="main-card">
   <!-- مرحله ۱: ورود کد -->
@@ -126,7 +129,26 @@ body.dark .order-box p { color: #ddd; }
 
   <!-- مرحله ۲: نمایش دستور و آپلود -->
   <div id="step2">
-    <h3>📋 آخرین دستور صادر شده برای شما:</h3>
+    <div id="aiConsultantBar" style="background:#f8f4ff;border:2px solid #a18cd1;border-radius:14px;padding:12px;margin-bottom:16px;">
+  <h4 style="margin:0 0 10px;color:#1a2a4a;font-size:0.95rem;">🧠 هوشهای تخصصی مشاور (سوال بپرسید کمک بگیرید)</h4>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+    <button onclick="openAIBox('analyzer','🔍 تحلیلگر')" style="padding:6px 12px;border:none;border-radius:8px;background:#4facfe;color:#fff;font-weight:bold;cursor:pointer;font-family:inherit;font-size:0.82rem;">🔍 تحلیلگر</button>
+    <button onclick="openAIBox('statistics','📊 آمارگر')" style="padding:6px 12px;border:none;border-radius:8px;background:#43e97b;color:#fff;font-weight:bold;cursor:pointer;font-family:inherit;font-size:0.82rem;">📊 آمارگر</button>
+    <button onclick="openAIBox('aggregator','📚 گردآور منابع')" style="padding:6px 12px;border:none;border-radius:8px;background:#fa709a;color:#fff;font-weight:bold;cursor:pointer;font-family:inherit;font-size:0.82rem;">📚 گردآور</button>
+    <button onclick="openAIBox('writer','📝 گزارشنویس')" style="padding:6px 12px;border:none;border-radius:8px;background:#d4a843;color:#1a2a4a;font-weight:bold;cursor:pointer;font-family:inherit;font-size:0.82rem;">📝 گزارشنویس</button>
+  </div>
+  <div id="aiChatBox" style="display:none;border-top:1px solid #ddd;padding-top:10px;">
+    <h5 id="aiChatTitle" style="margin:0 0 6px;color:#1a2a4a;"></h5>
+    <div id="aiChatLog" style="background:#fff;border-radius:8px;padding:10px;min-height:250px;max-height:400px;overflow-y:auto;margin-bottom:8px;font-size:0.85rem;line-height:1.7;"></div>
+    <div style="display:flex;gap:6px;">
+      <input id="aiChatInput" type="text" placeholder="سوال خود را بپرسید..." style="flex:1;padding:8px;border-radius:8px;border:1px solid #ccc;font-family:inherit;font-size:0.85rem;">
+      <button onclick="sendAIMessage()" style="padding:8px 16px;border:none;border-radius:8px;background:#a18cd1;color:#fff;font-weight:bold;cursor:pointer;font-family:inherit;font-size:0.85rem;">ارسال</button>
+      <button onclick="closeAIBox()" style="padding:8px 16px;border:none;border-radius:8px;background:#ddd;color:#333;font-weight:bold;cursor:pointer;font-family:inherit;font-size:0.85rem;">بستن</button>
+    </div>
+  </div>
+</div>
+
+<h3>📋 آخرین دستور صادر شده برای شما:</h3>
     <div class="order-box">
       <p id="orderText">دستوری یافت نشد.</p>
     </div>
@@ -141,6 +163,15 @@ body.dark .order-box p { color: #ddd; }
     <textarea id="reportDesc" placeholder="توضیحات مختصر در مورد گزارش..."></textarea>
     
     <button class="submit-btn" onclick="submitReport()">ارسال گزارش و دریافت کد رهگیری</button>
+<div id="reportTrackingBox" style="margin-top:20px;padding:16px;background:#f0f8ff;border:2px solid #4facfe;border-radius:12px;">
+  <h3 style="margin:0 0 10px;color:#1a2a4a;">🔎 پیگیری گزارش با کد رهگیری</h3>
+  <p style="font-size:0.85rem;color:#666;margin-bottom:10px;">کد رهگیری (مثل TRK-12345) را وارد کنید.</p>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <input type="text" id="reportTrackInput" placeholder="TRK-12345" style="flex:1;min-width:180px;padding:10px;border-radius:8px;border:1px solid #ccc;font-family:inherit;">
+    <button onclick="checkReportStatus()" style="padding:10px 20px;border:none;border-radius:8px;background:#4facfe;color:#fff;font-weight:bold;cursor:pointer;font-family:inherit;">🔍 بررسی</button>
+  </div>
+  <div id="reportTrackResult" style="margin-top:12px;"></div>
+</div>
     
     <div id="trackingCode">
       <h3>✅ گزارش شما با موفقیت ثبت شد.</h3>
@@ -186,9 +217,10 @@ const consultantsDB = {
   '103': { name: 'رضا کریمی', order: 'تحلیل داده‌های رفاهی کارکنان و ارائه گزارش به مدیرکل.' }
 };
 
-function checkCode() {
+async function checkCode() {
   var code = document.getElementById('consultantCode').value.trim();
   if (code === '1001') {
+    localStorage.setItem('consultant_current_code', '1001');
     document.getElementById('step1').style.display = 'none';
     document.getElementById('step2').style.display = 'block';
     document.getElementById('orderText').innerText = 'دستور نمونه: تهیه گزارش تحلیلی از وضعیت مراجعین.';
@@ -196,10 +228,19 @@ function checkCode() {
   }
   var data = consultantsDB[code];
   if (data) {
+    localStorage.setItem('consultant_current_code', code);
+    localStorage.setItem('consultant_current_name', data.name || '');
     document.getElementById('step1').style.display = 'none';
     document.getElementById('step2').style.display = 'block';
     document.getElementById('orderText').innerText = data.order;
   } else {
+    try {
+      if (typeof window.getBotResponse === 'function') {
+        const guide = await window.getBotResponse('کد مشاور ' + code + ' پذیرفته نشد. راهنمایی محترمانه بده که احتمالا چه اشکالی هست و از کجا باید کد را بگیرد.');
+        alert('🔍 راهنما:\n\n' + guide);
+        return;
+      }
+    } catch(e){}
     alert('کد وارد شده اشتباه است.');
   }
 }
@@ -212,25 +253,59 @@ function showFileName() {
   }
 }
 
-function submitReport() {
+async function submitReport() {
   const fileInput = document.getElementById('fileInput');
   const desc = document.getElementById('reportDesc').value.trim();
-  if (fileInput.files.length === 0) {
-    alert('لطفاً فایل گزارش خود را انتخاب کنید.');
+  const currentCode = (function(){ try { return localStorage.getItem('consultant_current_code') || (document.getElementById('consultantCode')||{}).value || ''; } catch(e){ return ''; } })();
+  if (fileInput.files.length === 0 && desc.length < 20) {
+    alert('لطفا فایل گزارش یا توضیحات کافی وارد کنید.');
     return;
   }
-  if (!desc) {
-    alert('لطفاً توضیحات مختصر را وارد کنید.');
+  const trackCode = 'TRK-' + Math.floor(10000 + Math.random() * 90000);
+  const consultant = (window.consultantsDB && window.consultantsDB[currentCode]) ? window.consultantsDB[currentCode] : { name: 'مشاور' };
+
+  let fileData = null, fileName = null, fileType = null;
+  if (fileInput.files.length > 0) {
+    const file = fileInput.files[0];
+    fileName = file.name; fileType = file.type;
+    fileData = await new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = e => resolve(e.target.result);
+      r.onerror = reject;
+      r.readAsDataURL(file);
+    });
+  }
+
+  const report = {
+    id: 'rep-' + Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+    code: currentCode || 'نامشخص',
+    consultantName: consultant.name,
+    title: 'گزارش مشاور — ' + (consultant.name || ''),
+    desc: desc,
+    content: desc,
+    fileName, fileType, fileData,
+    trackingCode: trackCode,
+    status: 'sent',
+    createdAt: Date.now()
+  };
+
+  try {
+    const reports = JSON.parse(localStorage.getItem('hr_reports') || '[]');
+    reports.push(report);
+    localStorage.setItem('hr_reports', JSON.stringify(reports));
+  } catch(e) {
+    alert('❌ حافظه پر است. فایل را فشردهتر کنید یا گزارشهای قدیمی را پاک کنید.');
     return;
   }
-  // تولید کد رهگیری
-  const trackCode = 'TRK-' + Math.floor(Math.random() * 90000) + 10000;
-  document.getElementById('trackCodeDisplay').innerText = trackCode;
-  document.getElementById('trackingCode').style.display = 'block';
-  document.getElementById('step2').querySelector('.upload-area').style.display = 'none';
-  document.getElementById('step2').querySelector('textarea').style.display = 'none';
-  document.getElementById('step2').querySelector('.submit-btn').style.display = 'none';
-  alert('گزارش شما با موفقیت ارسال شد. کد رهگیری: ' + trackCode);
+
+  const trackEl = document.getElementById('trackCodeDisplay');
+  if (trackEl) trackEl.innerText = trackCode;
+  const tc = document.getElementById('trackingCode');
+  if (tc) tc.style.display = 'block';
+  const upload = document.querySelector('#step2 .upload-area'); if (upload) upload.style.display = 'none';
+  const ta = document.querySelector('#step2 textarea'); if (ta) ta.style.display = 'none';
+  const sb = document.querySelector('#step2 .submit-btn'); if (sb) sb.style.display = 'none';
+  alert('✅ گزارش ثبت و در پرونده شما ذخیره شد. کد رهگیری: ' + trackCode);
 }
 
 // تم و زبان
@@ -264,13 +339,219 @@ function downloadTrackingCode() {
   URL.revokeObjectURL(link.href);
 }
 function submitSatisfaction(score) {
+  var page = 'consultants.html';
+  var all = JSON.parse(localStorage.getItem('hr_surveys') || '[]');
+  all.push({ page: page, score: score, at: Date.now() });
+  localStorage.setItem('hr_surveys', JSON.stringify(all));
   alert('امتیاز ' + score + ' شما ثبت شد. با تشکر!');
-  document.getElementById('satisfactionBox').style.bottom = '-200px';
+  var box = document.getElementById('satisfactionBox');
+  if (box) box.style.bottom = '-220px';
 }
 </script>
 
+
+
+
+<script>
+/* ==================== هوشهای تخصصی مشاور — نسخهٔ پایدار ==================== */
+(function(){
+  window.__aiState = { role: null, title: '' };
+
+  const PROMPTS = {
+    analyzer: 'تو «هوش تحلیلگر» مشاورین سازمان بنیاد شهید هستی. قانون سختگیرانه: فقط دربارهٔ همان موضوعی که مشاور میپرسد تحلیل بده. اگر دادههای موجود در سیستم مستقیما به آن موضوع مربوط نیستند (مثلا موضوع سوال حقوق خانوادهٔ شهداست ولی دادهها فقط دربارهٔ درخواست مرخصی کارکنان است) باید صریح بگویی: «برای تحلیل این موضوع دادهای در سیستم ثبت نشده و تحلیل من محدود به آنچه هست نمیتواند پاسخ دقیق بدهد» و سپس دقیقا بگو چه دادهای لازم است. هرگز با دادههای نامرتبط پر نکن. حداکثر ۶ خط فارسی رسمی.',
+    statistics: 'تو «هوش آمارگر» مشاورین هستی. فقط آمار مربوط به همان موضوعی که مشاور میپرسد را از دادهها بده. اگر دادهای برای آن موضوع در سیستم نیست صریح بگو «آماری برای این موضوع ثبت نشده» و لیست کن چه آماری لازم است. هرگز عدد جعلی یا از موضوع نامرتبط نساز. حداکثر ۵ خط.',
+    aggregator: 'تو «هوش گردآور منابع» هستی. اگر مشاور دربارهٔ ارتباط منابع پرسید بر اساس دادههای موجود ارتباط بده. اگر موضوع سوال خارج از دادههای سیستم بود صریح بگو و پیشنهاد بده چه منبعی باید اضافه شود. حداکثر ۵ خط.',
+    writer: 'تو «هوش گزارشنویس» هستی. بر اساس موضوعی که مشاور میگوید و دادههای موجود گزارش اداری بنویس. اگر داده کافی نیست بخشهایی که نیاز به داده دارند را با «[نیاز به داده: ...]» علامت بزن. حداکثر ۱۰ خط فارسی رسمی.'
+  };
+
+  function buildContext() {
+    const ctx = { org:null, live:{}, consultant:null };
+    try { ctx.org = window.ORG_KNOWLEDGE || null; } catch(e){}
+    const pull = (k,label) => {
+      try { const v = JSON.parse(localStorage.getItem(k)||'[]'); if (Array.isArray(v) && v.length) ctx.live[label] = v.slice(-12); } catch(e){}
+    };
+    pull('hr_eco_challenges','چالشها');
+    pull('hr_eco_knowledge','دانشها');
+    pull('hr_admin_requests','درخواستها');
+    pull('hr_pending_decrees','احکام');
+    pull('hr_personal_queries','سوالات');
+    pull('hr_ican_cases','توانمندیها');
+    pull('hr_learning_requests','نیازهای آموزشی');
+    pull('hr_reports','گزارشهای قبلی');
+    try {
+      const code = localStorage.getItem('consultant_current_code') || '';
+      const name = localStorage.getItem('consultant_current_name') || '';
+      if (code) ctx.consultant = { code, name };
+    } catch(e){}
+    return ctx;
+  }
+
+  function ctxText(ctx) {
+    return '=== دادههای موجود در سیستم ===\n' +
+      (Object.keys(ctx.live).length
+        ? Object.entries(ctx.live).map(([k,v]) => `• ${k} (${v.length}): ${JSON.stringify(v).slice(0, 500)}`).join('\n')
+        : '(خالی)') +
+      '\n=== فرایندهای سازمان ===\n' +
+      (ctx.org ? JSON.stringify(ctx.org.processes || {}).slice(0, 800) : 'ندارد') +
+      '\n=== مشاور جاری ===\n' + (ctx.consultant ? JSON.stringify(ctx.consultant) : 'ناشناس');
+  }
+
+  function appendMsg(txt, who, allowActions) {
+    const log = document.getElementById('aiChatLog');
+    if (!log) return;
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = 'margin-bottom:10px;' + (who === 'user' ? 'text-align:right;' : '');
+    // حباب پیام
+    const bubble = document.createElement('div');
+    bubble.style.cssText = 'padding:6px 10px;border-radius:8px;display:inline-block;max-width:92%;white-space:pre-wrap;' +
+      (who === 'user' ? 'background:#a18cd1;color:#fff;' : 'background:#f0f0f0;color:#1a2a4a;');
+    bubble.textContent = txt;
+    wrapper.appendChild(bubble);
+    // اکشنها پایین (برای bot با actions)
+    if (who === 'bot' && allowActions) {
+      const actions = document.createElement('div');
+      actions.style.cssText = 'margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;';
+      const btnStyle = 'padding:5px 12px;border:none;border-radius:6px;font-size:0.78rem;cursor:pointer;font-family:inherit;font-weight:bold;';
+      const b1 = document.createElement('button');
+      b1.textContent = '📎 افزودن به گزارش';
+      b1.style.cssText = btnStyle + 'background:#43e97b;color:#fff;';
+      b1.onclick = () => window.__aiAppendToReport(txt);
+      const b2 = document.createElement('button');
+      b2.textContent = '💾 ذخیره تحلیل';
+      b2.style.cssText = btnStyle + 'background:#4facfe;color:#fff;';
+      b2.onclick = () => window.__aiSaveArchive(txt);
+      const b3 = document.createElement('button');
+      b3.textContent = '📋 کپی';
+      b3.style.cssText = btnStyle + 'background:#d4a843;color:#1a2a4a;';
+      b3.onclick = () => window.__aiCopy(txt);
+      actions.appendChild(b1); actions.appendChild(b2); actions.appendChild(b3);
+      wrapper.appendChild(actions);
+    }
+    log.appendChild(wrapper);
+    // اسکرول خودکار به پایین برای دیدن دکمهها
+    setTimeout(() => { log.scrollTop = log.scrollHeight; }, 50);
+  }
+
+  window.__aiAppendToReport = function(text) {
+    const ta = document.getElementById('reportDesc');
+    if (!ta) { alert('کادر گزارش پیدا نشد.'); return; }
+    const prev = ta.value.trim();
+    ta.value = prev ? prev + '\n\n--- تحلیل هوش ---\n' + text : '--- تحلیل هوش ---\n' + text;
+    ta.scrollIntoView({behavior:'smooth', block:'center'});
+    ta.focus();
+    alert('✅ به متن گزارش اضافه شد.');
+  };
+  window.__aiSaveArchive = function(text) {
+    try {
+      const list = JSON.parse(localStorage.getItem('hr_analysis_archive') || '[]');
+      list.push({ id: 'an-' + Date.now().toString(36), role: window.__aiState.role || 'analyzer', title: window.__aiState.title || '', text: text, createdAt: Date.now() });
+      localStorage.setItem('hr_analysis_archive', JSON.stringify(list));
+      alert('✅ در آرشیو ذخیره شد. (تعداد کل: ' + list.length + ')');
+    } catch(e) { alert('خطا در ذخیره: ' + e.message); }
+  };
+  window.__aiCopy = function(text) {
+    if (navigator.clipboard) navigator.clipboard.writeText(text).then(()=>alert('📋 کپی شد.')).catch(()=>alert('کپی نشد.'));
+    else alert('مرورگر پشتیبانی نمیکند.');
+  };
+
+  window.openAIBox = function(role, title) {
+    window.__aiState.role = role;
+    window.__aiState.title = title;
+    const box = document.getElementById('aiChatBox');
+    const t = document.getElementById('aiChatTitle');
+    const log = document.getElementById('aiChatLog');
+    if (!box) return;
+    box.style.display = 'block';
+    if (t) t.textContent = title + ' — سوال خود را بپرسید:';
+    if (log) log.innerHTML = '';
+    const greetings = {
+      analyzer: 'سلام! من تحلیلگر هستم. دربارهٔ هر موضوعی که میخواهید تحلیل کنم بپرسید. اگر دادهای در سیستم برای آن موضوع نباشد صادقانه میگویم چه دادهای لازم است.',
+      statistics: 'سلام! من آمارگر هستم. بگویید چه آماری میخواهید. اگر آماری برای آن موضوع ثبت نشده باشد صریح میگویم.',
+      aggregator: 'سلام! من گردآور منابع هستم. بپرسید چه ارتباطی بین بخشهای مختلف سازمان دیده میشود.',
+      writer: 'سلام! من گزارشنویس هستم. موضوع گزارش را بگویید تا پیشنویس کنم.'
+    };
+    appendMsg(greetings[role] || 'سلام! سوال خود را بپرسید.', 'bot', false);
+    const input = document.getElementById('aiChatInput');
+    if (input) { input.value = ''; input.focus(); }
+  };
+
+  window.closeAIBox = function() {
+    const box = document.getElementById('aiChatBox');
+    if (box) box.style.display = 'none';
+    window.__aiState.role = null;
+  };
+
+  window.sendAIMessage = async function() {
+    const input = document.getElementById('aiChatInput');
+    if (!input || !window.__aiState.role) return;
+    const text = input.value.trim();
+    if (!text) return;
+    appendMsg(text, 'user', false);
+    input.value = '';
+    const pending = document.createElement('div');
+    pending.style.cssText = 'margin-bottom:8px;color:#888;font-style:italic;';
+    pending.textContent = '⏳ در حال تحلیل...';
+    document.getElementById('aiChatLog').appendChild(pending);
+
+    const ctx = buildContext();
+    const messages = [
+      { role:'system', content: PROMPTS[window.__aiState.role] || PROMPTS.analyzer },
+      { role:'system', content: ctxText(ctx).slice(0, 6000) },
+      { role:'user', content: text }
+    ];
+    let answer = 'متأسفم پاسخگویی هوش در دسترس نیست.';
+    try {
+      if (typeof window.callAI === 'function') {
+        const r = await window.callAI(messages, { max_tokens: 1200, temperature: 0.2 });
+        if (typeof r === 'string' && r.trim()) answer = r.trim();
+        else if (r && r.success && r.text) answer = r.text;
+        else if (r && r.text) answer = r.text;
+      }
+    } catch(e) { console.warn('AI error:', e); }
+    if (pending.parentNode) pending.parentNode.removeChild(pending);
+    appendMsg(answer, 'bot', true);
+  };
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const input = document.getElementById('aiChatInput');
+    if (input) input.addEventListener('keypress', e => { if (e.key === 'Enter') { e.preventDefault(); window.sendAIMessage(); } });
+    console.log('✅ هوشهای تخصصی مشاور آماده — openAIBox:', typeof window.openAIBox);
+  });
+})();
+</script>
+
+<script>
+window.checkReportStatus = function() {
+  const code = (document.getElementById('reportTrackInput') || {}).value || '';
+  const out = document.getElementById('reportTrackResult');
+  if (!out) return;
+  const clean = code.trim().toUpperCase();
+  if (!clean) { out.innerHTML = '<span style="color:#c00;">کد را وارد کنید.</span>'; return; }
+  try {
+    const reports = JSON.parse(localStorage.getItem('hr_reports') || '[]');
+    const r = reports.find(x => (x.trackingCode || '').toUpperCase() === clean);
+    if (!r) { out.innerHTML = '<div style="background:#fff3cd;color:#856404;padding:10px;border-radius:8px;">⚠️ گزارشی با این کد پیدا نشد.</div>'; return; }
+    const map = { sent:'ارسال شده', reviewing:'در حال بررسی', answered:'پاسخ داده شده', archived:'بایگانی' };
+    const stat = map[r.status] || r.status || 'نامشخص';
+    const color = r.status === 'answered' ? '#2ed573' : r.status === 'reviewing' ? '#f1c65e' : '#4facfe';
+    let h = '<div style="background:#fff;padding:12px;border-radius:8px;border-right:4px solid ' + color + ';line-height:1.8;">';
+    h += '<strong>📄 موضوع:</strong> ' + (r.title || '—') + '<br>';
+    h += '<strong>📌 وضعیت:</strong> <span style="color:' + color + ';font-weight:bold;">' + stat + '</span>';
+    if (r.answer) h += '<br><strong>💬 پاسخ مدیرکل:</strong><div style="background:#f0f8ff;padding:8px;border-radius:6px;margin-top:4px;">' + r.answer + '</div>';
+    h += '</div>';
+    out.innerHTML = h;
+  } catch(e) { out.innerHTML = '<span style="color:#c00;">خطا: ' + e.message + '</span>'; }
+};
+</script>
 </body>
 </html>
+
+
+
+
+
+
+
 
 
 
